@@ -1,9 +1,9 @@
 # DEFINE CLASS SOLUTION
 
-from sklearn.metrics import root_mean_squared_error as rmse
 import random
 import numpy as np
 from PIL import Image, ImageDraw
+import matplotlib.pyplot as plt
 
 IMG_WIDTH   = 300
 IMG_HEIGHT  = 400
@@ -92,6 +92,20 @@ class Individual():
 
         return self.fitness
 
+    def plot(self, ax=None, title="Solution") -> None:
+        #Plot the rendered solution using matplotlib
+        # If ax is None, a new figure and axis are created. Otherwise, the solution is plotted on the provided axis.
+        show = ax is None
+        if ax is None:
+            fig, ax = plt.subplots(1, 1, figsize=(3, 4))
+
+        ax.imshow(self.render())
+        ax.set_title(title, fontsize=11)
+        ax.axis("off")
+
+        if show:
+            plt.tight_layout()
+            plt.show()
         
     # Method that is called when we run: print(object_of_the_class)
     def __repr__(self) -> str:
