@@ -1,13 +1,15 @@
 # DEFINE GENETIC ALGORITHM
-
+from solution import Individual, Triangle
 from operators import tournament_selection
 from operators import triangle_crossover
 from operators import triangle_mutation
 
 
-def genetic_algorithm(population_size, num_generations, crossover_prob, mutation_prob, tournament_size=2):
+
+def genetic_algorithm(target, population_size, num_generations, crossover_prob, mutation_prob, tournament_size=2):
     """Implements a genetic algorithm to evolve a population of individuals (solutions) over a specified number of generations.
     Parameters:
+        - target (Image): The target image that the algorithm is trying to approximate.
         - population_size (int): The number of individuals in the population.
         - num_generations (int): The number of generations to run the algorithm.
         - crossover_prob (float): The probability of performing crossover between two parents.
@@ -21,7 +23,7 @@ def genetic_algorithm(population_size, num_generations, crossover_prob, mutation
     population = [Individual() for _ in range(population_size)]
 
     # Record the best individual from the initial population
-    best = min(population, key=lambda ind: ind.fitness())
+    best = min(population, key=lambda ind: ind.fitness(target))
 
     # 2. PRINCIPAL LOOP — run for N generations
     for generation in range(num_generations):
@@ -41,12 +43,12 @@ def genetic_algorithm(population_size, num_generations, crossover_prob, mutation
         population = new_population[:population_size] # Ensure population size is maintained
 
         # 6. BEST INDIVIDUAL — record the progress
-        generation_best = min(population, key=lambda ind: ind.fitness()) # Find the best individual in the current generation
+        generation_best = min(population, key=lambda ind: ind.fitness(target)) # Find the best individual in the current generation
 
         # Update the overall best individual if the current generation's best is better
-        if generation_best.fitness() < best.fitness():
+        if generation_best.fitness(target) < best.fitness(target):
             best = generation_best
 
-        print(f"Geração {generation+1} | Melhor RMSE: {best.fitness():.4f}")
+        print(f"Geração {generation+1} | Melhor RMSE: {best.fitness(target):.4f}")
 
     return best

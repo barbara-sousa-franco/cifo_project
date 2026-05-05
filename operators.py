@@ -1,21 +1,23 @@
 # DEFINE OPERATORS - SELECTION, CROSSOVER, MUTATION
 
 from copy import deepcopy
-from random import random
+import random
+from solution import Individual, Triangle, IMG_WIDTH, IMG_HEIGHT
 
 
 # SELECTION: Tournament Selection
-def tournament_selection(population: list[Solution], tournament_size: int = 2):
+def tournament_selection(target, population: list[Individual], tournament_size: int = 2):
     """Selects an individual from the population using tournament selection.
     Parameters:
-        - population (list[Solution]): The list of individuals in the population.
+        - population (list[Individual]): The list of individuals in the population.
         - tournament_size (int): The number of individuals to participate in the tournament.
+        - target (Image): The target image used to evaluate fitness during selection.
     Returns:
-        - Solution: A copy of the selected individual.
+        - Individual: A copy of the selected individual.
     """
     # Select a random subset of individuals for the tournament
     tournament = random.choices(population, k=tournament_size)
-    best_individual = min(tournament, key=lambda ind: ind.fitness())
+    best_individual = min(tournament, key=lambda ind: ind.fitness(target))
 
     return deepcopy(best_individual)
 
@@ -36,8 +38,8 @@ def triangle_crossover(parent1, parent2, crossover_prob):
         point = random.randint(1, len(parent1.triangles) - 1)
 
         # Single-point crossover - swap the segments after the crossover point
-        child1_triangles = parent1.triangles[:point] + parent2.triangles[point:]
-        child2_triangles = parent2.triangles[:point] + parent1.triangles[point:]
+        child1_triangles = parent1.repr[:point] + parent2.repr[point:]
+        child2_triangles = parent2.repr[:point] + parent1.repr[point:]
 
         # Create new child individuals with the new triangle lists
         child1 = Individual(child1_triangles)
@@ -61,19 +63,19 @@ def triangle_crossover(parent1, parent2, crossover_prob):
 #         - tuple: A tuple containing the two child individuals resulting from crossover.
 #     """
 #     if random.random() <= crossover_prob: # verify if crossover should occur based on the given probability
-#         n = len(parent1.triangles) # number of triangles in the individual's representation. It will always be 100 in our case, but we can keep it general for flexibility.
+#         n = len(parent1.repr) # number of triangles in the individual's representation. It will always be 100 in our case, but we can keep it general for flexibility.
 
 #         # Select two random crossover points (point1 < point2)
 #         point1 = random.randint(1, n - 2)
 #         point2 = random.randint(point1 + 1, n - 1)
         
 #         # Two-point crossover: swap the segments between point1 and point2
-#         child1_triangles = (parent1.triangles[:point1] + 
-#                            parent2.triangles[point1:point2] + 
-#                            parent1.triangles[point2:])
-#         child2_triangles = (parent2.triangles[:point1] + 
-#                            parent1.triangles[point1:point2] + 
-#                            parent2.triangles[point2:])
+#         child1_triangles = (parent1.repr[:point1] + 
+#                            parent2.repr[point1:point2] + 
+#                            parent1.repr[point2:])
+#         child2_triangles = (parent2.repr[:point1] + 
+#                            parent1.repr[point1:point2] + 
+#                            parent2.repr[point2:])
         
 #         # Create new child individuals with the new triangle lists
 #         child1 = Individual(child1_triangles)
@@ -85,33 +87,38 @@ def triangle_crossover(parent1, parent2, crossover_prob):
 #     return child1, child2
 
 # MUTATION:
-def mutate(self, img_width=300, img_height=400):
-    """Mutates the individual's triangles by randomly modifying their vertices, colors, or replacing them entirely.
-    The mutation type is randomly selected for each triangle, and the modifications are constrained to ensure valid triangle properties.
+def triangle_mutation(individual, mutation_prob):
+    """ Performs mutation on an individual by randomly perturbing the vertices or color of its triangles, 
+    or replacing a triangle entirely. Each triangle in the individual's representation has a chance to mutate 
+    based on the given mutation probability.
     Parameters:
-        - img_width (int): The width of the image, used to constrain vertex positions.
-        - img_height (int): The height of the image, used to constrain vertex positions.
-    Returns:    
-        - None: The function modifies the individual's triangles in place.
+        - individual (Individual): The individual to be mutated.
+        - mutation_prob (float): The probability of mutating each triangle.
+    Returns:
+        - Individual: A new individual resulting from mutation.
     """
-    # Randomly select a mutation type for each triangle: "vertices", "color", or "full"
-    mutation_type = random.choice(["vertices", "color", "full"])
-    
-    if mutation_type == "vertices":
-        # Slightly modify the vertices of a randomly selected triangle
-        idx = random.randint(0, 2)
-        self.vertices[idx] = (
-            max(0, min(img_width,  self.vertices[idx][0] + random.randint(-30, 30))),
-            max(0, min(img_height, self.vertices[idx][1] + random.randint(-30, 30)))
-        )
-    
-    elif mutation_type == "color":
-        # Slightly modify the color of a randomly selected triangle
-        self.color = tuple(
-            max(0, min(255, c + random.randint(-30, 30)))
-            for c in self.color
-        )
-    
-    elif mutation_type == "full":
-        # Completely replace a randomly selected triangle 
-        self.__init__(img_width, img_height)
+    individual = deepcopy(individual)
+
+    for triangle in individual.repr:
+        if random.random() > mutation_prob:
+            continue  # este triângulo não muta
+
+        mutation_type = random.choice(["vertices", "color", "full"])
+
+        if mutation_type == "vertices":
+            # Escolhe um vértice aleatório (0, 2, ou 4 = índices de x) e perturba-o
+            idx = random.choice([0, 2, 4])  # x do vértice 1, 2 ou 3
+            triangle.repr[idx]   = max(0, min(IMG_WIDTH,  triangle.repr[idx]   + random.randint(-30, 30)))
+            triangle.repr[idx+1] = max(0, min(IMG_HEIGHT, triangle.repr[idx+1] + random.randint(-30, 30)))
+
+        elif mutation_type == "color":
+            # Perturba r, g, b (índices 6, 7, 8) e alpha (índice 9)
+            for i in range(6, 9):
+                triangle.repr[i] = max(0, min(255, triangle.repr[i] + random.randint(-30, 30)))
+            triangle.repr[9] = max(0.0, min(1.0, triangle.repr[9] + random.uniform(-0.1, 0.1)))
+
+        elif mutation_type == "full":
+            # Substitui o triângulo por um completamente novo
+            triangle.repr = triangle.random_initial_representation()
+
+    return individual
