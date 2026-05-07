@@ -51,6 +51,7 @@ def triangle_crossover(parent1, parent2, crossover_prob):
 
     return child1, child2
 
+
 # def triangle_crossover_double_cut(parent1, parent2, crossover_prob):
 #     """Performs double-point crossover between two parent individuals.
 #     Two crossover points are randomly selected, and the segments between these points are swapped 
@@ -87,10 +88,75 @@ def triangle_crossover(parent1, parent2, crossover_prob):
 #     return child1, child2
 
 # MUTATION:
-def triangle_mutation(individual, mutation_prob):
-    """ Performs mutation on an individual by randomly perturbing the vertices or color of its triangles, 
-    or replacing a triangle entirely. Each triangle in the individual's representation has a chance to mutate 
-    based on the given mutation probability.
+
+def triangles_overlap(t1, t2):
+    """ Checks if two triangles overlap by comparing their bounding boxes.
+    Parameters:
+        - t1 (Triangle): The first triangle.
+        - t2 (Triangle): The second triangle.
+    Returns:
+        - bool: True if the triangles overlap, False otherwise.
+    """
+    # Bounding box of the triangle 1
+    x1_min, x1_max = min(t1.repr[0], t1.repr[2], t1.repr[4]), max(t1.repr[0], t1.repr[2], t1.repr[4])
+    y1_min, y1_max = min(t1.repr[1], t1.repr[3], t1.repr[5]), max(t1.repr[1], t1.repr[3], t1.repr[5])
+    # Bounding box of the triangle 2
+    x2_min, x2_max = min(t2.repr[0], t2.repr[2], t2.repr[4]), max(t2.repr[0], t2.repr[2], t2.repr[4])
+    y2_min, y2_max = min(t2.repr[1], t2.repr[3], t2.repr[5]), max(t2.repr[1], t2.repr[3], t2.repr[5])
+    
+    # Verifies if the bounding boxes intersect
+    return (x1_min < x2_max and x1_max > x2_min and
+            y1_min < y2_max and y1_max > y2_min)
+
+def triangle_mutation_vcf(individual, mutation_prob):
+    """ Performs mutation on an individual by applying vertex, color, and order mutations to its triangles. 
+    Each triangle in the individual's representation has a chance to mutate based on the given mutation probability. 
+    The type of mutation applied to each triangle is randomly selected from vertex, color, full, and order mutations.
+    Parameters:
+        - individual (Individual): The individual to be mutated.
+        - mutation_prob (float): The probability of mutating each triangle.
+    Returns:
+        - Individual: A new individual resulting from mutation.
+    """
+    individual = deepcopy(individual)
+    
+    for i, triangle in enumerate(individual.repr):
+        if random.random() > mutation_prob:
+            continue
+        
+        # Choose between 1 to 4 mutations to apply to this triangle
+        mutations = random.sample(["vertices", "color", "full", "order"], 
+                                   k=random.randint(1, 4))
+        
+        # If "full" was chosen, it doesn't make sense to apply the other mutations, so we can skip them
+        if "full" in mutations:
+            triangle.repr = triangle.random_initial_representation()
+            continue
+        
+        if "vertices" in mutations:
+            idx = random.choice([0, 2, 4])
+            triangle.repr[idx] = int(max(0, min(IMG_WIDTH, triangle.repr[idx] + random.gauss(0, 15))))
+            triangle.repr[idx + 1] = int(max(0, min(IMG_HEIGHT, triangle.repr[idx + 1] + random.gauss(0, 15))))
+        
+        if "color" in mutations:
+            for j in range(6, 9):
+                triangle.repr[j] = int(max(0, min(255, triangle.repr[j] + random.gauss(0, 20))))
+            triangle.repr[9] = max(0.0, min(1.0, triangle.repr[9] + random.gauss(0, 0.05)))
+        
+        if "order" in mutations:
+            # Find triangles that overlap with this one 
+            overlapping = [j for j, t in enumerate(individual.repr) 
+                          if j != i and triangles_overlap(triangle, t)]
+            
+            if overlapping:
+                j = random.choice(overlapping)
+                individual.repr[i], individual.repr[j] = individual.repr[j], individual.repr[i]
+    
+    return individual
+
+
+def triangle_mutation_full(individual, mutation_prob):
+    """ Performs mutation on an individual by replacing entire triangles with new random triangles. Each triangle in the individual's representation has a chance to mutate based on the given mutation probability.
     Parameters:
         - individual (Individual): The individual to be mutated.
         - mutation_prob (float): The probability of mutating each triangle.
@@ -101,24 +167,10 @@ def triangle_mutation(individual, mutation_prob):
 
     for triangle in individual.repr:
         if random.random() > mutation_prob:
-            continue  # este triângulo não muta
+            continue  # the triangle does not mutate
 
-        mutation_type = random.choice(["vertices", "color", "full"])
-
-        if mutation_type == "vertices":
-            # Escolhe um vértice aleatório (0, 2, ou 4 = índices de x) e perturba-o
-            idx = random.choice([0, 2, 4])  # x do vértice 1, 2 ou 3
-            triangle.repr[idx]   = max(0, min(IMG_WIDTH,  triangle.repr[idx]   + random.randint(-30, 30)))
-            triangle.repr[idx+1] = max(0, min(IMG_HEIGHT, triangle.repr[idx+1] + random.randint(-30, 30)))
-
-        elif mutation_type == "color":
-            # Perturba r, g, b (índices 6, 7, 8) e alpha (índice 9)
-            for i in range(6, 9):
-                triangle.repr[i] = max(0, min(255, triangle.repr[i] + random.randint(-30, 30)))
-            triangle.repr[9] = max(0.0, min(1.0, triangle.repr[9] + random.uniform(-0.1, 0.1)))
-
-        elif mutation_type == "full":
-            # Substitui o triângulo por um completamente novo
+        else:
+            # Replace the triangle with a completely new random triangle
             triangle.repr = triangle.random_initial_representation()
 
     return individual
