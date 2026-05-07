@@ -1,112 +1,139 @@
 # DEFINE CLASS SOLUTION
+#
+# An Individual is a whole painting (a list of N_TRIANGLES Triangles).
+# A Triangle is one gene block of 10 floats in [0, 1]:
+#     (x1, y1, x2, y2, x3, y3, r, g, b, a)
+# The genome is normalized so that mutation/crossover operate uniformly on
+# a single numeric type and bounds repair is a single np.clip(g, 0, 1).
+# Decoding to pixel coordinates / 0-255 byte channels happens at render
+# time (W-1, H-1, *255), which removes the off-by-one risk of generating
+# coordinates equal to W or H.
+#
+# Public contract used by operators and the GA loop:
+#   - repr                          : the genome (list of Triangle)
+#   - random_initial_representation : build a random genome
+#   - fitness                       : RMSE vs. the target image (cached)
+#   - with_repr                     : build a sibling Individual with a new
+#                                     genome but the same target, so that
+#                                     mutation/crossover can be expressed
+#                                     as pure functions returning new
+#                                     Individuals.
 
 import random
+
 import numpy as np
 from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 
-IMG_WIDTH   = 300
-IMG_HEIGHT  = 400
+IMG_WIDTH = 300
+IMG_HEIGHT = 400
 N_TRIANGLES = 100
+GENES_PER_TRIANGLE = 10  # x1, y1, x2, y2, x3, y3, r, g, b, a - all in [0, 1]
 
 
-# Remeber an Individual / solution is a whole painting, not a single triangle
+class Triangle:
+    """One triangle: 10 floats in [0, 1]. Decoded on demand."""
+
+    __slots__ = ("repr",)
+
+    def __init__(self, repr=None):
+        if repr is None:
+            repr = [random.random() for _ in range(GENES_PER_TRIANGLE)]
+        # Defensive copy so two Triangles can never share a list.
+        self.repr = list(repr)
+
+    def vertices(self, w=IMG_WIDTH, h=IMG_HEIGHT):
+        """Return the 3 vertices in pixel space, decoded from [0, 1]."""
+        g = self.repr
+        return [
+            (round(g[0] * (w - 1)), round(g[1] * (h - 1))),
+            (round(g[2] * (w - 1)), round(g[3] * (h - 1))),
+            (round(g[4] * (w - 1)), round(g[5] * (h - 1))),
+        ]
+
+    def color(self):
+        """Return the RGBA color as a 4-tuple of bytes (0-255)."""
+        g = self.repr
+        return (
+            round(g[6] * 255),
+            round(g[7] * 255),
+            round(g[8] * 255),
+            round(g[9] * 255),
+        )
+
+    def copy(self):
+        return Triangle(self.repr)  # __init__ already copies the list
+
+    def __repr__(self):
+        return f"Triangle({self.repr})"
 
 
-class Triangle():
-    def __init__(self, repr = None):
-        # If no representation is given, a solution is randomly initialized.
+class Individual:
+    """A candidate painting: N_TRIANGLES Triangles + cached RMSE fitness.
+
+    Parameters
+    ----------
+    target : np.ndarray
+        Target image as an (H, W, 3) array of dtype float32 (or anything
+        castable to float32). Stored on the instance so that fitness() and
+        with_repr() can be called without re-passing it.
+    repr : list[Triangle], optional
+        Existing genome. If None, a random one is generated.
+    """
+
+    def __init__(self, target: np.ndarray, repr=None):
+        self.target = target
         if repr is None:
             repr = self.random_initial_representation()
+        # Defensive copy of each Triangle so children of crossover cannot
+        # share Triangle instances with their parents.
+        self.repr = [t.copy() for t in repr]
+        self._fitness = None  # populated on first fitness() call
 
-        self.repr = repr
-
-    def random_initial_representation(self) -> list:
-        # 1 triangle is represented by 6 integers: x1, y1, x2, y2, x3, y3 corresponding to the coordinates of the 3 vertices of the triangle
-        #  with x between 0 and 300 and y between 0 and 400
-        # It will also have rgb values between 0 and 255 and an alpha value between 0 and 1, but we will not include those in the representation, as they are not relevant for the fitness function (we will always set them to the same values)
-        # so in total we will have 10 integers for the representation of a triangle
-
-        x1 = random.randint(0, IMG_WIDTH)
-        y1 = random.randint(0, IMG_HEIGHT)
-        x2 = random.randint(0, IMG_WIDTH)
-        y2 = random.randint(0, IMG_HEIGHT)
-        x3 = random.randint(0, IMG_WIDTH)
-        y3 = random.randint(0, IMG_HEIGHT)
-        r = random.randint(0, 255)
-        g = random.randint(0, 255)
-        b = random.randint(0, 255)
-        alpha = random.random()  # float between 0 and 1
-
-        return [x1, y1, x2, y2, x3, y3, r, g, b, alpha]
-    
-
-    @property
-    def vertices(self) -> list:
-        r = self.repr
-        return [(r[0], r[1]), (r[2], r[3]), (r[4], r[5])]
-    
-    @property
-    def color(self) -> tuple:
-        r = self.repr
-        return (r[6], r[7], r[8], int(r[9] * 255)) # convert alpha to 0-255 range for RGBA, PIL expects that
-
-
-
-class Individual():
-
-    def __init__(self, repr = None):
-        # If no representation is given, a solution is randomly initialized.
-        if repr is None:
-            repr = self.random_initial_representation()
-
-        self._fitness = None  # Cache fitness value, to avoid recomputation
-        self.repr = repr
-    
-    def random_initial_representation(self) -> list:
+    def random_initial_representation(self):
         return [Triangle() for _ in range(N_TRIANGLES)]
-    
+
+    def with_repr(self, new_repr):
+        """Build a new Individual that carries the same target image but a
+        different genome. Mutation and crossover MUST go through this
+        method so that _fitness is left as None on the child and gets
+        recomputed from the new genome."""
+        return Individual(target=self.target, repr=new_repr)
+
     def render(self) -> Image.Image:
-        # Render the solution as a PIL RGBA image, composited onto black.
-        # Black background in RGBA so alpha blending works
-        canvas = Image.new("RGBA", (IMG_WIDTH, IMG_HEIGHT), (0, 0, 0, 255)) # creates a complete opac and black canvas
+        """Rasterize the genome to an RGB PIL image.
 
+        Uses one RGBA canvas and ImageDraw.polygon in RGBA mode, which
+        alpha-blends each polygon's fill against the existing canvas in a
+        single pass - no per-triangle layer is allocated.
+        """
+        canvas = Image.new("RGBA", (IMG_WIDTH, IMG_HEIGHT), (0, 0, 0, 255))
+        draw = ImageDraw.Draw(canvas, "RGBA")
         for triangle in self.repr:
-            # Temporary layer for each triangle (transparent background)
-            layer = Image.new("RGBA", (IMG_WIDTH, IMG_HEIGHT), (0, 0, 0, 0))
-            draw  = ImageDraw.Draw(layer)
+            draw.polygon(triangle.vertices(), fill=triangle.color())
+        return canvas.convert("RGB")
 
-            # Draw the triangle on the layer
-            draw.polygon(triangle.vertices, fill=triangle.color)
-
-            # Pastes the triangle layer onto the canvas using alpha compositing
-            canvas = Image.alpha_composite(canvas, layer)
-
-        return canvas.convert("RGB")  # return RGB for fitness computation
-    
-    def fitness(self, target: np.ndarray) -> float:
-        # Calculate rmse between the solution and the target
-        rendered = np.array(self.render(), dtype=np.float32)  # (400, 300, 3)
-        rmse = np.sqrt(np.mean((rendered - target) ** 2))
-        self.fitness = float(rmse)
-
-        return self.fitness
+    def fitness(self) -> float:
+        """Pixel-wise RMSE between rendered phenotype and the target.
+        Cached in self._fitness because rasterization dominates runtime."""
+        if self._fitness is not None:
+            return self._fitness
+        rendered = np.asarray(self.render(), dtype=np.float32)
+        diff = rendered - self.target.astype(np.float32, copy=False)
+        self._fitness = float(np.sqrt(np.mean(diff * diff)))
+        return self._fitness
 
     def plot(self, ax=None, title="Solution") -> None:
-        #Plot the rendered solution using matplotlib
-        # If ax is None, a new figure and axis are created. Otherwise, the solution is plotted on the provided axis.
+        """Display the rendered phenotype with matplotlib."""
         show = ax is None
         if ax is None:
-            fig, ax = plt.subplots(1, 1, figsize=(3, 4))
-
+            _, ax = plt.subplots(1, 1, figsize=(3, 4))
         ax.imshow(self.render())
         ax.set_title(title, fontsize=11)
         ax.axis("off")
-
         if show:
             plt.tight_layout()
             plt.show()
-        
-    # Method that is called when we run: print(object_of_the_class)
+
     def __repr__(self) -> str:
-        return str( self.repr)
+        return str(self.repr)
