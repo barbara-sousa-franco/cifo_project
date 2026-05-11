@@ -6,23 +6,28 @@ from solution import Individual, Triangle, IMG_WIDTH, IMG_HEIGHT
 
 
 # SELECTION: Tournament Selection
-def tournament_selection(target, population: list[Individual], tournament_size: int = 2):
+def tournament_selection(population: list[Individual], maximization: bool = False, tournament_size: int = 2):
     """Selects an individual from the population using tournament selection.
     Parameters:
         - population (list[Individual]): The list of individuals in the population.
+        - maximization (bool): If True, selects the individual with the highest fitness; otherwise, selects the one with the lowest fitness.
         - tournament_size (int): The number of individuals to participate in the tournament.
-        - target (Image): The target image used to evaluate fitness during selection.
     Returns:
         - Individual: A copy of the selected individual.
     """
     # Select a random subset of individuals for the tournament
     tournament = random.choices(population, k=tournament_size)
-    best_individual = min(tournament, key=lambda ind: ind.fitness(target))
+    if maximization:
+        best_individual = max(tournament, key=lambda ind: ind.fitness())
+    else:
+        best_individual = min(tournament, key=lambda ind: ind.fitness())
 
-    return deepcopy(best_individual)
+    return best_individual.with_repr(best_individual.repr) 
+
+
 
 # CROSSOVER:
-def triangle_crossover(parent1, parent2, crossover_prob):
+def triangle_crossover(parent1, parent2, crossover_prob, verbose=False):
     """Performs single-point crossover between two parent individuals. 
     A random crossover point is selected, and the segments after this point are swapped between 
     the parents to create two children.
@@ -35,19 +40,19 @@ def triangle_crossover(parent1, parent2, crossover_prob):
     """
     if random.random() <= crossover_prob:
         # Select a random crossover point (between 1 and the number of triangles - 1)
-        point = random.randint(1, len(parent1.triangles) - 1)
+        point = random.randint(1, len(parent1.repr) - 1)
 
         # Single-point crossover - swap the segments after the crossover point
         child1_triangles = parent1.repr[:point] + parent2.repr[point:]
         child2_triangles = parent2.repr[:point] + parent1.repr[point:]
 
         # Create new child individuals with the new triangle lists
-        child1 = Individual(child1_triangles)
-        child2 = Individual(child2_triangles)
+        child1 = parent1.with_repr(child1_triangles)
+        child2 = parent2.with_repr(child2_triangles)
 
     else: # If crossover does not occur, return deep copies of the parents
-        child1 = deepcopy(parent1)
-        child2 = deepcopy(parent2)
+        child1 = parent1.with_repr(parent1.repr)
+        child2 = parent2.with_repr(parent2.repr)
 
     return child1, child2
 
