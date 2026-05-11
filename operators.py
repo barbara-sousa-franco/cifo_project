@@ -108,6 +108,7 @@ def triangles_overlap(t1, t2):
     return (x1_min < x2_max and x1_max > x2_min and
             y1_min < y2_max and y1_max > y2_min)
 
+
 def triangle_mutation_vcf(individual, mutation_prob):
     """ Performs mutation on an individual by applying vertex, color, and order mutations to its triangles. 
     Each triangle in the individual's representation has a chance to mutate based on the given mutation probability. 
@@ -118,9 +119,12 @@ def triangle_mutation_vcf(individual, mutation_prob):
     Returns:
         - Individual: A new individual resulting from mutation.
     """
-    individual = deepcopy(individual)
+
     
-    for i, triangle in enumerate(individual.repr):
+    # Initial defensive copy of the individual's representation to ensure that we do not modify the original individual directly.
+    new_repr = [t.copy() for t in individual.repr]
+
+    for i, triangle in enumerate(new_repr):
         if random.random() > mutation_prob:
             continue
         
@@ -130,29 +134,27 @@ def triangle_mutation_vcf(individual, mutation_prob):
         
         # If "full" was chosen, it doesn't make sense to apply the other mutations, so we can skip them
         if "full" in mutations:
-            triangle.repr = triangle.random_initial_representation()
+            new_repr[i] = Triangle()
             continue
-        
+
         if "vertices" in mutations:
             idx = random.choice([0, 2, 4])
-            triangle.repr[idx] = int(max(0, min(IMG_WIDTH, triangle.repr[idx] + random.gauss(0, 15))))
-            triangle.repr[idx + 1] = int(max(0, min(IMG_HEIGHT, triangle.repr[idx + 1] + random.gauss(0, 15))))
-        
+            triangle.repr[idx] = max(0.0, min(1.0, triangle.repr[idx] + random.gauss(0, 0.05)))
+            triangle.repr[idx + 1] = max(0.0, min(1.0, triangle.repr[idx + 1] + random.gauss(0, 0.05)))
+
         if "color" in mutations:
-            for j in range(6, 9):
-                triangle.repr[j] = int(max(0, min(255, triangle.repr[j] + random.gauss(0, 20))))
-            triangle.repr[9] = max(0.0, min(1.0, triangle.repr[9] + random.gauss(0, 0.05)))
-        
+            for j in range(6, 10):
+                triangle.repr[j] = max(0.0, min(1.0, triangle.repr[j] + random.gauss(0, 0.05)))
+
         if "order" in mutations:
             # Find triangles that overlap with this one 
-            overlapping = [j for j, t in enumerate(individual.repr) 
-                          if j != i and triangles_overlap(triangle, t)]
-            
+            overlapping = [j for j, t in enumerate(new_repr) 
+                           if j != i and triangles_overlap(triangle, t)]
             if overlapping:
                 j = random.choice(overlapping)
-                individual.repr[i], individual.repr[j] = individual.repr[j], individual.repr[i]
-    
-    return individual
+                new_repr[i], new_repr[j] = new_repr[j], new_repr[i]
+
+    return individual.with_repr(new_repr)
 
 
 def triangle_mutation_full(individual, mutation_prob):
@@ -163,14 +165,13 @@ def triangle_mutation_full(individual, mutation_prob):
     Returns:
         - Individual: A new individual resulting from mutation.
     """
-    individual = deepcopy(individual)
+    new_repr = [t.copy() for t in individual.repr]
 
-    for triangle in individual.repr:
+    for i in range(len(new_repr)):
         if random.random() > mutation_prob:
-            continue  # the triangle does not mutate
+            continue # the triangle does not mutate
 
-        else:
-            # Replace the triangle with a completely new random triangle
-            triangle.repr = triangle.random_initial_representation()
+        # Replace the triangle with a completely new random triangle
+        new_repr[i] = Triangle()
 
-    return individual
+    return individual.with_repr(new_repr)
