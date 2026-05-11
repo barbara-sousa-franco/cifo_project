@@ -34,6 +34,9 @@ GENES_PER_TRIANGLE = 10  # x1, y1, x2, y2, x3, y3, r, g, b, a - all in [0, 1]
 class Triangle:
     """One triangle: 10 floats in [0, 1]. Decoded on demand."""
 
+    # __slots__ avoids creating a dynamic __dict__ for each instance.
+    # This reduces memory usage and can slightly improve attribute access speed.
+    # Here, Triangle objects are only allowed to have one attribute: 'repr'.
     __slots__ = ("repr",)
 
     def __init__(self, repr=None):
@@ -107,6 +110,7 @@ class Individual:
         alpha-blends each polygon's fill against the existing canvas in a
         single pass - no per-triangle layer is allocated.
         """
+        # Initialize a fully opaque black image (0, 0, 0, 255) 
         canvas = Image.new("RGBA", (IMG_WIDTH, IMG_HEIGHT), (0, 0, 0, 255))
         draw = ImageDraw.Draw(canvas, "RGBA")
         for triangle in self.repr:
@@ -118,8 +122,10 @@ class Individual:
         Cached in self._fitness because rasterization dominates runtime."""
         if self._fitness is not None:
             return self._fitness
-        rendered = np.asarray(self.render(), dtype=np.float32)
-        diff = rendered - self.target.astype(np.float32, copy=False)
+        rendered = np.asarray(self.render(), dtype=np.float32) # converts the rendered PIL image to a NumPy array of type float32
+
+        # compares the rendered image to the target image by calculating the pixel-wise Root Mean Square Error (RMSE). 
+        diff = rendered - self.target.astype(np.float32, copy=False) 
         self._fitness = float(np.sqrt(np.mean(diff * diff)))
         return self._fitness
 
