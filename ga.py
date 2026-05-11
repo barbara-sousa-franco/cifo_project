@@ -1,10 +1,9 @@
 # DEFINE GENETIC ALGORITHM
 from collections.abc import Callable
 
-from solution import Individual, Triangle
-from operators import tournament_selection
-from operators import triangle_crossover
-from operators import triangle_mutation
+from solution import *
+from operators import *
+from operators import *
 
 from copy import deepcopy
 from time import time
