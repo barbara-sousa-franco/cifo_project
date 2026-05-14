@@ -192,16 +192,16 @@ def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
                                  current_gen=0, max_gen=100, **kwargs):
     """
     Muda o operador de crossover com base na fase da evolução:
-      - Fase inicial  (< 30% das gerações) : Uniform      → máxima exploração
-      - Fase intermédia (30–70%)           : K-Point      → mistura estruturada
-      - Fase final    (> 70% das gerações) : Red.Surrogate → foco nas diferenças reais
+      - Fase inicial  (< 50% das gerações) : Uniform      → máxima exploração
+      - Fase intermédia (50–85%)           : K-Point      → mistura estruturada
+      - Fase final    (> 85% das gerações) : Red.Surrogate → foco nas diferenças reais
     """
     phase = current_gen / max_gen
 
-    if phase < 0.3:
+    if phase < 0.5:
         if verbose: print(f"Gen {current_gen}: Uniform")
         return uniform_crossover(p1, p2, xo_prob, verbose=verbose, **kwargs)
-    elif phase < 0.7:
+    elif phase < 0.85:
         if verbose: print(f"Gen {current_gen}: K-Point")
         return kpoint_crossover(p1, p2, xo_prob, verbose=verbose, **kwargs)
     else:
