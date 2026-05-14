@@ -187,6 +187,26 @@ def shuffle_crossover(p1, p2, xo_prob, verbose=False):
     return _new_ind(p1, c1), _new_ind(p2, c2)
 
 
+# 5. ADAPTIVE CROSSOVER SCHEDULE
+def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
+                                 current_gen=0, max_gen=100):
+    """
+    Muda o operador de crossover com base na fase da evolução:
+      - Fase inicial  (< 30% das gerações) : Uniform      → máxima exploração
+      - Fase intermédia (30–70%)           : K-Point      → mistura estruturada
+      - Fase final    (> 70% das gerações) : Red.Surrogate → foco nas diferenças reais
+    """
+    phase = current_gen / max_gen
+
+    if phase < 0.3:
+        if verbose: print(f"Gen {current_gen}: Uniform")
+        return uniform_crossover(p1, p2, xo_prob, verbose=verbose)
+    elif phase < 0.7:
+        if verbose: print(f"Gen {current_gen}: K-Point")
+        return kpoint_crossover(p1, p2, xo_prob, verbose=verbose)
+    else:
+        if verbose: print(f"Gen {current_gen}: Reduced Surrogate")
+        return reduced_surrogate_crossover(p1, p2, xo_prob, verbose=verbose)
 
 # =====================================
 # MUTATION:
