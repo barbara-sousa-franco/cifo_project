@@ -29,7 +29,7 @@ def tournament_selection(population: list[Individual], maximization: bool = Fals
 # CROSSOVER:
 # =====================================
 
-def triangle_crossover(parent1, parent2, crossover_prob, verbose=False):
+def triangle_crossover(parent1, parent2, crossover_prob, verbose=False, **kwargs):
     """Performs single-point crossover between two parent individuals. 
     A random crossover point is selected, and the segments after this point are swapped between 
     the parents to create two children.
@@ -59,7 +59,7 @@ def triangle_crossover(parent1, parent2, crossover_prob, verbose=False):
     return child1, child2
 
 
-# def triangle_crossover_double_cut(parent1, parent2, crossover_prob):
+# def triangle_crossover_double_cut(parent1, parent2, crossover_prob, **kwargs):
 #     """Performs double-point crossover between two parent individuals.
 #     Two crossover points are randomly selected, and the segments between these points are swapped 
 #     between the parents to create two children.
@@ -101,7 +101,7 @@ def _new_ind(parent, new_repr):
 
 
 # 1. UNIFORM CROSSOVER
-def uniform_crossover(p1, p2, xo_prob, verbose=False, p=0.5):
+def uniform_crossover(p1, p2, xo_prob, verbose=False, p=0.5, **kwargs):
     """Cada gene é herdado independentemente de p1 (prob p) ou p2 (prob 1-p)."""
     if random.random() > xo_prob:
         return deepcopy(p1), deepcopy(p2)
@@ -116,7 +116,7 @@ def uniform_crossover(p1, p2, xo_prob, verbose=False, p=0.5):
 
 
 # 2. K-POINT CROSSOVER  (K variável entre k_min e k_max)
-def kpoint_crossover(p1, p2, xo_prob, verbose=False, k_min=3, k_max=7):
+def kpoint_crossover(p1, p2, xo_prob, verbose=False, k_min=3, k_max=7, **kwargs):
     """K pontos de corte, K amostrado aleatoriamente em [k_min, k_max] a cada chamada."""
     if random.random() > xo_prob:
         return deepcopy(p1), deepcopy(p2)
@@ -140,7 +140,7 @@ def kpoint_crossover(p1, p2, xo_prob, verbose=False, k_min=3, k_max=7):
 
 
 # 3. REDUCED SURROGATE CROSSOVER
-def reduced_surrogate_crossover(p1, p2, xo_prob, verbose=False):
+def reduced_surrogate_crossover(p1, p2, xo_prob, verbose=False, **kwargs):
     """
     Corta apenas numa posição onde os dois pais diferem.
     Evita crossovers inúteis — mais eficiente quando a população converge.
@@ -161,7 +161,7 @@ def reduced_surrogate_crossover(p1, p2, xo_prob, verbose=False):
 
 
 # 4. SHUFFLE CROSSOVER
-def shuffle_crossover(p1, p2, xo_prob, verbose=False):
+def shuffle_crossover(p1, p2, xo_prob, verbose=False, **kwargs):
     """
     Aplica o mesmo shuffle aleatório a ambos os pais, faz single-point crossover,
     e depois inverte o shuffle — elimina o viés posicional.
@@ -189,7 +189,7 @@ def shuffle_crossover(p1, p2, xo_prob, verbose=False):
 
 # 5. ADAPTIVE CROSSOVER SCHEDULE
 def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
-                                 current_gen=0, max_gen=100):
+                                 current_gen=0, max_gen=100, **kwargs):
     """
     Muda o operador de crossover com base na fase da evolução:
       - Fase inicial  (< 30% das gerações) : Uniform      → máxima exploração
@@ -200,13 +200,13 @@ def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
 
     if phase < 0.3:
         if verbose: print(f"Gen {current_gen}: Uniform")
-        return uniform_crossover(p1, p2, xo_prob, verbose=verbose)
+        return uniform_crossover(p1, p2, xo_prob, verbose=verbose, **kwargs)
     elif phase < 0.7:
         if verbose: print(f"Gen {current_gen}: K-Point")
-        return kpoint_crossover(p1, p2, xo_prob, verbose=verbose)
+        return kpoint_crossover(p1, p2, xo_prob, verbose=verbose, **kwargs)
     else:
         if verbose: print(f"Gen {current_gen}: Reduced Surrogate")
-        return reduced_surrogate_crossover(p1, p2, xo_prob, verbose=verbose)
+        return reduced_surrogate_crossover(p1, p2, xo_prob, verbose=verbose, **kwargs)
 
 # =====================================
 # MUTATION:
