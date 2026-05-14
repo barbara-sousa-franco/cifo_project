@@ -25,8 +25,10 @@ def tournament_selection(population: list[Individual], maximization: bool = Fals
     return best_individual.with_repr(best_individual.repr) 
 
 
-
+# =====================================
 # CROSSOVER:
+# =====================================
+
 def triangle_crossover(parent1, parent2, crossover_prob, verbose=False):
     """Performs single-point crossover between two parent individuals. 
     A random crossover point is selected, and the segments after this point are swapped between 
@@ -92,7 +94,103 @@ def triangle_crossover(parent1, parent2, crossover_prob, verbose=False):
     
 #     return child1, child2
 
+
+# --- Helper: cria offspring com novo repr ---
+def _new_ind(parent, new_repr):
+    return parent.with_repr(new_repr)
+
+
+# 1. UNIFORM CROSSOVER
+def uniform_crossover(p1, p2, xo_prob, verbose=False, p=0.5):
+    """Cada gene é herdado independentemente de p1 (prob p) ou p2 (prob 1-p)."""
+    if random.random() > xo_prob:
+        return deepcopy(p1), deepcopy(p2)
+    r1, r2 = p1.repr, p2.repr
+    size = len(r1)
+    mask = [random.random() < p for _ in range(size)]
+    c1 = [deepcopy(r1[i]) if mask[i] else deepcopy(r2[i]) for i in range(size)]
+    c2 = [deepcopy(r2[i]) if mask[i] else deepcopy(r1[i]) for i in range(size)]
+    if verbose:
+        print(f"Uniform Crossover: {c1} | {c2}")
+    return _new_ind(p1, c1), _new_ind(p2, c2)
+
+
+# 2. K-POINT CROSSOVER  (K variável entre k_min e k_max)
+def kpoint_crossover(p1, p2, xo_prob, verbose=False, k_min=3, k_max=7):
+    """K pontos de corte, K amostrado aleatoriamente em [k_min, k_max] a cada chamada."""
+    if random.random() > xo_prob:
+        return deepcopy(p1), deepcopy(p2)
+    r1, r2 = p1.repr, p2.repr
+    size = len(r1)
+    k = random.randint(k_min, k_max)
+    cuts = sorted(random.sample(range(1, size), min(k, size - 1)))
+    c1, c2 = [], []
+    prev = 0
+    for seg_idx, cut in enumerate(cuts + [size]):
+        if seg_idx % 2 == 0:
+            c1.extend(deepcopy(r1[prev:cut]))
+            c2.extend(deepcopy(r2[prev:cut]))
+        else:
+            c1.extend(deepcopy(r2[prev:cut]))
+            c2.extend(deepcopy(r1[prev:cut]))
+        prev = cut
+    if verbose:
+        print(f"K-Point Crossover: {c1} | {c2}")
+    return _new_ind(p1, c1), _new_ind(p2, c2)
+
+
+# 3. REDUCED SURROGATE CROSSOVER
+def reduced_surrogate_crossover(p1, p2, xo_prob, verbose=False):
+    """
+    Corta apenas numa posição onde os dois pais diferem.
+    Evita crossovers inúteis — mais eficiente quando a população converge.
+    """
+    if random.random() > xo_prob:
+        return deepcopy(p1), deepcopy(p2)
+    r1, r2 = p1.repr, p2.repr
+    size = len(r1)
+    diff = [i for i in range(size) if r1[i] != r2[i]]
+    if len(diff) < 2:  # pais quase idênticos: devolve clones
+        return deepcopy(p1), deepcopy(p2)
+    cut = random.choice(diff[:-1])
+    c1 = deepcopy(r1[:cut]) + deepcopy(r2[cut:])
+    c2 = deepcopy(r2[:cut]) + deepcopy(r1[cut:])
+    if verbose:
+        print(f"Reduced Surrogate Crossover: {c1} | {c2}")
+    return _new_ind(p1, c1), _new_ind(p2, c2)
+
+
+# 4. SHUFFLE CROSSOVER
+def shuffle_crossover(p1, p2, xo_prob, verbose=False):
+    """
+    Aplica o mesmo shuffle aleatório a ambos os pais, faz single-point crossover,
+    e depois inverte o shuffle — elimina o viés posicional.
+    """
+    if random.random() > xo_prob:
+        return deepcopy(p1), deepcopy(p2)
+    r1, r2 = p1.repr, p2.repr
+    size = len(r1)
+    indices = list(range(size))
+    random.shuffle(indices)
+    s1 = [r1[i] for i in indices]
+    s2 = [r2[i] for i in indices]
+    cut = random.randint(1, size - 1)
+    cs1 = s1[:cut] + s2[cut:]
+    cs2 = s2[:cut] + s1[cut:]
+    inv = [0] * size
+    for new_pos, orig_pos in enumerate(indices):
+        inv[orig_pos] = new_pos
+    c1 = [deepcopy(cs1[inv[i]]) for i in range(size)]
+    c2 = [deepcopy(cs2[inv[i]]) for i in range(size)]
+    if verbose:
+        print(f"Shuffle Crossover: {c1} | {c2}")
+    return _new_ind(p1, c1), _new_ind(p2, c2)
+
+
+
+# =====================================
 # MUTATION:
+# =====================================
 
 def triangles_overlap(t1, t2):
     """ Checks if two triangles overlap by comparing their bounding boxes.
@@ -180,3 +278,4 @@ def triangle_mutation_full(individual, mutation_prob):
         new_repr[i] = Triangle()
 
     return individual.with_repr(new_repr)
+
