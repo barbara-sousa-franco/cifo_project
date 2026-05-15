@@ -260,7 +260,7 @@ def plot_convergence_curve(fitness_curve, baseline_rmse, MAX_GENS):
     Args:
 
         - fitness_curve (list[float]): The fitness of the best individual at each generation.
-        
+
         - baseline_rmse (float): The RMSE of a random baseline for comparison.
 
         - MAX_GENS (int): The maximum number of generations, used for the x-axis range.
@@ -374,7 +374,6 @@ def plot_experiment_summary(
 
 
 # FUNCTION FOR PLOTTING EXPERIMENT RESULTS - BEST INDIVIDUALS VS TARGET
-
 def plot_best_individuals(
     best_inds,
     configs,
@@ -382,29 +381,81 @@ def plot_best_individuals(
     title_prefix,
 ):
     """
-    Display the target image alongside the best individual rendered for each
-    operator configuration or probability pair.
+    Display the target image alongside the best evolved individual(s).
+
+    This function supports two modes:
+
+    1. Single individual mode:
+       - `best_inds` is a single Individual object.
+       - Displays the target image and the best individual side by side.
+
+    2. Multiple configuration mode:
+       - `best_inds` is a dictionary mapping configuration identifiers
+         to Individuals.
+       - Displays the target image alongside the best individual for
+         each configuration.
 
     Args:
-        - best_inds (dict): Maps config name (str) or (mut_prob, xo_prob) tuple to the best Individual, 
-        as returned by run_operator_experiment or run_probability_experiment.
+        - best_inds (Individual or dict):
+            Either:
+                * A single best Individual object.
+                * A dictionary mapping configuration keys to Individuals.
 
-        - configs (list[dict] or list[tuple]): Operator configs (each with key 'name') or list of 
-        (mut_prob, xo_prob) tuples, matching the keys in best_inds.
+        - configs (list[dict] or list[tuple] or None): 
+            Configuration descriptors associated with `best_inds`.
 
-        - target_img (PIL.Image or np.ndarray): The target image to display first.
+            Supported formats:
+                * list[dict] with key "name"
+                * list[(mut_prob, xo_prob)] tuples
+                * None when plotting a single individual
 
-        - title_prefix (str): Prefix for the figure suptitle, e.g. 'Mutation', 'Crossover', or 'Probability Grid'.
+        - target_img (PIL.Image or np.ndarray):
+            The target image displayed as reference.
+
+        - title_prefix (str):
+            Figure title prefix.
 
 
     """
 
-    # Support both list[dict] (operator configs) and list[tuple] (prob configs)
+    # ---------------------------------------------------------
+    # Single individual mode
+    # ---------------------------------------------------------
+    if not isinstance(best_inds, dict):
+
+        fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+
+        axes[0].imshow(target_img)
+        axes[0].set_title("Target", fontsize=12)
+        axes[0].axis("off")
+
+        axes[1].imshow(best_inds.render())
+        axes[1].set_title(
+            f"Best Individual\nRMSE={best_inds.fitness():.2f}",
+            fontsize=10
+        )
+        axes[1].axis("off")
+
+        fig.suptitle(
+            title_prefix,
+            fontsize=13,
+            fontweight="bold"
+        )
+
+        plt.tight_layout()
+        plt.show()
+
+        return
+
+    # ---------------------------------------------------------
+    # Multiple configuration mode
+    # ---------------------------------------------------------
     if configs and isinstance(configs[0], dict):
         keys   = [c["name"] for c in configs]
         labels = keys
+
     else:
-        keys   = configs          # list of (mut_prob, xo_prob) tuples
+        keys   = configs
         labels = [f"mut={k[0]} xo={k[1]}" for k in keys]
 
     fig, axes = plt.subplots(1, len(keys) + 1, figsize=(4 * (len(keys) + 1), 4))
@@ -414,11 +465,23 @@ def plot_best_individuals(
     axes[0].axis("off")
 
     for ax, key, label in zip(axes[1:], keys, labels):
+
         ind = best_inds[key]
+
         ax.imshow(ind.render())
-        ax.set_title(f"{label}\nRMSE={ind.fitness():.2f}", fontsize=10)
+
+        ax.set_title(
+            f"{label}\nRMSE={ind.fitness():.2f}",
+            fontsize=10
+        )
+
         ax.axis("off")
 
-    fig.suptitle(f"{title_prefix} — Best Individual per Configuration", fontsize=13, fontweight="bold")
+    fig.suptitle(
+        f"{title_prefix} — Best Individual per Configuration",
+        fontsize=13,
+        fontweight="bold"
+    )
+
     plt.tight_layout()
     plt.show()
