@@ -1,0 +1,6 @@
+numpy>=2.0
+pandas>=2.0
+pillow>=10.0
+matplotlib>=3.8
+ipykernel>=6.0
+jupyter>=1.0
