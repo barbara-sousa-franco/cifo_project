@@ -191,10 +191,17 @@ def shuffle_crossover(p1, p2, xo_prob, verbose=False, **kwargs):
 def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
                                  current_gen=0, max_gen=100, **kwargs):
     """
-    Muda o operador de crossover com base na fase da evolução:
-      - Fase inicial  (< 50% das gerações) : Uniform      → máxima exploração
-      - Fase intermédia (50–85%)           : K-Point      → mistura estruturada
-      - Fase final    (> 85% das gerações) : Red.Surrogate → foco nas diferenças reais
+    Changes the operation of crossover based on the phase of evolution:
+      - Initial phase  (< 50% of generations) : Uniform      → maximum exploration
+      - Mid phase      (50–85%)              : K-Point      → structured mixing
+      - Final phase    (> 85% of generations) : Red.Surrogate → focus on real differences
+
+    Args:
+        - p1, p2: Parent individuals.
+        - xo_prob: Crossover probability.
+        - verbose: If True, prints the chosen crossover type and resulting children.
+        - current_gen: The current generation number (starting from 0).
+        - max_gen: The total number of generations planned for the evolution process.
     """
     phase = current_gen / max_gen
 

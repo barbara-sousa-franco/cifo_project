@@ -81,7 +81,7 @@ def genetic_algorithm(initial_population: list, max_generations: int, selection_
             # Our binary standard crossover function takes care of both the crossover and replication cases, since if the crossover
             # probability is not met, it simply returns the original individuals as offspring.
 
-            offspring1, offspring2 = xo_method(first_ind, second_ind, xo_prob, verbose, current_gen=gen)
+            offspring1, offspring2 = xo_method(first_ind, second_ind, xo_prob, verbose, current_gen=gen, max_gens = max_generations)
             
             # 2.3.4. Apply mutation to offspring1
             first_new_ind = mut_method(offspring1, mut_prob)
