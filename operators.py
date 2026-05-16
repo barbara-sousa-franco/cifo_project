@@ -11,17 +11,7 @@ import random
 
 import numpy as np
 
-from solution import (
-    Individual,
-    Triangle,
-    IMG_WIDTH,
-    IMG_HEIGHT,
-    GENES_PER_TRIANGLE,
-    ALPHA_MIN,
-    ALPHA_MAX,
-    clip_alpha,
-    shrink_to_max_size,
-)
+from solution import Individual, Triangle, IMG_WIDTH, IMG_HEIGHT, GENES_PER_TRIANGLE, clip_alpha, shrink_to_max_size
 
 
 # Helper used by fitness sharing and restricted mating: flatten an
@@ -43,6 +33,12 @@ def _genome_distance(a: Individual, b: Individual) -> float:
     ga = _flat_genome(a)
     gb = _flat_genome(b)
     return float(np.linalg.norm(ga - gb) / np.sqrt(len(ga)))
+
+def genotype_distance(ind1, ind2):
+    """Mean absolute difference between the two genomes."""
+    genes1 = [g for t in ind1.repr for g in t.repr]
+    genes2 = [g for t in ind2.repr for g in t.repr]
+    return float(np.mean(np.abs(np.array(genes1) - np.array(genes2))))
 
 
 # SELECTION: Tournament Selection
@@ -135,6 +131,47 @@ def fitness_sharing_tournament(
         best_idx = min(contenders_idx, key=lambda i: adjusted[i])
     best = population[best_idx]
     return best.with_repr(best.repr)
+
+
+def apply_fitness_sharing(population):
+    """
+    Apply fitness sharing to the population.
+    Steps:
+        1. Calculate pairwise distances between all individuals
+        2. Normalize distances to [0, 1]
+        3. Calculate sharing coefficient S(i) = sum of distances from i to all j
+        4. Redefine fitness fs(i) = f(i) / S(i)
+
+    Args:
+        population (list[Individual]): Current population.
+
+    Returns:
+        list[float]: Shared fitness values for each individual.
+    """
+    n = len(population)
+
+    # 1. Calculate all pairwise distances between individuals
+    distances = np.zeros((n, n))
+    for i in range(n):
+        for j in range(i + 1, n):
+            d = genotype_distance(population[i], population[j])
+            distances[i, j] = d
+            distances[j, i] = d  # matriz simétrica
+
+    # 2. Normalize to [0, 1]
+    max_dist = distances.max()
+    if max_dist > 0:
+        distances = distances / max_dist
+
+    # 3. Calculate the sharing coefficient S(i) = sum of distances from i to all j
+
+    sharing_coefficients = distances.sum(axis=1)  # sum of distances for each individual
+
+    # 4. Redefine fitness fs(i) = f(i) / S(i)
+    raw_fitnesses = np.array([ind.fitness() for ind in population])
+    shared_fitnesses = raw_fitnesses / np.maximum(sharing_coefficients, 1e-10)  # avoid division by zero
+
+    return shared_fitnesses.tolist()
 
 
 def restricted_mating_selection(
@@ -408,7 +445,7 @@ def triangle_mutation_vcf(individual, mutation_prob):
 
         # If "full" was chosen, it doesn't make sense to apply the other mutations, so we can skip them
         if "full" in mutations:
-            new_repr[i] = Triangle()
+            new_repr[i] = Triangle(alpha_min=individual.alpha_min, alpha_max=individual.alpha_max, max_triangle_size=individual.max_triangle_size)
             continue
 
         touched = False
@@ -422,14 +459,14 @@ def triangle_mutation_vcf(individual, mutation_prob):
             for j in range(6, 10):
                 triangle.repr[j] = max(0.0, min(1.0, triangle.repr[j] + random.gauss(0, 0.05)))
             # Alpha must stay within the visibility window
-            triangle.repr[9] = clip_alpha(triangle.repr[9])
+            triangle.repr[9] = clip_alpha(triangle.repr[9], alpha_min=individual.alpha_min, alpha_max=individual.alpha_max)
             touched = True
 
         # Re-apply the domain repairs if vertices changed (size + degenerate).
         # We don't rebuild for color-only changes because those cannot break
         # the geometric constraints.
         if touched and "vertices" in mutations:
-            new_repr[i] = Triangle(repr=triangle.repr)
+            new_repr[i] = Triangle(repr=triangle.repr, alpha_min=individual.alpha_min, alpha_max=individual.alpha_max, max_triangle_size=individual.max_triangle_size)
 
         if "order" in mutations:
             # Find triangles that overlap with this one
@@ -447,6 +484,8 @@ def triangle_mutation_full(individual, mutation_prob):
     Parameters:
         - individual (Individual): The individual to be mutated.
         - mutation_prob (float): The probability of mutating each triangle.
+        - alpha_min (float): The minimum alpha value.
+        - alpha_max (float): The maximum alpha value.
     Returns:
         - Individual: A new individual resulting from mutation.
     """
@@ -458,7 +497,7 @@ def triangle_mutation_full(individual, mutation_prob):
 
         # Replace the triangle with a completely new random triangle.
         # Triangle() applies all domain constraints automatically.
-        new_repr[i] = Triangle()
+        new_repr[i] = Triangle(alpha_min=individual.alpha_min, alpha_max=individual.alpha_max, max_triangle_size=individual.max_triangle_size)
 
     return individual.with_repr(new_repr)
 
@@ -486,9 +525,8 @@ def gaussian_gene_mutation(individual, mutation_prob, sigma=0.05):
         # on continuous chromosomes (Eiben & Smith, §4.4).
         new_genes = list(triangle.repr)
         for k in range(GENES_PER_TRIANGLE):
-            if random.random() <= mutation_prob:
-                new_genes[k] = max(0.0, min(1.0, new_genes[k] + random.gauss(0.0, sigma)))
-        new_repr.append(Triangle(repr=new_genes))
+            new_genes[k] = max(0.0, min(1.0, new_genes[k] + random.gauss(0.0, sigma)))
+        new_repr.append(Triangle(repr=new_genes, alpha_min=triangle.alpha_min, alpha_max=triangle.alpha_max, max_triangle_size=triangle.max_triangle_size))
     return individual.with_repr(new_repr)
 
 
@@ -512,9 +550,12 @@ def color_creep_mutation(individual, mutation_prob, color_sigma=0.04):
         if changed:
             # Color-only changes: alpha must stay in window; geometry untouched
             # so we can avoid the (expensive) full Triangle rebuild.
-            new_genes[9] = clip_alpha(new_genes[9])
+            new_genes[9] = clip_alpha(new_genes[9], alpha_min=individual.alpha_min, alpha_max=individual.alpha_max)
             new_tri = Triangle.__new__(Triangle)
             new_tri.repr = new_genes
+            new_tri.alpha_min = triangle.alpha_min
+            new_tri.alpha_max = triangle.alpha_max
+            new_tri.max_triangle_size = triangle.max_triangle_size
             new_repr.append(new_tri)
         else:
             new_repr.append(triangle.copy())

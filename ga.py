@@ -17,11 +17,7 @@ from collections.abc import Callable
 import numpy as np
 
 from solution import Individual, Triangle
-from operators import (
-    tournament_selection,
-    triangle_crossover,
-    triangle_mutation_vcf,
-)
+from operators import tournament_selection, triangle_crossover, triangle_mutation_vcf
 
 from time import time
 
@@ -92,6 +88,7 @@ def genetic_algorithm(
         elitism (bool): If True, carries the best individual unchanged.
         verbose (bool): If True, prints per-generation debug info.
 
+        fitness_sharing (bool): If True, apply fitness sharing
         adaptive_mutation (bool): If True, apply Rechenberg's 1/5 success
             rule: keep a sliding window of how often offspring beat their
             parents, then scale mut_prob up if success rate > 0.2, down if
@@ -129,6 +126,7 @@ def genetic_algorithm(
 
         new_population = []
 
+
         # 2.2. Elitism: copy the best individual into the new population.
         if elitism:
             best = get_best_ind(population, maximization)
@@ -145,28 +143,23 @@ def genetic_algorithm(
             if mate_selection_algorithm is not None:
                 # Restricted mating: parent 2 is constrained by its
                 # distance to parent 1.
-                second_ind = mate_selection_algorithm(
-                    population, first_ind, maximization,
-                )
+                second_ind = mate_selection_algorithm( population, first_ind, maximization )
             else:
                 second_ind = selection_algorithm(population, maximization)
 
             offspring1, offspring2 = xo_method(
-                first_ind, second_ind, xo_prob, verbose,
-                current_gen=gen, max_gens=max_generations,
-            )
+                first_ind, second_ind, xo_prob, verbose, current_gen=gen, max_gens=max_generations)
 
             parent_best = (
                 max(first_ind.fitness(), second_ind.fitness())
-                if maximization else min(first_ind.fitness(), second_ind.fitness())
-            )
+                if maximization else min(first_ind.fitness(), second_ind.fitness()))
 
             first_new_ind = mut_method(offspring1, mut_prob)
             new_population.append(first_new_ind)
             n_offspring += 1
             if (maximization and first_new_ind.fitness() > parent_best) or (
-                not maximization and first_new_ind.fitness() < parent_best
-            ):
+                not maximization and first_new_ind.fitness() < parent_best):
+
                 n_better += 1
 
             if len(new_population) < len(population):
@@ -174,8 +167,8 @@ def genetic_algorithm(
                 new_population.append(second_new_ind)
                 n_offspring += 1
                 if (maximization and second_new_ind.fitness() > parent_best) or (
-                    not maximization and second_new_ind.fitness() < parent_best
-                ):
+                    not maximization and second_new_ind.fitness() < parent_best):
+
                     n_better += 1
 
         population = new_population
@@ -187,7 +180,7 @@ def genetic_algorithm(
         if adaptive_mutation and n_offspring > 0:
             success_window.append(n_better / n_offspring)
             if len(success_window) >= adaptive_window:
-                rate = float(np.mean(success_window[-adaptive_window:]))
+                rate = float(np.mean(success_window[-adaptive_window:])) # average of the last adaptive_window generations
                 if rate > 0.2:
                     mut_prob = min(adaptive_max, mut_prob * 1.1)
                 elif rate < 0.2:
@@ -214,7 +207,9 @@ def genetic_algorithm(
                         target=template.target,
                         fitness_metric=template.fitness_metric,
                         target_lab=template.target_lab,
-                        antialiased=template.antialiased,
+                        max_triangle_size=template.max_triangle_size,
+                        alpha_min=template.alpha_min,
+                        alpha_max=template.alpha_max,
                     )
                     population[idx] = new_ind
                 if verbose:

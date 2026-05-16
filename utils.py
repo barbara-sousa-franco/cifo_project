@@ -22,7 +22,6 @@ def run_experiment(
     config_key="config",
     maximization=False,
     fitness_metric="rmse",
-    antialiased=False,
     **ga_kwargs,
 ):
     """
@@ -114,9 +113,7 @@ def run_experiment(
             initial_pop = [
                 Individual(
                     target=target_array,
-                    fitness_metric=fitness_metric,
-                    antialiased=antialiased,
-                )
+                    fitness_metric=fitness_metric)
                 for _ in range(pop_size)
             ]
 
@@ -175,7 +172,7 @@ def run_single_experiment(
     mut_fn,
     maximization=False,
     fitness_metric="rmse",
-    antialiased=False,
+    individual_kwargs=None,
     **ga_kwargs,
 ):
     """
@@ -204,6 +201,10 @@ def run_single_experiment(
 
         - mut_fn (Callable): Mutation function to use across all runs.
 
+        - individual_kwargs (dict, optional): Additional keyword arguments to pass to the Individual constructor.
+
+        -**ga_kwargs: Additional keyword arguments to pass to the genetic_algorithm function.
+
     Returns:
         - all_results (list[dict]): One dict per run with keys 'run' and 'best_fitness'.
 
@@ -212,6 +213,8 @@ def run_single_experiment(
         - best_ind (Individual): The best Individual found across all runs.
 
     """
+
+    individual_kwargs = individual_kwargs or {}
 
     all_results = []
     all_curves  = []
@@ -227,7 +230,7 @@ def run_single_experiment(
             Individual(
                 target=target_array,
                 fitness_metric=fitness_metric,
-                antialiased=antialiased,
+                **individual_kwargs,
             )
             for _ in range(pop_size)
         ]
