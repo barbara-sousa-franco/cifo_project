@@ -21,6 +21,9 @@ def run_experiment(
     fixed_mut_fn=None,
     config_key="config",
     maximization=False,
+    fitness_metric="rmse",
+    antialiased=False,
+    **ga_kwargs,
 ):
     """
     Run a genetic algorithm experiment over a list of operator configurations
@@ -108,7 +111,14 @@ def run_experiment(
             random.seed(run * seed)
             np.random.seed(run * seed)
 
-            initial_pop = [Individual(target=target_array) for _ in range(pop_size)]
+            initial_pop = [
+                Individual(
+                    target=target_array,
+                    fitness_metric=fitness_metric,
+                    antialiased=antialiased,
+                )
+                for _ in range(pop_size)
+            ]
 
             start = time()
 
@@ -123,6 +133,7 @@ def run_experiment(
                 mut_prob            = run_mut_prob,
                 elitism             = elitism,
                 verbose             = False,
+                **ga_kwargs,
             )
 
             elapsed = time() - start
@@ -140,7 +151,7 @@ def run_experiment(
                 "best_fitness": best_ind.fitness(),
                 "time_seconds"  : round(elapsed, 2),
             })
-            print(f"best RMSE: {best_ind.fitness():.4f}")
+            print(f"best fitness: {best_ind.fitness():.4f}")
 
         all_curves[key] = curves
         avg = np.mean([r["best_fitness"] for r in all_results if r[config_key] == key])
@@ -162,7 +173,10 @@ def run_single_experiment(
     selection_algorithm,
     xo_fn,
     mut_fn,
-    maximization=False
+    maximization=False,
+    fitness_metric="rmse",
+    antialiased=False,
+    **ga_kwargs,
 ):
     """
     Run a single configuration of the genetic algorithm for multiple runs.
@@ -209,7 +223,14 @@ def run_single_experiment(
         random.seed(run * seed)
         np.random.seed(run * seed)
 
-        initial_pop = [Individual(target=target_array) for _ in range(pop_size)]
+        initial_pop = [
+            Individual(
+                target=target_array,
+                fitness_metric=fitness_metric,
+                antialiased=antialiased,
+            )
+            for _ in range(pop_size)
+        ]
 
         start = time()
 
@@ -224,6 +245,7 @@ def run_single_experiment(
             mut_prob            = mut_prob,
             elitism             = elitism,
             verbose             = False,
+            **ga_kwargs,
         )
 
         elapsed = time() - start
@@ -240,10 +262,10 @@ def run_single_experiment(
             "best_fitness": ind.fitness(),
             "time_seconds"  : round(elapsed, 2),
         })
-        print(f"best RMSE: {ind.fitness():.4f}")
+        print(f"best fitness: {ind.fitness():.4f}")
 
     avg_fitness = np.mean([r["best_fitness"] for r in all_results])
-    print(f"\nAverage RMSE over {n_runs} runs: {avg_fitness:.4f}")
+    print(f"\nAverage fitness over {n_runs} runs: {avg_fitness:.4f}")
 
     return all_results, all_curves, best_ind
 
@@ -260,7 +282,7 @@ def plot_convergence_curve(fitness_curve, baseline_rmse, MAX_GENS):
     Args:
 
         - fitness_curve (list[float]): The fitness of the best individual at each generation.
-
+        
         - baseline_rmse (float): The RMSE of a random baseline for comparison.
 
         - MAX_GENS (int): The maximum number of generations, used for the x-axis range.
@@ -372,6 +394,8 @@ def plot_experiment_summary(
 
 
 
+
+# FUNCTION FOR PLOTTING EXPERIMENT RESULTS - BEST INDIVIDUALS VS TARGET
 
 # FUNCTION FOR PLOTTING EXPERIMENT RESULTS - BEST INDIVIDUALS VS TARGET
 def plot_best_individuals(
