@@ -154,7 +154,7 @@ def genetic_algorithm(
                 max(first_ind.fitness(), second_ind.fitness())
                 if maximization else min(first_ind.fitness(), second_ind.fitness()))
 
-            first_new_ind = mut_method(offspring1, mut_prob)
+            first_new_ind = mut_method(offspring1, mut_prob, verbose=verbose, current_gen=gen, max_gens=max_generations)
             new_population.append(first_new_ind)
             n_offspring += 1
             if (maximization and first_new_ind.fitness() > parent_best) or (
@@ -163,7 +163,7 @@ def genetic_algorithm(
                 n_better += 1
 
             if len(new_population) < len(population):
-                second_new_ind = mut_method(offspring2, mut_prob)
+                second_new_ind = mut_method(offspring2, mut_prob, verbose=verbose, current_gen=gen, max_gens=max_generations)
                 new_population.append(second_new_ind)
                 n_offspring += 1
                 if (maximization and second_new_ind.fitness() > parent_best) or (

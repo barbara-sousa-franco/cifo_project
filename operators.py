@@ -34,22 +34,25 @@ def _genome_distance(a: Individual, b: Individual) -> float:
     gb = _flat_genome(b)
     return float(np.linalg.norm(ga - gb) / np.sqrt(len(ga)))
 
-def genotype_distance(ind1, ind2):
-    """Mean absolute difference between the two genomes."""
-    genes1 = [g for t in ind1.repr for g in t.repr]
-    genes2 = [g for t in ind2.repr for g in t.repr]
-    return float(np.mean(np.abs(np.array(genes1) - np.array(genes2))))
+
+# =====================================
+# SELECTION:
+# =====================================
 
 
-# SELECTION: Tournament Selection
+# TOURNAMENT SELECTION:
 def tournament_selection(population: list[Individual], maximization: bool = False, tournament_size: int = 2):
-    """Selects an individual from the population using tournament selection.
+    """
+    Selects an individual from the population using tournament selection.
+
     Parameters:
-        - population (list[Individual]): The list of individuals in the population.
-        - maximization (bool): If True, selects the individual with the highest fitness; otherwise, selects the one with the lowest fitness.
-        - tournament_size (int): The number of individuals to participate in the tournament.
+    - population (list[Individual]): The list of individuals in the population.
+    - maximization (bool): If True, selects the individual with the highest fitness; otherwise, selects the one with the lowest fitness.
+    - tournament_size (int): The number of individuals to participate in the tournament.
+
     Returns:
-        - Individual: A copy of the selected individual.
+    - Individual: A copy of the selected individual.
+
     """
     # Select a random subset of individuals for the tournament
     tournament = random.choices(population, k=tournament_size)
@@ -72,6 +75,9 @@ def tournament_selection(population: list[Individual], maximization: bool = Fals
 # Both are standard techniques covered in the CIFO course.
 # =====================================
 
+
+# FITNESS SHARING TOURNAMENT
+
 def fitness_sharing_tournament(
     population: list[Individual],
     maximization: bool = False,
@@ -90,19 +96,22 @@ def fitness_sharing_tournament(
     Reference: Goldberg & Richardson, "Genetic algorithms with sharing
     for multimodal function optimization", ICGA 1987.
 
-    Parameters
-    ----------
-    population : list[Individual]
+    Parameters:
+    - population : list[Individual]
         Current population.
-    maximization : bool
+    - maximization : bool
         If True, larger fitness is better.
-    tournament_size : int
+    - tournament_size : int
         Number of contenders in the tournament.
-    sigma_share : float
+    - sigma_share : float
         Niche radius in normalised genotype space (0 .. 1 typical).
         Smaller -> more niches, more diversity pressure.
-    strength : float
+    - strength : float
         How aggressively crowded individuals are penalised. 0 disables.
+
+    Returns:
+    - Individual: A selected individual from the population, with fitness adjusted for sharing.
+
     """
     if not population:
         raise ValueError("Cannot select from an empty population.")
@@ -116,6 +125,8 @@ def fitness_sharing_tournament(
     for i in range(n):
         distances = np.linalg.norm(genomes - genomes[i], axis=1) / norm
         sharing = np.maximum(0.0, 1.0 - distances / max(1e-9, sigma_share))
+        # sharing indicates the similarity between each individual in the pop and ind i
+        # sigma share is the radius of the niche: individuals within this distance contribute to crowding
         crowding[i] = float(np.mean(sharing))
 
     if maximization:
@@ -142,11 +153,11 @@ def apply_fitness_sharing(population):
         3. Calculate sharing coefficient S(i) = sum of distances from i to all j
         4. Redefine fitness fs(i) = f(i) / S(i)
 
-    Args:
-        population (list[Individual]): Current population.
+    Parameters:
+    - population (list[Individual]): Current population.
 
     Returns:
-        list[float]: Shared fitness values for each individual.
+    - list[float]: Shared fitness values for each individual.
     """
     n = len(population)
 
@@ -154,7 +165,7 @@ def apply_fitness_sharing(population):
     distances = np.zeros((n, n))
     for i in range(n):
         for j in range(i + 1, n):
-            d = genotype_distance(population[i], population[j])
+            d = _genome_distance(population[i], population[j])
             distances[i, j] = d
             distances[j, i] = d  # matriz simétrica
 
@@ -173,6 +184,13 @@ def apply_fitness_sharing(population):
 
     return shared_fitnesses.tolist()
 
+
+
+
+
+
+
+# RESTRICTED MATING
 
 def restricted_mating_selection(
     population: list[Individual],
@@ -196,19 +214,24 @@ def restricted_mating_selection(
     Machine Learning", 1989, §5.5; Eshelman & Schaffer, "Preventing
     premature convergence by preventing incest", ICGA 1991.
 
-    Parameters
-    ----------
-    population : list[Individual]
+    Parameters:
+    - population : list[Individual]
         Current population.
-    parent1 : Individual
+    - parent1 : Individual
         The already-selected first parent.
-    pool_size : int
+    - pool_size : int
         How many candidates to draw before filtering.
-    min_distance, max_distance : float
-        The allowed niche width in normalised genotype space.
-    base_selection : callable, optional
+    - min_distance : float
+        The minimum allowed distance.
+    - max_distance : float
+        The maximum allowed distance.
+    - base_selection : callable, optional
         Selection function used to sample candidates. Defaults to
         tournament_selection.
+
+    Returns:
+    - Individual: A selected parent 2 that is neither too close nor too far from parent 1.
+
     """
     if base_selection is None:
         base_selection = tournament_selection
@@ -231,20 +254,38 @@ def restricted_mating_selection(
     return chosen.with_repr(chosen.repr)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
 # =====================================
 # CROSSOVER:
 # =====================================
 
 def triangle_crossover(parent1, parent2, crossover_prob, verbose=False, **kwargs):
-    """Performs single-point crossover between two parent individuals.
+
+    """
+    Performs single-point crossover between two parent individuals.
     A random crossover point is selected, and the segments after this point are swapped between
     the parents to create two children.
+
     Parameters:
-        - parent1 (Individual): The first parent individual.
-        - parent2 (Individual): The second parent individual.
-        - crossover_prob (float): The probability of performing crossover.
+    - parent1 (Individual): The first parent individual.
+    - parent2 (Individual): The second parent individual.
+    - crossover_prob (float): The probability of performing crossover.
+    - verbose (bool): If True, prints the resulting children.
+
     Returns:
-        - tuple: A tuple containing the two child individuals resulting from crossover.
+    - tuple: A tuple containing the two child individuals resulting from crossover.
+
     """
     if random.random() <= crossover_prob:
         # Select a random crossover point (between 1 and the number of triangles - 1)
@@ -265,18 +306,32 @@ def triangle_crossover(parent1, parent2, crossover_prob, verbose=False, **kwargs
     return child1, child2
 
 
-# --- Helper: cria offspring com novo repr ---
+# --- Helper: creates offspring with new representation ---
 def _new_ind(parent, new_repr):
     return parent.with_repr(new_repr)
 
 
 # 1. UNIFORM CROSSOVER
 def uniform_crossover(p1, p2, xo_prob, verbose=False, p=0.5, **kwargs):
-    """Cada gene é herdado independentemente de p1 (prob p) ou p2 (prob 1-p)."""
+
+    """
+    Each gene is inherited independently from p1 (prob p) or p2 (prob 1-p).
+    
+    Parameters:
+    - p1, p2: Parent individuals.
+    - xo_prob: Crossover probability.
+    - verbose: If True, prints the resulting children.
+    - p: Probability of inheriting each gene from p1 (default 0.5).
+    
+    Returns:
+    - Tuple of two child individuals resulting from crossover.
+    
+    """
     if random.random() > xo_prob:
         return deepcopy(p1), deepcopy(p2)
     r1, r2 = p1.repr, p2.repr
     size = len(r1)
+    # For each gene position, randomly decide whether to take from p1 or p2 based on probability p.
     mask = [random.random() < p for _ in range(size)]
     c1 = [deepcopy(r1[i]) if mask[i] else deepcopy(r2[i]) for i in range(size)]
     c2 = [deepcopy(r2[i]) if mask[i] else deepcopy(r1[i]) for i in range(size)]
@@ -285,11 +340,27 @@ def uniform_crossover(p1, p2, xo_prob, verbose=False, p=0.5, **kwargs):
     return _new_ind(p1, c1), _new_ind(p2, c2)
 
 
-# 2. K-POINT CROSSOVER  (K variável entre k_min e k_max)
+# 2. K-POINT CROSSOVER  (K between k_min and k_max)
 def kpoint_crossover(p1, p2, xo_prob, verbose=False, k_min=3, k_max=7, **kwargs):
-    """K pontos de corte, K amostrado aleatoriamente em [k_min, k_max] a cada chamada."""
+
+    """
+    K random crossover points are selected, and the segments between these points are alternately 
+    swapped between the two parents to create two children.
+
+    Parameters:
+    - p1, p2: Parent individuals.
+    - xo_prob: Crossover probability.
+    - verbose: If True, prints the resulting children.
+    - k_min: Minimum number of crossover points (default 3).
+    - k_max: Maximum number of crossover points (default 7).
+
+    Returns:
+    - Tuple of two child individuals resulting from crossover.
+    
+    """
     if random.random() > xo_prob:
         return deepcopy(p1), deepcopy(p2)
+    
     r1, r2 = p1.repr, p2.repr
     size = len(r1)
     k = random.randint(k_min, k_max)
@@ -311,17 +382,27 @@ def kpoint_crossover(p1, p2, xo_prob, verbose=False, k_min=3, k_max=7, **kwargs)
 
 # 3. REDUCED SURROGATE CROSSOVER
 def reduced_surrogate_crossover(p1, p2, xo_prob, verbose=False, **kwargs):
+
     """
-    Corta apenas numa posição onde os dois pais diferem.
-    Evita crossovers inúteis — mais eficiente quando a população converge.
+    Cuts the genome at a position where the two parents differ, ensuring that the crossover is meaningful.
+
+    Parameters:
+    - p1, p2: Parent individuals.
+    - xo_prob: Crossover probability.
+    - verbose: If True, prints the resulting children.
+
+    Returns:
+    - Tuple of two child individuals resulting from crossover.
+
     """
     if random.random() > xo_prob:
         return deepcopy(p1), deepcopy(p2)
     r1, r2 = p1.repr, p2.repr
     size = len(r1)
     diff = [i for i in range(size) if r1[i] != r2[i]]
-    if len(diff) < 2:  # pais quase idênticos: devolve clones
+    if len(diff) < 2:  # parents almost identical - no meaningful crossover points
         return deepcopy(p1), deepcopy(p2)
+    # we exclude the last differing point to ensure we have a lot of difference after the cut
     cut = random.choice(diff[:-1])
     c1 = deepcopy(r1[:cut]) + deepcopy(r2[cut:])
     c2 = deepcopy(r2[:cut]) + deepcopy(r1[cut:])
@@ -332,9 +413,19 @@ def reduced_surrogate_crossover(p1, p2, xo_prob, verbose=False, **kwargs):
 
 # 4. SHUFFLE CROSSOVER
 def shuffle_crossover(p1, p2, xo_prob, verbose=False, **kwargs):
+
     """
-    Aplica o mesmo shuffle aleatório a ambos os pais, faz single-point crossover,
-    e depois inverte o shuffle — elimina o viés posicional.
+    Apply the same random shuffle to both parents, perform single-point crossover, and then invert the shuffle
+     — eliminates positional bias.
+
+    Parameters:
+    - p1, p2: Parent individuals.
+    - xo_prob: Crossover probability.
+    - verbose: If True, prints the resulting children.
+
+    Returns:
+    - Tuple of two child individuals resulting from crossover.
+
     """
     if random.random() > xo_prob:
         return deepcopy(p1), deepcopy(p2)
@@ -366,12 +457,16 @@ def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
       - Mid phase      (50–85%)              : K-Point      → structured mixing
       - Final phase    (> 85% of generations) : Red.Surrogate → focus on real differences
 
-    Args:
-        - p1, p2: Parent individuals.
-        - xo_prob: Crossover probability.
-        - verbose: If True, prints the chosen crossover type and resulting children.
-        - current_gen: The current generation number (starting from 0).
-        - max_gen: The total number of generations planned for the evolution process.
+    Parameters:
+    - p1, p2: Parent individuals.
+    - xo_prob: Crossover probability.
+    - verbose: If True, prints the chosen crossover type and resulting children.
+    - current_gen: The current generation number (starting from 0).
+    - max_gen: The total number of generations planned for the evolution process.
+
+    Returns:
+    - Tuple of two child individuals resulting from crossover.
+
     """
     phase = current_gen / max_gen
 
@@ -384,6 +479,9 @@ def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
     else:
         if verbose: print(f"Gen {current_gen}: Reduced Surrogate")
         return reduced_surrogate_crossover(p1, p2, xo_prob, verbose=verbose, **kwargs)
+    
+
+
 
 # =====================================
 # MUTATION:
@@ -397,11 +495,14 @@ def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
 
 def triangles_overlap(t1, t2):
     """ Checks if two triangles overlap by comparing their bounding boxes.
+
     Parameters:
         - t1 (Triangle): The first triangle.
         - t2 (Triangle): The second triangle.
+
     Returns:
         - bool: True if the triangles overlap, False otherwise.
+
     """
     # Bounding box of the triangle 1
     x1_min, x1_max = min(t1.repr[0], t1.repr[2], t1.repr[4]), max(t1.repr[0], t1.repr[2], t1.repr[4])
@@ -415,7 +516,7 @@ def triangles_overlap(t1, t2):
             y1_min < y2_max and y1_max > y2_min)
 
 
-def triangle_mutation_vcf(individual, mutation_prob):
+def triangle_mutation_vcf(individual, mutation_prob, **kwargs):
     """ Performs mutation on an individual by applying vertex, color, and order mutations to its triangles.
     Each triangle in the individual's representation has a chance to mutate based on the given mutation probability.
     The type of mutation applied to each triangle is randomly selected from vertex, color, full, and order mutations.
@@ -428,8 +529,10 @@ def triangle_mutation_vcf(individual, mutation_prob):
     Parameters:
         - individual (Individual): The individual to be mutated.
         - mutation_prob (float): The probability of mutating each triangle.
+
     Returns:
         - Individual: A new individual resulting from mutation.
+
     """
 
     # Initial defensive copy of the individual's representation to ensure that we do not modify the original individual directly.
@@ -450,6 +553,7 @@ def triangle_mutation_vcf(individual, mutation_prob):
 
         touched = False
         if "vertices" in mutations:
+            # mutate one vertex (x, y) pair by adding Gaussian noise and clipping to [0, 1]
             idx = random.choice([0, 2, 4])
             triangle.repr[idx] = max(0.0, min(1.0, triangle.repr[idx] + random.gauss(0, 0.05)))
             triangle.repr[idx + 1] = max(0.0, min(1.0, triangle.repr[idx + 1] + random.gauss(0, 0.05)))
@@ -479,15 +583,20 @@ def triangle_mutation_vcf(individual, mutation_prob):
     return individual.with_repr(new_repr)
 
 
-def triangle_mutation_full(individual, mutation_prob):
-    """ Performs mutation on an individual by replacing entire triangles with new random triangles. Each triangle in the individual's representation has a chance to mutate based on the given mutation probability.
+def triangle_mutation_full(individual, mutation_prob, **kwargs):
+    """ Performs mutation on an individual by replacing entire triangles with new random triangles. 
+    Each triangle in the individual's representation has a chance to mutate based on the given mutation 
+    probability.
+
     Parameters:
         - individual (Individual): The individual to be mutated.
         - mutation_prob (float): The probability of mutating each triangle.
         - alpha_min (float): The minimum alpha value.
         - alpha_max (float): The maximum alpha value.
+
     Returns:
         - Individual: A new individual resulting from mutation.
+
     """
     new_repr = [t.copy() for t in individual.repr]
 
@@ -502,11 +611,12 @@ def triangle_mutation_full(individual, mutation_prob):
     return individual.with_repr(new_repr)
 
 
-def gaussian_gene_mutation(individual, mutation_prob, sigma=0.05):
-    """Standard real-coded GA mutation: per-gene Gaussian perturbation.
+def gaussian_gene_mutation(individual, mutation_prob, sigma=0.05, **kwargs):
+    """
+    Standard real-coded GA mutation: per-gene Gaussian perturbation.
 
-    Each of the 10 floats in each triangle mutates independently with
-    probability ``mutation_prob`` by adding a Gaussian(0, sigma) and
+    Each Traingle of the Individual mutates with probability mutation_prob. If selected, then
+    each of the 10 floats in each triangle mutates independently by adding a Gaussian(0, sigma) and
     clipping to [0, 1]. After the gene-level perturbation, the Triangle is
     rebuilt via Triangle(repr=...) so the domain constraints
     (alpha clip, size shrink, degenerate repair) are applied.
@@ -514,15 +624,22 @@ def gaussian_gene_mutation(individual, mutation_prob, sigma=0.05):
     This is the "vanilla" mutation that pairs naturally with single-point
     or uniform crossover. It explores the continuous genome more uniformly
     than the VCF mutation, at the cost of weaker domain awareness.
+
+    Parameters:
+    - individual (Individual): The individual to be mutated.
+    - mutation_prob (float): The probability of mutating each triangle.
+    - sigma (float): The standard deviation of the Gaussian perturbation.
+
+    Returns:
+    - Individual: A new individual resulting from mutation.
+
     """
     new_repr = []
     for triangle in individual.repr:
         if random.random() > mutation_prob:
             new_repr.append(triangle.copy())
             continue
-        # Perturb every gene with the per-gene probability mutation_prob.
-        # Empirically this matches the behaviour of standard real-coded GAs
-        # on continuous chromosomes (Eiben & Smith, §4.4).
+
         new_genes = list(triangle.repr)
         for k in range(GENES_PER_TRIANGLE):
             new_genes[k] = max(0.0, min(1.0, new_genes[k] + random.gauss(0.0, sigma)))
@@ -530,14 +647,24 @@ def gaussian_gene_mutation(individual, mutation_prob, sigma=0.05):
     return individual.with_repr(new_repr)
 
 
-def color_creep_mutation(individual, mutation_prob, color_sigma=0.04):
-    """Mutate only the RGBA channels of each triangle (genes 6..9).
+def color_creep_mutation(individual, mutation_prob, color_sigma=0.04, **kwargs):
+    """
+    Mutate only the RGBA channels of each triangle (genes 6..9).
 
     Useful late in the run, when the triangle geometry is roughly correct
     but the colors still need fine-tuning. Decouples geometric exploration
     from colour exploitation - similar in spirit to the staged operators of
     Mantere & Koljonen, "Image Optimization by Genetic Algorithms"
     (Soft Computing 2008).
+
+    Parameters:
+    - individual (Individual): The individual to be mutated.
+    - mutation_prob (float): The probability of mutating each triangle.
+    - color_sigma (float): The standard deviation of the Gaussian perturbation for color genes.
+
+    Returns:
+    - Individual: A new individual resulting from mutation.
+
     """
     new_repr = []
     for triangle in individual.repr:
@@ -560,3 +687,36 @@ def color_creep_mutation(individual, mutation_prob, color_sigma=0.04):
         else:
             new_repr.append(triangle.copy())
     return individual.with_repr(new_repr)
+
+
+
+
+def adaptive_mutation_schedule(p1, p2, mut_prob, current_gen, max_gen, verbose=False, **kwargs):
+    """
+    Changes the operation of crossover based on the phase of evolution:
+      - Initial phase  (< 50% of generations) : Uniform      → maximum exploration
+      - Mid phase      (50–85%)              : K-Point      → structured mixing
+      - Final phase    (> 85% of generations) : Red.Surrogate → focus on real differences
+
+    Parameters:
+    - p1, p2: Parent individuals.
+    - mut_prob: Mutation probability.
+    - verbose: If True, prints the chosen mutation type and resulting children.
+    - current_gen: The current generation number (starting from 0).
+    - max_gen: The total number of generations planned for the evolution process.
+
+    Returns:
+    - Tuple of two child individuals resulting from crossover.
+
+    """
+    phase = current_gen / max_gen
+
+    if phase < 0.5:
+        if verbose: print(f"Gen {current_gen}: Uniform")
+        return triangle_mutation_full(p1, p2, mut_prob, verbose=verbose, **kwargs)
+    elif phase < 0.85:
+        if verbose: print(f"Gen {current_gen}: K-Point")
+        return triangle_mutation_vcf(p1, p2, mut_prob, verbose=verbose, **kwargs)
+    else:
+        if verbose: print(f"Gen {current_gen}: Reduced Surrogate")
+        return color_creep_mutation(p1, p2, mut_prob, verbose=verbose, **kwargs)
