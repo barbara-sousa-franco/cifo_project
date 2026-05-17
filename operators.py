@@ -691,32 +691,35 @@ def color_creep_mutation(individual, mutation_prob, color_sigma=0.04, **kwargs):
 
 
 
-def adaptive_mutation_schedule(p1, p2, mut_prob, current_gen, max_gen, verbose=False, **kwargs):
+def adaptive_mutation_schedule(individual, mut_prob, current_gen=0, max_gens=100, verbose=False, **kwargs):
     """
-    Changes the operation of crossover based on the phase of evolution:
-      - Initial phase  (< 50% of generations) : Uniform      → maximum exploration
-      - Mid phase      (50–85%)              : K-Point      → structured mixing
-      - Final phase    (> 85% of generations) : Red.Surrogate → focus on real differences
+    Switches mutation operator based on the phase of evolution:
+      - Initial phase  (< 40%) : Full replacement  → maximum exploration
+      - Mid phase      (40-75%): Gaussian           → uniform fine-tuning (best overall)
+      - Final phase    (> 75%) : Color creep        → color refinement only
+
+    The VCF mutation is not used here because Gaussian outperformed it
+    consistently across runs, and color creep is more targeted for late
+    convergence than VCF's order mutation.
 
     Parameters:
-    - p1, p2: Parent individuals.
-    - mut_prob: Mutation probability.
-    - verbose: If True, prints the chosen mutation type and resulting children.
-    - current_gen: The current generation number (starting from 0).
-    - max_gen: The total number of generations planned for the evolution process.
+    - individual (Individual): The individual to be mutated.
+    - mut_prob (float): Mutation probability.
+    - current_gen (int): Current generation number.
+    - max_gens (int): Total number of generations.
+    - verbose (bool): If True, prints the chosen mutation type.
 
     Returns:
-    - Tuple of two child individuals resulting from crossover.
-
+    - Individual: A new individual resulting from mutation.
     """
-    phase = current_gen / max_gen
+    phase = current_gen / max_gens
 
-    if phase < 0.5:
-        if verbose: print(f"Gen {current_gen}: Uniform")
-        return triangle_mutation_full(p1, p2, mut_prob, verbose=verbose, **kwargs)
+    if phase < 0.40:
+        if verbose: print(f"Gen {current_gen}: Full replacement")
+        return triangle_mutation_full(individual, mut_prob)
     elif phase < 0.85:
-        if verbose: print(f"Gen {current_gen}: K-Point")
-        return triangle_mutation_vcf(p1, p2, mut_prob, verbose=verbose, **kwargs)
+        if verbose: print(f"Gen {current_gen}: Gaussian")
+        return gaussian_gene_mutation(individual, mut_prob)
     else:
-        if verbose: print(f"Gen {current_gen}: Reduced Surrogate")
-        return color_creep_mutation(p1, p2, mut_prob, verbose=verbose, **kwargs)
+        if verbose: print(f"Gen {current_gen}: Color creep")
+        return color_creep_mutation(individual, mut_prob)
