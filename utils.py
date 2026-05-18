@@ -2,6 +2,7 @@
 
 import random
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from time import time
 
@@ -14,20 +15,9 @@ from solution import Individual
 
 # FUNCTION FOR EXPERIMENTS OVER DIFFERENT CONFIGURATIONS
 
-def run_experiment(
-    configs,
-    target_array,
-    n_runs, max_gens, pop_size, seed,
-    xo_prob, mut_prob, elitism,
-    selection_algorithm,
-    fixed_xo_fn=None,
-    fixed_mut_fn=None,
-    config_key="config",
-    maximization=False,
-    fitness_metric="rmse",
-    individual_kwargs=None,
-    **ga_kwargs,
-):
+def run_experiment(configs, target_array, n_runs, max_gens, pop_size, seed, xo_prob, mut_prob, elitism, 
+                   selection_algorithm, fixed_xo_fn=None, fixed_mut_fn=None, config_key="config", maximization=False, 
+                   fitness_metric="rmse", individual_kwargs=None, **ga_kwargs):
     """
     Run a GA experiment over a list of operator configurations or probability pairs.
 
@@ -150,18 +140,9 @@ def run_experiment(
 
 # FUNCTION TO RUN A SINGLE CONFIGURATION  FOR MULTIPLE RUNS
 
-def run_single_experiment(
-    target_array,
-    n_runs, max_gens, pop_size, seed,
-    xo_prob, mut_prob, elitism,
-    selection_algorithm,
-    xo_fn,
-    mut_fn,
-    maximization=False,
-    fitness_metric="rmse",
-    individual_kwargs=None,
-    **ga_kwargs,
-):
+def run_single_experiment(target_array, n_runs, max_gens, pop_size, seed, xo_prob, mut_prob, elitism,
+                          selection_algorithm, xo_fn, mut_fn, maximization=False, fitness_metric="rmse",
+                          individual_kwargs=None, **ga_kwargs):
     """
     Run a single GA configuration for multiple independent runs.
 
@@ -242,12 +223,8 @@ def run_single_experiment(
 
 
 # COMPARE TWO EXPERIMENTS
-def compare_two_experiments(
-    results_a, curves_a, label_a,
-    results_b, curves_b, label_b,
-    maximization=False,
-    alpha=0.05,
-):
+def compare_two_experiments(results_a, curves_a, label_a, results_b, curves_b, label_b,
+    maximization=False, alpha=0.05):
     """
     Statistically compare two configurations using Wilcoxon signed-rank test.
 
@@ -304,13 +281,7 @@ def compare_two_experiments(
 
 
 # COMPARE MORE THAN ONE CONFIGURATION
-def compare_all_configs(
-    all_results,
-    all_curves,
-    config_key,
-    maximization=False,
-    alpha=0.05,
-):
+def compare_all_configs(all_results, all_curves, config_key, maximization=False, alpha=0.05):
     """
     Compare all configurations at once using the Kruskal-Wallis test
     (non-parametric equivalent of one-way ANOVA), then produce a clean
@@ -354,7 +325,7 @@ def compare_all_configs(
 
     summary_df = pd.DataFrame(rows).set_index("config")
 
-    # ── Global test: Kruskal-Wallis ───────────────────────────────────────
+    # Global test: Kruskal-Wallis 
     # Tests whether at least one config is drawn from a different distribution.
     # Non-parametric, no normality assumption needed.
     groups = [finals[name] for name in config_names]
@@ -367,7 +338,7 @@ def compare_all_configs(
     print(f"{'='*65}")
     print(summary_df.to_string(float_format=lambda x: f"{x:.4f}"))
 
-    # ── Post-hoc: pairwise Mann-Whitney U with Bonferroni correction ──────
+    # Post-hoc: pairwise Mann-Whitney U with Bonferroni correction 
     # Only run if global test is significant.
     if p_kw < alpha:
         pairs = list(combinations(config_names, 2))
@@ -401,14 +372,9 @@ def plot_convergence_curve(fitness_curve, baseline_rmse, MAX_GENS):
 
     '''
     Args:
-
         - fitness_curve (list[float]): The fitness of the best individual at each generation.
-        
         - baseline_rmse (float): The RMSE of a random baseline for comparison.
-
         - MAX_GENS (int): The maximum number of generations, used for the x-axis range.
-
-    
     '''
 
     fig, ax = plt.subplots(figsize=(10, 4))
@@ -427,15 +393,7 @@ def plot_convergence_curve(fitness_curve, baseline_rmse, MAX_GENS):
 
 # FUNCTION FOR PLOTTING EXPERIMENT RESULTS - CONVERGE CURVES + FINAL FITNESS
 
-def plot_experiment_summary(
-    all_curves,
-    df,
-    configs,
-    config_key,
-    title_prefix,
-    colors=None,
-    errorbar_every=None,
-):
+def plot_experiment_summary(all_curves, df, configs, config_key, title_prefix, colors=None, errorbar_every=None):
     """
     Plot per-generation average fitness with std error bars (as shown in class)
     and a boxplot of final fitness distributions.
@@ -466,7 +424,7 @@ def plot_experiment_summary(
 
     fig, axes = plt.subplots(1, 2, figsize=(16, 5))
 
-    # ── Plot 1: mean ± std error bars per generation (as shown in class) ──
+    # Plot 1: mean ± std error bars per generation (as shown in class) 
     ax = axes[0]
     for idx, (key, label) in enumerate(zip(keys, labels)):
         curves = np.array(all_curves[key])   # shape: (n_runs, max_gens)
@@ -496,7 +454,7 @@ def plot_experiment_summary(
     ax.legend(fontsize=11)
     ax.grid(True, alpha=0.3)
 
-    # ── Plot 2: boxplot of final fitness ──────────────────────────────────
+    # Plot 2: boxplot of final fitness 
     ax = axes[1]
     groups = [df[df[config_key] == key]["best_fitness"].values for key in keys]
     bp = ax.boxplot(groups, labels=labels, patch_artist=True)
@@ -519,17 +477,9 @@ def plot_experiment_summary(
 
 
 # FUNCTION FOR PLOTTING EXPERIMENT RESULTS - BEST INDIVIDUALS VS TARGET
-def plot_best_individuals(
-    best_inds,
-    configs,
-    target_img,
-    title_prefix,
-):
+def plot_best_individuals(best_inds, configs, target_img, title_prefix):
     """
-    Display the target image alongside the best evolved individual(s).
-
-    This function supports two modes:
-
+    Display the target image alongside the best evolved individual(s). This function supports two modes:
     1. Single individual mode:
        - `best_inds` is a single Individual object.
        - Displays the target image and the best individual side by side.
@@ -545,27 +495,19 @@ def plot_best_individuals(
             Either:
                 * A single best Individual object.
                 * A dictionary mapping configuration keys to Individuals.
-
         - configs (list[dict] or list[tuple] or None): 
             Configuration descriptors associated with `best_inds`.
-
             Supported formats:
                 * list[dict] with key "name"
                 * list[(mut_prob, xo_prob)] tuples
                 * None when plotting a single individual
-
         - target_img (PIL.Image or np.ndarray):
             The target image displayed as reference.
-
         - title_prefix (str):
             Figure title prefix.
-
-
     """
 
-    # ---------------------------------------------------------
     # Single individual mode
-    # ---------------------------------------------------------
     if not isinstance(best_inds, dict):
 
         fig, axes = plt.subplots(1, 2, figsize=(8, 4))
@@ -592,9 +534,7 @@ def plot_best_individuals(
 
         return
 
-    # ---------------------------------------------------------
     # Multiple configuration mode
-    # ---------------------------------------------------------
     if configs and isinstance(configs[0], dict):
         keys   = [c["name"] for c in configs]
         labels = keys
