@@ -5,6 +5,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from time import time
 
+from itertools import combinations
+from scipy import stats
+
 from ga import genetic_algorithm
 from solution import Individual
 
@@ -26,54 +29,38 @@ def run_experiment(
     **ga_kwargs,
 ):
     """
-    Run a genetic algorithm experiment over a list of operator configurations
-    (mutations, crossovers) or a grid of (mut_prob, xo_prob) probability pairs.
+    Run a GA experiment over a list of operator configurations or probability pairs.
 
     Args:
-        - configs (list[dict] or list[tuple]): Either a list of operator configs (each with keys 'name' and 'fn') 
-        or a list of (mut_prob, xo_prob)tuples for probability grid experiments.
-
+        - configs (list[dict] | list[tuple]): Operator configs (each with 'name' and 'fn')
+          or (mut_prob, xo_prob) tuples for probability grid experiments.
         - target_array (np.ndarray): Target image as an (H, W, 3) float32 array.
-
         - n_runs (int): Number of independent runs per configuration.
-
         - max_gens (int): Maximum number of generations per run.
-
         - pop_size (int): Number of individuals in the population.
-
-        - seed (int): Base seed for reproducibility; each run uses run * seed.
-
-        - xo_prob (float): Crossover probability (used as default when not varied).
-
-        - mut_prob (float): Mutation probability (used as default when not varied).
-
-        - elitism (bool): Whether to carry the best individual to the next generation.
-
-        - selection_algorithm (Callable): Selection function used by the GA.
-
-        - fixed_xo_fn (Callable or None): Crossover function to use across all runs. If None, the function is 
-        taken from each config (i.e. we are testing crossover operators).
-
-        - fixed_mut_fn (Callable or None): Mutation function to use across all runs. If None, the function is 
-        taken from each config (i.e. we are testing mutation operators).
-
-        - config_key (str): Key name used in the results dicts, e.g. 'mutation_type', 'crossover_type', or 
-        'config' for probability experiments.
+        - seed (int): Base seed; run i uses i * seed for reproducibility.
+        - xo_prob (float): Crossover probability (default when not varied).
+        - mut_prob (float): Mutation probability (default when not varied).
+        - elitism (bool): Whether to carry the best individual unchanged.
+        - selection_algorithm (Callable): Selection function.
+        - fixed_xo_fn (Callable | None): Fixed crossover; if None, taken from each config.
+        - fixed_mut_fn (Callable | None): Fixed mutation; if None, taken from each config.
+        - config_key (str): Key used in results dicts (e.g. 'mutation_type').
+        - individual_kwargs (dict, optional): Extra kwargs for Individual constructor.
+        - **ga_kwargs: Extra kwargs forwarded to genetic_algorithm.
 
     Returns:
-        - all_results (list[dict]): One dict per run with keys config_key, 'run', and 'best_fitness'.
-
-        - all_curves (dict): Maps config key to a list of fitness curves (one list of floats per run).
-
-        - best_inds (dict): Maps config key to the best Individual found across all runs for that configuration.
-
+        - all_results (list[dict]): One dict per run with config_key, 'run', 'best_fitness',
+          'time_seconds'.
+        - all_curves (dict): Maps config key → list of per-run fitness curves.
+        - best_inds (dict): Maps config key → best Individual across all runs.
     """
-
+    individual_kwargs = individual_kwargs or {}
     all_results = []
     all_curves  = {}
     best_inds   = {}
 
-    # Normalize configs into (key, label, xo_fn, mut_fn, xo_prob, mut_prob)
+    # Normalise configs into (key, xo_fn, mut_fn, run_xo_prob, run_mut_prob)
     if configs and isinstance(configs[0], dict):
         normalized = [
             (
@@ -88,7 +75,7 @@ def run_experiment(
     else:
         normalized = [
             (
-                (mp, xp),   # key is the tuple itself
+                (mp, xp),
                 fixed_xo_fn,
                 fixed_mut_fn,
                 xp,
@@ -115,13 +102,12 @@ def run_experiment(
                 Individual(
                     target=target_array,
                     fitness_metric=fitness_metric,
-                    **individual_kwargs
+                    **individual_kwargs,
                 )
                 for _ in range(pop_size)
             ]
 
             start = time()
-
             best_ind, fitness_curve = genetic_algorithm(
                 initial_population  = initial_pop,
                 max_generations     = max_gens,
@@ -135,13 +121,11 @@ def run_experiment(
                 verbose             = False,
                 **ga_kwargs,
             )
-
             elapsed = time() - start
 
-            if (key not in best_inds or best_ind.fitness() < best_inds[key].fitness()) and not maximization:
-                best_inds[key] = best_ind
-
-            elif (key not in best_inds or best_ind.fitness() > best_inds[key].fitness()) and maximization:
+            if (key not in best_inds
+                    or (not maximization and best_ind.fitness() < best_inds[key].fitness())
+                    or (    maximization and best_ind.fitness() > best_inds[key].fitness())):
                 best_inds[key] = best_ind
 
             curves.append(fitness_curve)
@@ -149,13 +133,13 @@ def run_experiment(
                 config_key    : key,
                 "run"         : run,
                 "best_fitness": best_ind.fitness(),
-                "time_seconds"  : round(elapsed, 2),
+                "time_seconds": round(elapsed, 2),
             })
             print(f"best fitness: {best_ind.fitness():.4f}")
 
         all_curves[key] = curves
         avg = np.mean([r["best_fitness"] for r in all_results if r[config_key] == key])
-        print(f" Avg: {avg:.4f}")
+        print(f"  Avg best fitness: {avg:.4f}")
 
     return all_results, all_curves, best_inds
 
@@ -179,52 +163,35 @@ def run_single_experiment(
     **ga_kwargs,
 ):
     """
-    Run a single configuration of the genetic algorithm for multiple runs.
+    Run a single GA configuration for multiple independent runs.
 
     Args:
         - target_array (np.ndarray): Target image as an (H, W, 3) float32 array.
-
         - n_runs (int): Number of independent runs.
-
         - max_gens (int): Maximum number of generations per run.
-
         - pop_size (int): Number of individuals in the population.
-
-        - seed (int): Base seed for reproducibility; each run uses run * seed.
-
+        - seed (int): Base seed; run i uses i * seed for reproducibility.
         - xo_prob (float): Crossover probability.
-
         - mut_prob (float): Mutation probability.
-
-        - elitism (bool): Whether to carry the best individual to the next generation.
-
-        - selection_algorithm (Callable): Selection function used by the GA.
-
-        - xo_fn (Callable): Crossover function to use across all runs.
-
-        - mut_fn (Callable): Mutation function to use across all runs.
-
-        - individual_kwargs (dict, optional): Additional keyword arguments to pass to the Individual constructor.
-
-        -**ga_kwargs: Additional keyword arguments to pass to the genetic_algorithm function.
+        - elitism (bool): Whether to carry the best individual unchanged.
+        - selection_algorithm (Callable): Selection function.
+        - xo_fn (Callable): Crossover function.
+        - mut_fn (Callable): Mutation function.
+        - individual_kwargs (dict, optional): Extra kwargs for Individual constructor.
+        - **ga_kwargs: Extra kwargs forwarded to genetic_algorithm.
 
     Returns:
-        - all_results (list[dict]): One dict per run with keys 'run' and 'best_fitness'.
-
-        - all_curves (list[list[float]]): List of fitness curves (one list of floats per run).
-
-        - best_ind (Individual): The best Individual found across all runs.
-
+        - all_results (list[dict]): One dict per run: 'run', 'best_fitness', 'time_seconds'.
+        - all_curves (list[list[float]]): Per-generation best fitness for each run.
+        - best_ind (Individual): Best individual found across all runs.
     """
-
     individual_kwargs = individual_kwargs or {}
-
     all_results = []
     all_curves  = []
     best_ind    = None
 
     for run in range(1, n_runs + 1):
-        print(f"Run {run}/{n_runs}", end="  ")
+        print(f"  Run {run}/{n_runs}", end="  ")
 
         random.seed(run * seed)
         np.random.seed(run * seed)
@@ -239,7 +206,6 @@ def run_single_experiment(
         ]
 
         start = time()
-
         ind, fitness_curve = genetic_algorithm(
             initial_population  = initial_pop,
             max_generations     = max_gens,
@@ -253,28 +219,177 @@ def run_single_experiment(
             verbose             = False,
             **ga_kwargs,
         )
-
         elapsed = time() - start
 
-        if (best_ind is None or ind.fitness() < best_ind.fitness()) and not maximization:
-            best_ind = ind
-
-        elif (best_ind is None or ind.fitness() > best_ind.fitness()) and maximization:
+        if (best_ind is None
+                or (not maximization and ind.fitness() < best_ind.fitness())
+                or (    maximization and ind.fitness() > best_ind.fitness())):
             best_ind = ind
 
         all_curves.append(fitness_curve)
         all_results.append({
             "run"         : run,
             "best_fitness": ind.fitness(),
-            "time_seconds"  : round(elapsed, 2),
+            "time_seconds": round(elapsed, 2),
         })
         print(f"best fitness: {ind.fitness():.4f}")
 
     avg_fitness = np.mean([r["best_fitness"] for r in all_results])
-    print(f"\nAverage fitness over {n_runs} runs: {avg_fitness:.4f}")
+    print(f"\n  Average fitness over {n_runs} runs: {avg_fitness:.4f}")
 
     return all_results, all_curves, best_ind
 
+
+
+# COMPARE TWO EXPERIMENTS
+def compare_two_experiments(
+    results_a, curves_a, label_a,
+    results_b, curves_b, label_b,
+    maximization=False,
+    alpha=0.05,
+):
+    """
+    Statistically compare two configurations using Wilcoxon signed-rank test.
+
+    Args:
+        - results_a / results_b: Output of run_single_experiment.
+        - curves_a / curves_b: Corresponding per-run fitness curves.
+        - label_a / label_b: Config names.
+        - maximization (bool): Direction of optimisation.
+        - alpha (float): Significance level (default 0.05).
+
+    Returns:
+        - avg_curve_a, avg_curve_b (np.ndarray): Mean fitness per generation.
+        - p_value (float)
+        - significant (bool)
+    """
+    finals_a = np.array([r["best_fitness"] for r in results_a])
+    finals_b = np.array([r["best_fitness"] for r in results_b])
+
+    avg_curve_a = np.mean(curves_a, axis=0)
+    avg_curve_b = np.mean(curves_b, axis=0)
+
+    if len(finals_a) == len(finals_b):
+        stat, p_value = stats.wilcoxon(finals_a, finals_b)
+        test_name = "Wilcoxon signed-rank"
+    else:
+        stat, p_value = stats.mannwhitneyu(finals_a, finals_b, alternative="two-sided")
+        test_name = "Mann-Whitney U (unpaired)"
+
+    significant = p_value < alpha
+    if significant:
+        if not maximization:
+            winner = label_a if finals_a.mean() < finals_b.mean() else label_b
+        else:
+            winner = label_a if finals_a.mean() > finals_b.mean() else label_b
+    else:
+        winner = None
+
+    print(f"\n{'='*60}")
+    print(f"  Comparison: '{label_a}'  vs  '{label_b}'")
+    print(f"{'='*60}")
+    print(f"  {'':30}  {'Mean':>8}  {'Std':>8}  {'Best':>8}  {'Worst':>8}")
+    print(f"  {'-'*30}  {'-'*8}  {'-'*8}  {'-'*8}  {'-'*8}")
+    for label, finals in [(label_a, finals_a), (label_b, finals_b)]:
+        best  = finals.min() if not maximization else finals.max()
+        worst = finals.max() if not maximization else finals.min()
+        print(f"  {label:<30}  {finals.mean():>8.4f}  {finals.std():>8.4f}  {best:>8.4f}  {worst:>8.4f}")
+    print(f"\n  {test_name}: stat={stat:.4f}, p={p_value:.4f}")
+    if significant:
+        print(f"  Statistically significant (p < {alpha}). Winner: '{winner}'.")
+    else:
+        print(f"  No statistically significant difference (p ≥ {alpha}).")
+
+    return avg_curve_a, avg_curve_b, p_value, significant
+
+
+# COMPARE MORE THAN ONE CONFIGURATION
+def compare_all_configs(
+    all_results,
+    all_curves,
+    config_key,
+    maximization=False,
+    alpha=0.05,
+):
+    """
+    Compare all configurations at once using the Kruskal-Wallis test
+    (non-parametric equivalent of one-way ANOVA), then produce a clean
+    summary table with per-config statistics.
+
+    If Kruskal-Wallis is significant, runs post-hoc pairwise Mann-Whitney U
+    tests with Bonferroni correction to identify which configs differ.
+
+    Args:
+        - all_results (list[dict]): Full results from run_experiment.
+        - all_curves (dict): Full curves dict from run_experiment.
+        - config_key (str): Key used to identify configs (e.g. 'mutation_type').
+        - maximization (bool): Direction of optimisation.
+        - alpha (float): Significance level (default 0.05).
+
+    Returns:
+        - summary_df (pd.DataFrame): Per-config statistics table.
+        - avg_curves (dict): Maps config name -> mean fitness curve (np.ndarray).
+    """
+
+    config_names = list(all_curves.keys())
+
+    # Per-config statistics
+    rows = []
+    finals = {}
+    avg_curves = {}
+    for name in config_names:
+        runs = [r["best_fitness"] for r in all_results if r[config_key] == name]
+        times = [r["time_seconds"] for r in all_results if r[config_key] == name]
+        arr = np.array(runs)
+        finals[name] = arr
+        avg_curves[name] = np.mean(all_curves[name], axis=0)
+        rows.append({
+            "config"   : name,
+            "avg"      : arr.mean(),
+            "std"      : arr.std(),
+            "best"     : arr.min() if not maximization else arr.max(),
+            "worst"    : arr.max() if not maximization else arr.min(),
+            "avg_time" : np.mean(times),
+        })
+
+    summary_df = pd.DataFrame(rows).set_index("config")
+
+    # ── Global test: Kruskal-Wallis ───────────────────────────────────────
+    # Tests whether at least one config is drawn from a different distribution.
+    # Non-parametric, no normality assumption needed.
+    groups = [finals[name] for name in config_names]
+    stat_kw, p_kw = stats.kruskal(*groups)
+
+    print(f"\n{'='*65}")
+    print(f"  Global comparison — {config_key}")
+    print(f"  Kruskal-Wallis: H={stat_kw:.4f}, p={p_kw:.4f}  "
+          f"→ {'significant' if p_kw < alpha else 'not significant'}")
+    print(f"{'='*65}")
+    print(summary_df.to_string(float_format=lambda x: f"{x:.4f}"))
+
+    # ── Post-hoc: pairwise Mann-Whitney U with Bonferroni correction ──────
+    # Only run if global test is significant.
+    if p_kw < alpha:
+        pairs = list(combinations(config_names, 2))
+        bonferroni_alpha = alpha / len(pairs)
+        print(f"\n  Post-hoc pairwise Mann-Whitney U (Bonferroni α={bonferroni_alpha:.4f})")
+        print(f"  {'Pair':<45}  {'p-value':>9}  {'Winner'}")
+        print(f"  {'-'*45}  {'-'*9}  {'-'*20}")
+        for a, b in pairs:
+            _, p = stats.mannwhitneyu(finals[a], finals[b], alternative="two-sided")
+            significant = p < bonferroni_alpha
+            if significant:
+                winner = a if (
+                    (not maximization and finals[a].mean() < finals[b].mean()) or
+                    (    maximization and finals[a].mean() > finals[b].mean())
+                ) else b
+            else:
+                winner = "— (ns)"
+            print(f"  {a+' vs '+b:<45}  {p:>9.4f}  {winner}")
+    else:
+        print("\n  No post-hoc tests run (global test not significant).")
+
+    return summary_df, avg_curves
 
 
 
@@ -310,10 +425,6 @@ def plot_convergence_curve(fitness_curve, baseline_rmse, MAX_GENS):
 
 
 
-
-
-
-
 # FUNCTION FOR PLOTTING EXPERIMENT RESULTS - CONVERGE CURVES + FINAL FITNESS
 
 def plot_experiment_summary(
@@ -323,62 +434,69 @@ def plot_experiment_summary(
     config_key,
     title_prefix,
     colors=None,
+    errorbar_every=None,
 ):
     """
-    Plot convergence curves (mean ± std) and a boxplot of final fitness
-    for a set of operator or probability configurations.
+    Plot per-generation average fitness with std error bars (as shown in class)
+    and a boxplot of final fitness distributions.
 
     Args:
-        - all_curves (dict): Maps config name/key to a list of fitness curves (one list of floats per run), 
-        as returned by run_operator_experiment or run_probability_experiment.
-
-        - df (pd.DataFrame): Results dataframe with columns config_key and 'best_fitness', as built from 
-        all_results.
-
-        - configs (list[dict] or list[tuple]): Operator configurations (each with key 'name') or list of 
-        (mut_prob, xo_prob) tuples.
-
-        - config_key (str): Column name in df to group by, e.g. 'mutation_type', 'crossover_type', or a 
-        composite key for probability experiments.
-
-        - title_prefix (str): Prefix for the figure suptitle, e.g. 'Mutation', 'Crossover', or 'Probability Grid'.
-
-        - colors (list[str], optional): List of hex color strings, one per config. Defaults to a built-in 
-        palette if None.
-
+        - all_curves (dict): Maps config name -> list of per-run fitness curves.
+        - df (pd.DataFrame): Results dataframe with config_key and 'best_fitness'.
+        - configs (list[dict] | list[tuple]): Operator configs or (mut_prob, xo_prob) tuples.
+        - config_key (str): Column in df to group by.
+        - title_prefix (str): Figure suptitle prefix.
+        - colors (list[str], optional): One hex color per config.
+        - errorbar_every (int, optional): Plot error bars every N generations to avoid clutter.
+          Defaults to max(1, max_gens // 20).
     """
-
     if colors is None:
         colors = ["#2196F3", "#F44336", "#4CAF50", "#FF9800", "#9C27B0"]
 
-    # Normalize configs into (key, label) pairs regardless of input type
     if configs and isinstance(configs[0], dict):
         keys   = [c["name"] for c in configs]
         labels = keys
     else:
-        keys   = configs  # list of (mut_prob, xo_prob) tuples
+        keys   = configs
         labels = [f"mut={k[0]} xo={k[1]}" for k in keys]
+
+    max_gens = len(next(iter(all_curves.values()))[0])
+    if errorbar_every is None:
+        errorbar_every = max(1, max_gens // 20)
 
     fig, axes = plt.subplots(1, 2, figsize=(16, 5))
 
-    # Plot 1 — Convergence curves (mean ± std)
+    # ── Plot 1: mean ± std error bars per generation (as shown in class) ──
     ax = axes[0]
     for idx, (key, label) in enumerate(zip(keys, labels)):
-        curves = np.array(all_curves[key])
+        curves = np.array(all_curves[key])   # shape: (n_runs, max_gens)
         mean   = curves.mean(axis=0)
         std    = curves.std(axis=0)
-        gens   = np.arange(1, len(mean) + 1)
+        gens   = np.arange(1, max_gens + 1)
         color  = colors[idx % len(colors)]
+
+        # Plot the mean line
         ax.plot(gens, mean, label=label, color=color, linewidth=2)
-        ax.fill_between(gens, mean - std, mean + std, alpha=0.2, color=color)
+
+        # Error bars only every `errorbar_every` generations to keep it readable
+        eb_idx = np.arange(0, max_gens, errorbar_every)
+        ax.errorbar(
+            gens[eb_idx], mean[eb_idx], yerr=std[eb_idx],
+            fmt="none",           # no marker — just the caps
+            ecolor=color,
+            elinewidth=1.2,
+            capsize=4,
+            capthick=1.2,
+            alpha=0.8,
+        )
 
     ax.set_xlabel("Generation", fontsize=12)
-    ax.set_ylabel("Best Fitness (RMSE)", fontsize=12)
+    ax.set_ylabel("Avg Best Fitness (RMSE)", fontsize=12)
     ax.set_title(f"Convergence by {title_prefix}\n(mean ± std)", fontsize=13)
     ax.legend(fontsize=11)
     ax.grid(True, alpha=0.3)
 
-    # Plot 2 — Boxplot of final fitness
+    # ── Plot 2: boxplot of final fitness ──────────────────────────────────
     ax = axes[1]
     groups = [df[df[config_key] == key]["best_fitness"].values for key in keys]
     bp = ax.boxplot(groups, labels=labels, patch_artist=True)
@@ -387,21 +505,18 @@ def plot_experiment_summary(
         patch.set_alpha(0.6)
 
     ax.set_ylabel("Final Best Fitness (RMSE)", fontsize=12)
-    ax.set_title(f"Final Fitness Distribution\n({len(next(iter(all_curves.values())))} runs per configuration)", fontsize=13)
+    ax.set_title(
+        f"Final Fitness Distribution\n({len(next(iter(all_curves.values())))} runs per configuration)",
+        fontsize=13,
+    )
     ax.grid(True, axis="y", alpha=0.3)
 
     fig.suptitle(f"{title_prefix} Comparison", fontsize=14, fontweight="bold")
     plt.tight_layout()
     plt.show()
-
  
 
 
-
-
-
-
-# FUNCTION FOR PLOTTING EXPERIMENT RESULTS - BEST INDIVIDUALS VS TARGET
 
 # FUNCTION FOR PLOTTING EXPERIMENT RESULTS - BEST INDIVIDUALS VS TARGET
 def plot_best_individuals(
