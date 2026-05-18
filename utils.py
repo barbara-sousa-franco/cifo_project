@@ -22,6 +22,7 @@ def run_experiment(
     config_key="config",
     maximization=False,
     fitness_metric="rmse",
+    individual_kwargs=None,
     **ga_kwargs,
 ):
     """
@@ -113,7 +114,9 @@ def run_experiment(
             initial_pop = [
                 Individual(
                     target=target_array,
-                    fitness_metric=fitness_metric)
+                    fitness_metric=fitness_metric,
+                    **individual_kwargs
+                )
                 for _ in range(pop_size)
             ]
 

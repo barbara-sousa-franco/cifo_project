@@ -218,7 +218,7 @@ class Triangle:
     # This reduces memory usage and can slightly improve attribute access speed.
     __slots__ = ("repr", "alpha_min", "alpha_max", "max_triangle_size")
 
-    def __init__(self, max_triangle_size = 0.25, alpha_min = 0.30, alpha_max = 0.80, repr=None):
+    def __init__(self, max_triangle_size = 1, alpha_min = 0, alpha_max = 1, repr=None):
         if repr is None:
             repr = [random.random() for _ in range(GENES_PER_TRIANGLE)]
             repr[9] = alpha_min + random.random() * (alpha_max - alpha_min)
@@ -328,9 +328,9 @@ class Individual:
         repr=None,
         fitness_metric: str = "rmse",
         target_lab: np.ndarray = None,
-        max_triangle_size: float = 0.25,
-        alpha_min: float = 0.30,
-        alpha_max: float = 0.80,
+        max_triangle_size: float = 1,
+        alpha_min: float = 0,
+        alpha_max: float = 1,
     ):
         self.target = target
         self.fitness_metric = fitness_metric
@@ -372,36 +372,41 @@ class Individual:
     def render(self, antialiased=False) -> Image.Image:
         """Rasterize the genome to an RGB PIL image.
 
-        Uses one RGBA canvas and ImageDraw.polygon in RGBA mode, which
-        alpha-blends each polygon's fill against the existing canvas in a
-        single pass - no per-triangle layer is allocated.
-
-        Args:
-            antialiased (bool): If True, renders at SUPERSAMPLE_FACTOR-x resolution
-                and downsamples with LANCZOS for smoother triangle edges.
-                Off by default to keep fitness evaluation tractable.
+        Each triangle is drawn on a separate transparent layer and then
+        alpha-composited onto the canvas using PIL.Image.alpha_composite.
+        This guarantees correct Porter-Duff 'over' blending for every
+        triangle, so semi-transparent triangles stack visually as intended.
         """
-        if antialiased:
-            w = IMG_WIDTH * SUPERSAMPLE_FACTOR
-            h = IMG_HEIGHT * SUPERSAMPLE_FACTOR
-            canvas = Image.new("RGBA", (w, h), (0, 0, 0, 255))
-            draw = ImageDraw.Draw(canvas, "RGBA")
-            for triangle in self.repr:
+        w = IMG_WIDTH * (SUPERSAMPLE_FACTOR if antialiased else 1)
+        h = IMG_HEIGHT * (SUPERSAMPLE_FACTOR if antialiased else 1)
+
+        # Start with a fully opaque black background
+        canvas = Image.new("RGBA", (w, h), (0, 0, 0, 255))
+
+        for triangle in self.repr:
+            # Create a transparent layer for this triangle only
+            layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+            draw  = ImageDraw.Draw(layer)
+
+            if antialiased:
                 g = triangle.repr
                 verts = [
                     (round(g[0] * (w - 1)), round(g[1] * (h - 1))),
                     (round(g[2] * (w - 1)), round(g[3] * (h - 1))),
                     (round(g[4] * (w - 1)), round(g[5] * (h - 1))),
                 ]
-                draw.polygon(verts, fill=triangle.color())
-            return canvas.convert("RGB").resize((IMG_WIDTH, IMG_HEIGHT), Image.LANCZOS)
+            else:
+                verts = triangle.vertices()
 
-        canvas = Image.new("RGBA", (IMG_WIDTH, IMG_HEIGHT), (0, 0, 0, 255))
-        draw = ImageDraw.Draw(canvas, "RGBA")
-        for triangle in self.repr:
-            draw.polygon(triangle.vertices(), fill=triangle.color())
+            draw.polygon(verts, fill=triangle.color())
+
+            # Porter-Duff 'over' composite: layer over canvas
+            canvas = Image.alpha_composite(canvas, layer)
+
+        if antialiased:
+            canvas = canvas.resize((IMG_WIDTH, IMG_HEIGHT), Image.LANCZOS)
+
         return canvas.convert("RGB")
-
 
 
 
