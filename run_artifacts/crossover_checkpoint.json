@@ -1,0 +1,462 @@
+{
+  "Uniform": [
+    {
+      "run": 1,
+      "fitness": 49.95940399169922,
+      "time_seconds": 1434.77,
+      "curve_file": "crossover_Uniform_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 50.46288299560547,
+      "time_seconds": 1529.65,
+      "curve_file": "crossover_Uniform_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 49.70507049560547,
+      "time_seconds": 1384.05,
+      "curve_file": "crossover_Uniform_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 53.86341857910156,
+      "time_seconds": 1417.58,
+      "curve_file": "crossover_Uniform_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 52.1583137512207,
+      "time_seconds": 1410.53,
+      "curve_file": "crossover_Uniform_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 50.9337272644043,
+      "time_seconds": 1412.67,
+      "curve_file": "crossover_Uniform_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 49.51728820800781,
+      "time_seconds": 1431.77,
+      "curve_file": "crossover_Uniform_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 51.30363464355469,
+      "time_seconds": 1404.27,
+      "curve_file": "crossover_Uniform_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 50.052391052246094,
+      "time_seconds": 1364.83,
+      "curve_file": "crossover_Uniform_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 51.63642120361328,
+      "time_seconds": 1393.45,
+      "curve_file": "crossover_Uniform_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 49.40510177612305,
+      "time_seconds": 1376.12,
+      "curve_file": "crossover_Uniform_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 50.80380630493164,
+      "time_seconds": 1371.16,
+      "curve_file": "crossover_Uniform_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 53.64445495605469,
+      "time_seconds": 1384.83,
+      "curve_file": "crossover_Uniform_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 51.70261764526367,
+      "time_seconds": 1407.56,
+      "curve_file": "crossover_Uniform_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 50.69369888305664,
+      "time_seconds": 1426.68,
+      "curve_file": "crossover_Uniform_run15_curve.npy"
+    }
+  ],
+  "KPoint": [
+    {
+      "run": 1,
+      "fitness": 51.63224792480469,
+      "time_seconds": 1376.44,
+      "curve_file": "crossover_KPoint_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 51.41498947143555,
+      "time_seconds": 1390.5,
+      "curve_file": "crossover_KPoint_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 53.59864044189453,
+      "time_seconds": 1367.95,
+      "curve_file": "crossover_KPoint_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 54.067527770996094,
+      "time_seconds": 1472.34,
+      "curve_file": "crossover_KPoint_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 56.27602005004883,
+      "time_seconds": 1402.09,
+      "curve_file": "crossover_KPoint_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 53.33413314819336,
+      "time_seconds": 1376.75,
+      "curve_file": "crossover_KPoint_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 53.7513542175293,
+      "time_seconds": 1380.68,
+      "curve_file": "crossover_KPoint_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 54.15879440307617,
+      "time_seconds": 1402.79,
+      "curve_file": "crossover_KPoint_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 54.07933807373047,
+      "time_seconds": 1367.99,
+      "curve_file": "crossover_KPoint_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 52.51993179321289,
+      "time_seconds": 1363.07,
+      "curve_file": "crossover_KPoint_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 50.78795623779297,
+      "time_seconds": 1426.4,
+      "curve_file": "crossover_KPoint_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 51.85551452636719,
+      "time_seconds": 1400.99,
+      "curve_file": "crossover_KPoint_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 57.305362701416016,
+      "time_seconds": 1504.69,
+      "curve_file": "crossover_KPoint_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 53.75800323486328,
+      "time_seconds": 1404.18,
+      "curve_file": "crossover_KPoint_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 52.65263366699219,
+      "time_seconds": 1558.09,
+      "curve_file": "crossover_KPoint_run15_curve.npy"
+    }
+  ],
+  "ReducedSurrogate": [
+    {
+      "run": 1,
+      "fitness": 57.315120697021484,
+      "time_seconds": 1388.22,
+      "curve_file": "crossover_ReducedSurrogate_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 57.7407341003418,
+      "time_seconds": 1403.21,
+      "curve_file": "crossover_ReducedSurrogate_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 58.35495376586914,
+      "time_seconds": 1386.84,
+      "curve_file": "crossover_ReducedSurrogate_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 57.945335388183594,
+      "time_seconds": 1450.09,
+      "curve_file": "crossover_ReducedSurrogate_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 60.70029830932617,
+      "time_seconds": 1344.25,
+      "curve_file": "crossover_ReducedSurrogate_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 58.34007263183594,
+      "time_seconds": 1416.26,
+      "curve_file": "crossover_ReducedSurrogate_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 59.20526885986328,
+      "time_seconds": 1316.23,
+      "curve_file": "crossover_ReducedSurrogate_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 58.82057189941406,
+      "time_seconds": 1381.97,
+      "curve_file": "crossover_ReducedSurrogate_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 57.179508209228516,
+      "time_seconds": 1421.75,
+      "curve_file": "crossover_ReducedSurrogate_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 59.19343566894531,
+      "time_seconds": 1443.26,
+      "curve_file": "crossover_ReducedSurrogate_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 61.3179931640625,
+      "time_seconds": 1415.96,
+      "curve_file": "crossover_ReducedSurrogate_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 59.48896408081055,
+      "time_seconds": 1442.11,
+      "curve_file": "crossover_ReducedSurrogate_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 58.417022705078125,
+      "time_seconds": 1415.87,
+      "curve_file": "crossover_ReducedSurrogate_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 56.97193908691406,
+      "time_seconds": 1360.51,
+      "curve_file": "crossover_ReducedSurrogate_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 59.141563415527344,
+      "time_seconds": 1365.49,
+      "curve_file": "crossover_ReducedSurrogate_run15_curve.npy"
+    }
+  ],
+  "Shuffle": [
+    {
+      "run": 1,
+      "fitness": 50.3204460144043,
+      "time_seconds": 1389.16,
+      "curve_file": "crossover_Shuffle_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 50.49433898925781,
+      "time_seconds": 1469.1,
+      "curve_file": "crossover_Shuffle_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 50.00932693481445,
+      "time_seconds": 1450.33,
+      "curve_file": "crossover_Shuffle_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 54.483890533447266,
+      "time_seconds": 1459.88,
+      "curve_file": "crossover_Shuffle_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 53.98686218261719,
+      "time_seconds": 1413.31,
+      "curve_file": "crossover_Shuffle_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 52.934425354003906,
+      "time_seconds": 1394.23,
+      "curve_file": "crossover_Shuffle_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 52.594913482666016,
+      "time_seconds": 1379.79,
+      "curve_file": "crossover_Shuffle_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 55.188602447509766,
+      "time_seconds": 1434.9,
+      "curve_file": "crossover_Shuffle_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 52.01455307006836,
+      "time_seconds": 1386.28,
+      "curve_file": "crossover_Shuffle_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 52.29722213745117,
+      "time_seconds": 1464.4,
+      "curve_file": "crossover_Shuffle_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 50.10865783691406,
+      "time_seconds": 1525.49,
+      "curve_file": "crossover_Shuffle_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 50.18291091918945,
+      "time_seconds": 1502.75,
+      "curve_file": "crossover_Shuffle_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 53.72062301635742,
+      "time_seconds": 1485.76,
+      "curve_file": "crossover_Shuffle_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 54.072330474853516,
+      "time_seconds": 1485.42,
+      "curve_file": "crossover_Shuffle_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 52.94281005859375,
+      "time_seconds": 1491.8,
+      "curve_file": "crossover_Shuffle_run15_curve.npy"
+    }
+  ],
+  "AdaptiveXO": [
+    {
+      "run": 1,
+      "fitness": 49.85110092163086,
+      "time_seconds": 1484.09,
+      "curve_file": "crossover_AdaptiveXO_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 50.480995178222656,
+      "time_seconds": 1443.85,
+      "curve_file": "crossover_AdaptiveXO_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 49.731964111328125,
+      "time_seconds": 1407.6,
+      "curve_file": "crossover_AdaptiveXO_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 53.885162353515625,
+      "time_seconds": 1451.18,
+      "curve_file": "crossover_AdaptiveXO_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 52.23588562011719,
+      "time_seconds": 1450.71,
+      "curve_file": "crossover_AdaptiveXO_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 50.93929672241211,
+      "time_seconds": 1442.56,
+      "curve_file": "crossover_AdaptiveXO_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 49.520381927490234,
+      "time_seconds": 1470.43,
+      "curve_file": "crossover_AdaptiveXO_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 51.29859924316406,
+      "time_seconds": 1434.85,
+      "curve_file": "crossover_AdaptiveXO_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 50.05263900756836,
+      "time_seconds": 1389.62,
+      "curve_file": "crossover_AdaptiveXO_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 51.66797637939453,
+      "time_seconds": 1404.96,
+      "curve_file": "crossover_AdaptiveXO_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 49.40533447265625,
+      "time_seconds": 1400.29,
+      "curve_file": "crossover_AdaptiveXO_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 50.82377243041992,
+      "time_seconds": 1399.33,
+      "curve_file": "crossover_AdaptiveXO_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 53.687095642089844,
+      "time_seconds": 1402.64,
+      "curve_file": "crossover_AdaptiveXO_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 51.71881866455078,
+      "time_seconds": 1427.21,
+      "curve_file": "crossover_AdaptiveXO_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 50.75959014892578,
+      "time_seconds": 1464.02,
+      "curve_file": "crossover_AdaptiveXO_run15_curve.npy"
+    }
+  ]
+}

@@ -1,0 +1,292 @@
+{
+  "mut0.01_xo0.85": [
+    {
+      "run": 1,
+      "fitness": 30.302024841308594,
+      "time_seconds": 1502.29,
+      "curve_file": "probabilities_mut0.01_xo0.85_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 31.420909881591797,
+      "time_seconds": 1416.79,
+      "curve_file": "probabilities_mut0.01_xo0.85_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 31.33002281188965,
+      "time_seconds": 1507.95,
+      "curve_file": "probabilities_mut0.01_xo0.85_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 30.962350845336914,
+      "time_seconds": 1485.48,
+      "curve_file": "probabilities_mut0.01_xo0.85_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 33.07830810546875,
+      "time_seconds": 1415.53,
+      "curve_file": "probabilities_mut0.01_xo0.85_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 31.68791389465332,
+      "time_seconds": 1435.52,
+      "curve_file": "probabilities_mut0.01_xo0.85_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 32.676231384277344,
+      "time_seconds": 1428.28,
+      "curve_file": "probabilities_mut0.01_xo0.85_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 32.119503021240234,
+      "time_seconds": 1470.16,
+      "curve_file": "probabilities_mut0.01_xo0.85_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 32.623077392578125,
+      "time_seconds": 1407.73,
+      "curve_file": "probabilities_mut0.01_xo0.85_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 31.50046157836914,
+      "time_seconds": 1413.13,
+      "curve_file": "probabilities_mut0.01_xo0.85_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 31.768924713134766,
+      "time_seconds": 1439.73,
+      "curve_file": "probabilities_mut0.01_xo0.85_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 31.89276695251465,
+      "time_seconds": 1417.3,
+      "curve_file": "probabilities_mut0.01_xo0.85_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 32.12146759033203,
+      "time_seconds": 1407.37,
+      "curve_file": "probabilities_mut0.01_xo0.85_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 33.29433822631836,
+      "time_seconds": 1428.26,
+      "curve_file": "probabilities_mut0.01_xo0.85_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 32.30201721191406,
+      "time_seconds": 1436.38,
+      "curve_file": "probabilities_mut0.01_xo0.85_run15_curve.npy"
+    }
+  ],
+  "mut0.01_xo0.9": [
+    {
+      "run": 1,
+      "fitness": 31.71780014038086,
+      "time_seconds": 1390.66,
+      "curve_file": "probabilities_mut0.01_xo0.9_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 30.96785545349121,
+      "time_seconds": 1426.04,
+      "curve_file": "probabilities_mut0.01_xo0.9_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 31.640886306762695,
+      "time_seconds": 1485.92,
+      "curve_file": "probabilities_mut0.01_xo0.9_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 33.029659271240234,
+      "time_seconds": 1481.53,
+      "curve_file": "probabilities_mut0.01_xo0.9_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 31.754640579223633,
+      "time_seconds": 1453.26,
+      "curve_file": "probabilities_mut0.01_xo0.9_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 33.01814651489258,
+      "time_seconds": 1444.79,
+      "curve_file": "probabilities_mut0.01_xo0.9_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 32.165374755859375,
+      "time_seconds": 1469.09,
+      "curve_file": "probabilities_mut0.01_xo0.9_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 30.987749099731445,
+      "time_seconds": 1383.28,
+      "curve_file": "probabilities_mut0.01_xo0.9_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 31.149873733520508,
+      "time_seconds": 1466.74,
+      "curve_file": "probabilities_mut0.01_xo0.9_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 32.023799896240234,
+      "time_seconds": 1458.2,
+      "curve_file": "probabilities_mut0.01_xo0.9_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 31.297639846801758,
+      "time_seconds": 1456.99,
+      "curve_file": "probabilities_mut0.01_xo0.9_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 31.71506118774414,
+      "time_seconds": 1408.79,
+      "curve_file": "probabilities_mut0.01_xo0.9_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 31.320558547973633,
+      "time_seconds": 1399.58,
+      "curve_file": "probabilities_mut0.01_xo0.9_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 31.17534637451172,
+      "time_seconds": 1417.3,
+      "curve_file": "probabilities_mut0.01_xo0.9_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 31.762924194335938,
+      "time_seconds": 1424.45,
+      "curve_file": "probabilities_mut0.01_xo0.9_run15_curve.npy"
+    }
+  ],
+  "mut0.01_xo0.95": [
+    {
+      "run": 1,
+      "fitness": 31.475744247436523,
+      "time_seconds": 1384.28,
+      "curve_file": "probabilities_mut0.01_xo0.95_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 30.91360855102539,
+      "time_seconds": 1401.55,
+      "curve_file": "probabilities_mut0.01_xo0.95_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 31.79931640625,
+      "time_seconds": 1407.35,
+      "curve_file": "probabilities_mut0.01_xo0.95_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 32.14945602416992,
+      "time_seconds": 1436.85,
+      "curve_file": "probabilities_mut0.01_xo0.95_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 32.3861083984375,
+      "time_seconds": 1436.7,
+      "curve_file": "probabilities_mut0.01_xo0.95_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 31.048757553100586,
+      "time_seconds": 1395.56,
+      "curve_file": "probabilities_mut0.01_xo0.95_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 31.2080020904541,
+      "time_seconds": 1434.05,
+      "curve_file": "probabilities_mut0.01_xo0.95_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 31.87687873840332,
+      "time_seconds": 1449.23,
+      "curve_file": "probabilities_mut0.01_xo0.95_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 31.411409378051758,
+      "time_seconds": 1443.86,
+      "curve_file": "probabilities_mut0.01_xo0.95_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 30.60822868347168,
+      "time_seconds": 1447.18,
+      "curve_file": "probabilities_mut0.01_xo0.95_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 30.847829818725586,
+      "time_seconds": 1399.13,
+      "curve_file": "probabilities_mut0.01_xo0.95_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 31.707061767578125,
+      "time_seconds": 1481.88,
+      "curve_file": "probabilities_mut0.01_xo0.95_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 33.29878616333008,
+      "time_seconds": 1405.45,
+      "curve_file": "probabilities_mut0.01_xo0.95_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 31.421369552612305,
+      "time_seconds": 1409.54,
+      "curve_file": "probabilities_mut0.01_xo0.95_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 30.102357864379883,
+      "time_seconds": 1410.91,
+      "curve_file": "probabilities_mut0.01_xo0.95_run15_curve.npy"
+    }
+  ],
+  "mut0.15_xo0.95": [
+    {
+      "run": 1,
+      "fitness": 35.78419494628906,
+      "time_seconds": 717.64,
+      "curve_file": "probabilities_mut0.15_xo0.95_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 35.890647888183594,
+      "time_seconds": 725.16,
+      "curve_file": "probabilities_mut0.15_xo0.95_run02_curve.npy"
+    }
+  ]
+}
