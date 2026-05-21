@@ -1,0 +1,462 @@
+{
+  "VCF": [
+    {
+      "run": 1,
+      "fitness": 49.28282928466797,
+      "time_seconds": 1316.61,
+      "curve_file": "mutation_VCF_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 51.23594284057617,
+      "time_seconds": 1139.2,
+      "curve_file": "mutation_VCF_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 50.37651824951172,
+      "time_seconds": 1121.7,
+      "curve_file": "mutation_VCF_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 48.63152313232422,
+      "time_seconds": 1097.64,
+      "curve_file": "mutation_VCF_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 50.02192687988281,
+      "time_seconds": 1096.29,
+      "curve_file": "mutation_VCF_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 50.55825424194336,
+      "time_seconds": 1079.61,
+      "curve_file": "mutation_VCF_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 48.46131134033203,
+      "time_seconds": 1107.11,
+      "curve_file": "mutation_VCF_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 53.08064651489258,
+      "time_seconds": 1114.22,
+      "curve_file": "mutation_VCF_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 50.015785217285156,
+      "time_seconds": 1109.27,
+      "curve_file": "mutation_VCF_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 47.87578201293945,
+      "time_seconds": 1079.27,
+      "curve_file": "mutation_VCF_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 47.94462966918945,
+      "time_seconds": 1089.41,
+      "curve_file": "mutation_VCF_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 47.92177963256836,
+      "time_seconds": 1087.08,
+      "curve_file": "mutation_VCF_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 49.609649658203125,
+      "time_seconds": 1107.16,
+      "curve_file": "mutation_VCF_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 50.389015197753906,
+      "time_seconds": 1097.43,
+      "curve_file": "mutation_VCF_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 50.911861419677734,
+      "time_seconds": 1091.5,
+      "curve_file": "mutation_VCF_run15_curve.npy"
+    }
+  ],
+  "Full": [
+    {
+      "run": 1,
+      "fitness": 52.458736419677734,
+      "time_seconds": 1077.12,
+      "curve_file": "mutation_Full_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 51.15993118286133,
+      "time_seconds": 1113.02,
+      "curve_file": "mutation_Full_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 53.50499725341797,
+      "time_seconds": 1117.79,
+      "curve_file": "mutation_Full_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 53.309326171875,
+      "time_seconds": 1105.67,
+      "curve_file": "mutation_Full_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 52.376705169677734,
+      "time_seconds": 1107.15,
+      "curve_file": "mutation_Full_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 51.319725036621094,
+      "time_seconds": 1103.4,
+      "curve_file": "mutation_Full_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 52.01789474487305,
+      "time_seconds": 1117.03,
+      "curve_file": "mutation_Full_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 51.15220642089844,
+      "time_seconds": 1090.57,
+      "curve_file": "mutation_Full_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 50.68904495239258,
+      "time_seconds": 1117.43,
+      "curve_file": "mutation_Full_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 51.61992645263672,
+      "time_seconds": 1110.57,
+      "curve_file": "mutation_Full_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 54.303253173828125,
+      "time_seconds": 1090.02,
+      "curve_file": "mutation_Full_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 50.3999137878418,
+      "time_seconds": 1093.36,
+      "curve_file": "mutation_Full_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 52.15610122680664,
+      "time_seconds": 1105.91,
+      "curve_file": "mutation_Full_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 54.6015510559082,
+      "time_seconds": 1107.69,
+      "curve_file": "mutation_Full_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 50.88235855102539,
+      "time_seconds": 1110.34,
+      "curve_file": "mutation_Full_run15_curve.npy"
+    }
+  ],
+  "Gaussian": [
+    {
+      "run": 1,
+      "fitness": 42.9854736328125,
+      "time_seconds": 1104.51,
+      "curve_file": "mutation_Gaussian_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 44.22484588623047,
+      "time_seconds": 1103.34,
+      "curve_file": "mutation_Gaussian_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 45.22856140136719,
+      "time_seconds": 1035.66,
+      "curve_file": "mutation_Gaussian_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 43.696231842041016,
+      "time_seconds": 1139.3,
+      "curve_file": "mutation_Gaussian_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 43.44437026977539,
+      "time_seconds": 2509.5,
+      "curve_file": "mutation_Gaussian_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 42.51007843017578,
+      "time_seconds": 2556.85,
+      "curve_file": "mutation_Gaussian_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 44.062705993652344,
+      "time_seconds": 2446.51,
+      "curve_file": "mutation_Gaussian_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 43.79997634887695,
+      "time_seconds": 2065.13,
+      "curve_file": "mutation_Gaussian_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 42.6331672668457,
+      "time_seconds": 1586.11,
+      "curve_file": "mutation_Gaussian_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 43.7691650390625,
+      "time_seconds": 1659.29,
+      "curve_file": "mutation_Gaussian_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 42.212677001953125,
+      "time_seconds": 1904.46,
+      "curve_file": "mutation_Gaussian_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 40.88526153564453,
+      "time_seconds": 2373.32,
+      "curve_file": "mutation_Gaussian_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 42.91419219970703,
+      "time_seconds": 2360.61,
+      "curve_file": "mutation_Gaussian_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 43.671356201171875,
+      "time_seconds": 3009.17,
+      "curve_file": "mutation_Gaussian_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 41.363407135009766,
+      "time_seconds": 1542.66,
+      "curve_file": "mutation_Gaussian_run15_curve.npy"
+    }
+  ],
+  "ColorCreep": [
+    {
+      "run": 1,
+      "fitness": 47.319461822509766,
+      "time_seconds": 1557.3,
+      "curve_file": "mutation_ColorCreep_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 53.62210464477539,
+      "time_seconds": 1361.43,
+      "curve_file": "mutation_ColorCreep_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 48.56411361694336,
+      "time_seconds": 1233.42,
+      "curve_file": "mutation_ColorCreep_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 51.40640640258789,
+      "time_seconds": 1265.51,
+      "curve_file": "mutation_ColorCreep_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 49.569889068603516,
+      "time_seconds": 1351.92,
+      "curve_file": "mutation_ColorCreep_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 48.172088623046875,
+      "time_seconds": 1188.34,
+      "curve_file": "mutation_ColorCreep_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 50.06366729736328,
+      "time_seconds": 1166.58,
+      "curve_file": "mutation_ColorCreep_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 47.14746856689453,
+      "time_seconds": 1193.62,
+      "curve_file": "mutation_ColorCreep_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 51.44028854370117,
+      "time_seconds": 1090.29,
+      "curve_file": "mutation_ColorCreep_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 49.51366424560547,
+      "time_seconds": 1310.14,
+      "curve_file": "mutation_ColorCreep_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 49.685516357421875,
+      "time_seconds": 2125.74,
+      "curve_file": "mutation_ColorCreep_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 45.569358825683594,
+      "time_seconds": 2443.27,
+      "curve_file": "mutation_ColorCreep_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 48.3824462890625,
+      "time_seconds": 1081.84,
+      "curve_file": "mutation_ColorCreep_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 51.101646423339844,
+      "time_seconds": 1057.09,
+      "curve_file": "mutation_ColorCreep_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 50.5941162109375,
+      "time_seconds": 1065.88,
+      "curve_file": "mutation_ColorCreep_run15_curve.npy"
+    }
+  ],
+  "AdaptiveMut": [
+    {
+      "run": 1,
+      "fitness": 40.290523529052734,
+      "time_seconds": 1042.47,
+      "curve_file": "mutation_AdaptiveMut_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 40.70866775512695,
+      "time_seconds": 1088.3,
+      "curve_file": "mutation_AdaptiveMut_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 42.11128234863281,
+      "time_seconds": 1055.66,
+      "curve_file": "mutation_AdaptiveMut_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 43.98423767089844,
+      "time_seconds": 1037.49,
+      "curve_file": "mutation_AdaptiveMut_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 42.71762466430664,
+      "time_seconds": 1032.97,
+      "curve_file": "mutation_AdaptiveMut_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 43.1236572265625,
+      "time_seconds": 1034.45,
+      "curve_file": "mutation_AdaptiveMut_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 41.80763244628906,
+      "time_seconds": 1046.26,
+      "curve_file": "mutation_AdaptiveMut_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 39.5750617980957,
+      "time_seconds": 1042.5,
+      "curve_file": "mutation_AdaptiveMut_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 40.545040130615234,
+      "time_seconds": 1046.34,
+      "curve_file": "mutation_AdaptiveMut_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 40.855430603027344,
+      "time_seconds": 1047.25,
+      "curve_file": "mutation_AdaptiveMut_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 42.33984375,
+      "time_seconds": 1012.07,
+      "curve_file": "mutation_AdaptiveMut_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 41.91769027709961,
+      "time_seconds": 1036.05,
+      "curve_file": "mutation_AdaptiveMut_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 42.490604400634766,
+      "time_seconds": 1047.92,
+      "curve_file": "mutation_AdaptiveMut_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 42.74623107910156,
+      "time_seconds": 1031.86,
+      "curve_file": "mutation_AdaptiveMut_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 41.08490753173828,
+      "time_seconds": 1053.63,
+      "curve_file": "mutation_AdaptiveMut_run15_curve.npy"
+    }
+  ]
+}

@@ -61,7 +61,11 @@ def tournament_selection(population: list[Individual], maximization: bool = Fals
     else:
         best_individual = min(tournament, key=lambda ind: ind.fitness())
 
-    return best_individual.with_repr(best_individual.repr)
+    # Genome is identical => carry the cached fitness so the caller does
+    # not have to rerender + reevaluate when it reads .fitness() later.
+    copy = best_individual.with_repr(best_individual.repr)
+    copy._fitness = best_individual._fitness
+    return copy
 
 
 # =====================================
@@ -141,7 +145,11 @@ def fitness_sharing_tournament(
     else:
         best_idx = min(contenders_idx, key=lambda i: adjusted[i])
     best = population[best_idx]
-    return best.with_repr(best.repr)
+    # Carry the cached raw fitness across the copy (selection adjusts the
+    # score but the underlying fitness value is unchanged).
+    copy = best.with_repr(best.repr)
+    copy._fitness = best._fitness
+    return copy
 
 
 def apply_fitness_sharing(population):
@@ -246,12 +254,17 @@ def restricted_mating_selection(
             chosen = max(pool, key=lambda ind: ind.fitness())
         else:
             chosen = min(pool, key=lambda ind: ind.fitness())
-        return chosen.with_repr(chosen.repr)
+        # Carry cached fitness across (identical genome).
+        copy = chosen.with_repr(chosen.repr)
+        copy._fitness = chosen._fitness
+        return copy
 
     # Fallback: closest candidate to the centre of the allowed window.
     target = 0.5 * (min_distance + max_distance)
     chosen = min(zip(candidates, distances), key=lambda item: abs(item[1] - target))[0]
-    return chosen.with_repr(chosen.repr)
+    copy = chosen.with_repr(chosen.repr)
+    copy._fitness = chosen._fitness
+    return copy
 
 
 
@@ -300,8 +313,11 @@ def triangle_crossover(parent1, parent2, crossover_prob, verbose=False, **kwargs
         child2 = parent2.with_repr(child2_triangles)
 
     else: # If crossover does not occur, return deep copies of the parents
+        # Genomes unchanged => carry the cached fitness across.
         child1 = parent1.with_repr(parent1.repr)
+        child1._fitness = parent1._fitness
         child2 = parent2.with_repr(parent2.repr)
+        child2._fitness = parent2._fitness
 
     return child1, child2
 
