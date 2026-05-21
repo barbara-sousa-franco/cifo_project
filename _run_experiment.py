@@ -110,6 +110,7 @@ WINNERS = {
     "mut_fn":     adaptive_mutation_schedule,   # sec 5 winner
     "xo_fn":      uniform_crossover,            # sec 6 winner
     "mut_prob":   0.01,                         # sec 9 winner
+    "xo_prob":    0.90,                         
     # The default values match the Triangle.__init__ defaults so leaving
     # them None means "use whatever the constructor defaults to".
     "max_triangle_size": 0.25,
