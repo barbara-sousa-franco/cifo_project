@@ -1,0 +1,370 @@
+{
+  "size_1.0": [
+    {
+      "run": 1,
+      "fitness": 31.475744247436523,
+      "time_seconds": 731.97,
+      "curve_file": "size_size_1.0_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 30.91360855102539,
+      "time_seconds": 749.09,
+      "curve_file": "size_size_1.0_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 31.79931640625,
+      "time_seconds": 746.27,
+      "curve_file": "size_size_1.0_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 32.14945602416992,
+      "time_seconds": 799.64,
+      "curve_file": "size_size_1.0_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 32.3861083984375,
+      "time_seconds": 746.97,
+      "curve_file": "size_size_1.0_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 31.048757553100586,
+      "time_seconds": 728.87,
+      "curve_file": "size_size_1.0_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 31.2080020904541,
+      "time_seconds": 759.24,
+      "curve_file": "size_size_1.0_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 31.87687873840332,
+      "time_seconds": 745.9,
+      "curve_file": "size_size_1.0_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 31.411409378051758,
+      "time_seconds": 744.45,
+      "curve_file": "size_size_1.0_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 30.60822868347168,
+      "time_seconds": 748.34,
+      "curve_file": "size_size_1.0_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 30.847829818725586,
+      "time_seconds": 738.3,
+      "curve_file": "size_size_1.0_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 31.707061767578125,
+      "time_seconds": 769.37,
+      "curve_file": "size_size_1.0_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 33.29878616333008,
+      "time_seconds": 722.36,
+      "curve_file": "size_size_1.0_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 31.421369552612305,
+      "time_seconds": 731.32,
+      "curve_file": "size_size_1.0_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 30.102357864379883,
+      "time_seconds": 726.45,
+      "curve_file": "size_size_1.0_run15_curve.npy"
+    }
+  ],
+  "size_0.4": [
+    {
+      "run": 1,
+      "fitness": 32.266929626464844,
+      "time_seconds": 600.57,
+      "curve_file": "size_size_0.4_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 32.4833984375,
+      "time_seconds": 597.77,
+      "curve_file": "size_size_0.4_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 31.40477752685547,
+      "time_seconds": 596.71,
+      "curve_file": "size_size_0.4_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 32.28916549682617,
+      "time_seconds": 598.31,
+      "curve_file": "size_size_0.4_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 31.75464630126953,
+      "time_seconds": 598.99,
+      "curve_file": "size_size_0.4_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 32.310977935791016,
+      "time_seconds": 603.86,
+      "curve_file": "size_size_0.4_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 31.517850875854492,
+      "time_seconds": 600.54,
+      "curve_file": "size_size_0.4_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 31.520416259765625,
+      "time_seconds": 605.51,
+      "curve_file": "size_size_0.4_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 32.639076232910156,
+      "time_seconds": 604.77,
+      "curve_file": "size_size_0.4_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 32.039268493652344,
+      "time_seconds": 595.26,
+      "curve_file": "size_size_0.4_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 32.55782699584961,
+      "time_seconds": 603.51,
+      "curve_file": "size_size_0.4_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 31.777738571166992,
+      "time_seconds": 605.85,
+      "curve_file": "size_size_0.4_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 31.872325897216797,
+      "time_seconds": 594.28,
+      "curve_file": "size_size_0.4_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 31.36622428894043,
+      "time_seconds": 602.04,
+      "curve_file": "size_size_0.4_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 32.41569137573242,
+      "time_seconds": 603.23,
+      "curve_file": "size_size_0.4_run15_curve.npy"
+    }
+  ],
+  "size_0.25": [
+    {
+      "run": 1,
+      "fitness": 38.5058708190918,
+      "time_seconds": 554.38,
+      "curve_file": "size_size_0.25_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 37.757694244384766,
+      "time_seconds": 552.16,
+      "curve_file": "size_size_0.25_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 36.907737731933594,
+      "time_seconds": 553.77,
+      "curve_file": "size_size_0.25_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 36.579124450683594,
+      "time_seconds": 553.29,
+      "curve_file": "size_size_0.25_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 36.78874588012695,
+      "time_seconds": 550.5,
+      "curve_file": "size_size_0.25_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 36.92223358154297,
+      "time_seconds": 553.06,
+      "curve_file": "size_size_0.25_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 36.9460334777832,
+      "time_seconds": 554.4,
+      "curve_file": "size_size_0.25_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 37.18408203125,
+      "time_seconds": 555.7,
+      "curve_file": "size_size_0.25_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 35.82666015625,
+      "time_seconds": 553.82,
+      "curve_file": "size_size_0.25_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 36.31764602661133,
+      "time_seconds": 558.73,
+      "curve_file": "size_size_0.25_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 36.59913635253906,
+      "time_seconds": 553.93,
+      "curve_file": "size_size_0.25_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 37.382545471191406,
+      "time_seconds": 556.22,
+      "curve_file": "size_size_0.25_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 37.687381744384766,
+      "time_seconds": 562.81,
+      "curve_file": "size_size_0.25_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 36.827064514160156,
+      "time_seconds": 552.38,
+      "curve_file": "size_size_0.25_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 36.19488525390625,
+      "time_seconds": 559.17,
+      "curve_file": "size_size_0.25_run15_curve.npy"
+    }
+  ],
+  "size_0.15": [
+    {
+      "run": 1,
+      "fitness": 54.70633316040039,
+      "time_seconds": 523.6,
+      "curve_file": "size_size_0.15_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 53.443214416503906,
+      "time_seconds": 532.45,
+      "curve_file": "size_size_0.15_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 53.82027053833008,
+      "time_seconds": 529.51,
+      "curve_file": "size_size_0.15_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 52.54153823852539,
+      "time_seconds": 525.68,
+      "curve_file": "size_size_0.15_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 55.309486389160156,
+      "time_seconds": 533.79,
+      "curve_file": "size_size_0.15_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 55.32295608520508,
+      "time_seconds": 526.17,
+      "curve_file": "size_size_0.15_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 52.161216735839844,
+      "time_seconds": 529.48,
+      "curve_file": "size_size_0.15_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 51.79102325439453,
+      "time_seconds": 530.59,
+      "curve_file": "size_size_0.15_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 54.12745666503906,
+      "time_seconds": 524.51,
+      "curve_file": "size_size_0.15_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 52.41975021362305,
+      "time_seconds": 533.81,
+      "curve_file": "size_size_0.15_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 52.67151641845703,
+      "time_seconds": 525.57,
+      "curve_file": "size_size_0.15_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 55.90055847167969,
+      "time_seconds": 525.23,
+      "curve_file": "size_size_0.15_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 53.68982696533203,
+      "time_seconds": 529.76,
+      "curve_file": "size_size_0.15_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 54.9043083190918,
+      "time_seconds": 527.24,
+      "curve_file": "size_size_0.15_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 54.729129791259766,
+      "time_seconds": 521.69,
+      "curve_file": "size_size_0.15_run15_curve.npy"
+    }
+  ]
+}
