@@ -1,13 +1,17 @@
 # Utility functions 
 
+import json
 import random
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from time import time
+from pathlib import Path
 
 from itertools import combinations
 from scipy import stats
+
+from PIL import Image
 
 from ga import genetic_algorithm
 from solution import Individual
@@ -570,3 +574,167 @@ def plot_best_individuals(best_inds, configs, target_img, title_prefix):
 
     plt.tight_layout()
     plt.show()
+
+
+# ONE-CALL EVALUATION PIPELINE FOR A MULTI-CONFIG EXPERIMENT
+def evaluate_experiment(all_results, all_curves, best_inds, configs, config_key,
+                        target_img, title_prefix, maximization=False, alpha=0.05,
+                        plot_curves=True, plot_images=True):
+    """
+    Run the full post-experiment reporting pipeline in a single call.
+
+    Bundles the four steps used across every test section so that each section
+    in the notebook needs only ONE evaluation cell instead of four:
+      1. Build a tidy DataFrame from per-run results.
+      2. Run the statistical comparison (Kruskal-Wallis + post-hoc Mann-Whitney
+         with Bonferroni correction).
+      3. Plot mean ± std convergence curves and the boxplot of final fitnesses.
+      4. Plot the best individual per config against the target image.
+
+    Args:
+        - all_results (list[dict]): Output of run_experiment, or aggregated
+          from per-config run_single_experiment results (one dict per run).
+        - all_curves (dict): Maps config key -> list of per-run fitness curves.
+        - best_inds (dict): Maps config key -> best Individual across runs.
+        - configs (list[dict] | list[tuple]): Operator configs (each with
+          "name", optionally "fn") or (mut_prob, xo_prob) tuples.
+        - config_key (str): Column / key identifying each config in all_results.
+        - target_img (PIL.Image or np.ndarray): Reference image for the
+          best-individuals plot.
+        - title_prefix (str): Used in plot titles and section headers.
+        - maximization (bool): Direction of optimisation (default False).
+        - alpha (float): Significance level for statistical tests.
+        - plot_curves (bool): If False, skip the convergence + boxplot figure.
+        - plot_images (bool): If False, skip the best-individuals figure.
+
+    Returns:
+        - df (pd.DataFrame): Tidy per-run results.
+        - summary (pd.DataFrame): Per-config statistics + global test outcome.
+        - avg_curves (dict): Maps config -> mean fitness curve (np.ndarray).
+    """
+    # 1. DataFrame
+    df = pd.DataFrame(all_results)
+
+    # 2. Statistical comparison (prints the Kruskal-Wallis table + post-hoc)
+    summary, avg_curves = compare_all_configs(
+        all_results = all_results,
+        all_curves  = all_curves,
+        config_key  = config_key,
+        maximization= maximization,
+        alpha       = alpha,
+    )
+
+    # 3. Convergence (mean ± std) + final-fitness boxplot
+    if plot_curves:
+        plot_experiment_summary(
+            all_curves   = all_curves,
+            df           = df,
+            configs      = configs,
+            config_key   = config_key,
+            title_prefix = title_prefix,
+        )
+
+    # 4. Best individual per config against the target
+    if plot_images:
+        plot_best_individuals(
+            best_inds    = best_inds,
+            configs      = configs,
+            target_img   = target_img,
+            title_prefix = title_prefix,
+        )
+
+    return df, summary, avg_curves
+
+
+# LOAD PRE-COMPUTED EXPERIMENT ARTIFACTS FROM DISK
+ 
+class _LoadedIndividual:
+    """Lightweight stand-in for an Individual, built from saved artifacts.
+ 
+    Implements the minimal interface that ``plot_best_individuals`` and
+    ``evaluate_experiment`` rely on: ``.render()`` returns a PIL image of
+    the best individual, and ``.fitness()`` returns its scalar fitness.
+    """
+    def __init__(self, png_path, fitness_val):
+        self._img = Image.open(png_path).convert("RGB")
+        self._fit = float(fitness_val)
+ 
+    def render(self):
+        return self._img
+ 
+    def fitness(self):
+        return self._fit
+    
+def load_experiment_artifacts(checkpoint_path, config_names, config_key,
+                              best_png_template=None):
+    """
+    Load a pre-computed experiment from disk into the same (all_results,
+    all_curves, best_inds) triple that ``run_experiment`` returns, so it
+    can be fed directly into ``evaluate_experiment``.
+ 
+    Useful for sections whose experiment was run by a separate script
+    (e.g. ``_run_mutation.py``) because a full sweep is too slow to do
+    inline in the notebook.
+ 
+    Expected on-disk layout (paths relative to ``checkpoint_path.parent``):
+        - ``checkpoint_path``: JSON file structured as
+          ``{config_name: [{"run", "fitness", "time_seconds", "curve_file"}, ...]}``.
+        - ``curve_file``: ``.npy`` fitness curve per run (path stored in the checkpoint).
+        - best-individual PNGs named via ``best_png_template``.
+ 
+    Args:
+        - checkpoint_path (str | Path): Path to the JSON checkpoint.
+        - config_names (list[str]): Configs to load (must be keys in the checkpoint).
+        - config_key (str): Field name used in each result dict
+          (e.g. "mutation_type") — must match what ``evaluate_experiment`` expects.
+        - best_png_template (str, optional): Filename template for the best
+          PNG, with ``{name}`` placeholder. Defaults to
+          ``"{stem}_best_{name}.png"`` where ``{stem}`` is the checkpoint
+          filename with ``_checkpoint`` stripped (e.g. ``mutation_checkpoint.json``
+          -> ``mutation_best_{name}.png``).
+ 
+    Returns:
+        - all_results (list[dict]): One dict per run.
+        - all_curves (dict[str, list[list[float]]]): Per-config fitness curves.
+        - best_inds (dict[str, _LoadedIndividual]): Per-config best individual.
+    """
+    checkpoint_path = Path(checkpoint_path)
+    artifacts_dir = checkpoint_path.parent
+ 
+    with open(checkpoint_path, encoding="utf-8") as f:
+        checkpoint = json.load(f)
+ 
+    if best_png_template is None:
+        stem = checkpoint_path.stem.replace("_checkpoint", "")
+        best_png_template = f"{stem}_best_{{name}}.png"
+ 
+    all_results = []
+    all_curves  = {}
+    best_inds   = {}
+ 
+    for name in config_names:
+        runs = checkpoint[name]
+ 
+        # Flat per-run records — same format as run_experiment outputs.
+        for r in runs:
+            all_results.append({
+                config_key    : name,
+                "run"         : r["run"],
+                "best_fitness": r["fitness"],
+                "time_seconds": r["time_seconds"],
+            })
+ 
+        # Per-run fitness curves, ordered by run number.
+        all_curves[name] = [
+            np.load(artifacts_dir / r["curve_file"]).tolist()
+            for r in sorted(runs, key=lambda x: x["run"])
+        ]
+ 
+        # Best individual: lowest-fitness run's PNG.
+        best_run = min(runs, key=lambda r: r["fitness"])
+        best_inds[name] = _LoadedIndividual(
+            artifacts_dir / best_png_template.format(name=name),
+            best_run["fitness"],
+        )
+ 
+    return all_results, all_curves, best_inds
