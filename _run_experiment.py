@@ -110,12 +110,10 @@ WINNERS = {
     "mut_fn":     adaptive_mutation_schedule,   # sec 5 winner
     "xo_fn":      uniform_crossover,            # sec 6 winner
     "mut_prob":   0.01,                         # sec 9 winner
-    "xo_prob":    0.90,                         
-    # The default values match the Triangle.__init__ defaults so leaving
-    # them None means "use whatever the constructor defaults to".
-    "max_triangle_size": 0.25,
-    "alpha_min": 0.30,
-    "alpha_max": 0.80,
+    "xo_prob":    0.95,                         # sec 9 winner (31.48 RMSE)
+    "max_triangle_size": 1.00,                 # sec 7 winner (31.48 RMSE)
+    "alpha_min": 0.10,                         # sec 8 winner (30.18 RMSE)
+    "alpha_max": 0.40,                         # sec 8 winner (30.18 RMSE)
     # Sec 11 winner -- updated once the diversity phase runs.
     "diversity_kwargs": {
         "selection_algorithm": tournament_selection,
