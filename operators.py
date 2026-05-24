@@ -152,51 +152,6 @@ def fitness_sharing_tournament(
     return copy
 
 
-def apply_fitness_sharing(population):
-    """
-    Apply fitness sharing to the population.
-    Steps:
-        1. Calculate pairwise distances between all individuals
-        2. Normalize distances to [0, 1]
-        3. Calculate sharing coefficient S(i) = sum of distances from i to all j
-        4. Redefine fitness fs(i) = f(i) / S(i)
-
-    Parameters:
-    - population (list[Individual]): Current population.
-
-    Returns:
-    - list[float]: Shared fitness values for each individual.
-    """
-    n = len(population)
-
-    # 1. Calculate all pairwise distances between individuals
-    distances = np.zeros((n, n))
-    for i in range(n):
-        for j in range(i + 1, n):
-            d = _genome_distance(population[i], population[j])
-            distances[i, j] = d
-            distances[j, i] = d  # matriz simétrica
-
-    # 2. Normalize to [0, 1]
-    max_dist = distances.max()
-    if max_dist > 0:
-        distances = distances / max_dist
-
-    # 3. Calculate the sharing coefficient S(i) = sum of distances from i to all j
-
-    sharing_coefficients = distances.sum(axis=1)  # sum of distances for each individual
-
-    # 4. Redefine fitness fs(i) = f(i) / S(i)
-    raw_fitnesses = np.array([ind.fitness() for ind in population])
-    shared_fitnesses = raw_fitnesses / np.maximum(sharing_coefficients, 1e-10)  # avoid division by zero
-
-    return shared_fitnesses.tolist()
-
-
-
-
-
-
 
 # RESTRICTED MATING
 
@@ -282,44 +237,6 @@ def restricted_mating_selection(
 # =====================================
 # CROSSOVER:
 # =====================================
-
-def triangle_crossover(parent1, parent2, crossover_prob, verbose=False, **kwargs):
-
-    """
-    Performs single-point crossover between two parent individuals.
-    A random crossover point is selected, and the segments after this point are swapped between
-    the parents to create two children.
-
-    Parameters:
-    - parent1 (Individual): The first parent individual.
-    - parent2 (Individual): The second parent individual.
-    - crossover_prob (float): The probability of performing crossover.
-    - verbose (bool): If True, prints the resulting children.
-
-    Returns:
-    - tuple: A tuple containing the two child individuals resulting from crossover.
-
-    """
-    if random.random() <= crossover_prob:
-        # Select a random crossover point (between 1 and the number of triangles - 1)
-        point = random.randint(1, len(parent1.repr) - 1)
-
-        # Single-point crossover - swap the segments after the crossover point
-        child1_triangles = parent1.repr[:point] + parent2.repr[point:]
-        child2_triangles = parent2.repr[:point] + parent1.repr[point:]
-
-        # Create new child individuals with the new triangle lists
-        child1 = parent1.with_repr(child1_triangles)
-        child2 = parent2.with_repr(child2_triangles)
-
-    else: # If crossover does not occur, return deep copies of the parents
-        # Genomes unchanged => carry the cached fitness across.
-        child1 = parent1.with_repr(parent1.repr)
-        child1._fitness = parent1._fitness
-        child2 = parent2.with_repr(parent2.repr)
-        child2._fitness = parent2._fitness
-
-    return child1, child2
 
 
 # --- Helper: creates offspring with new representation ---
