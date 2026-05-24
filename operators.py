@@ -238,6 +238,43 @@ def restricted_mating_selection(
 # CROSSOVER:
 # =====================================
 
+def triangle_crossover(parent1, parent2, crossover_prob, verbose=False, **kwargs):
+
+    """
+    Performs single-point crossover between two parent individuals.
+    A random crossover point is selected, and the segments after this point are swapped between
+    the parents to create two children.
+
+    Parameters:
+    - parent1 (Individual): The first parent individual.
+    - parent2 (Individual): The second parent individual.
+    - crossover_prob (float): The probability of performing crossover.
+    - verbose (bool): If True, prints the resulting children.
+
+    Returns:
+    - tuple: A tuple containing the two child individuals resulting from crossover.
+
+    """
+    if random.random() <= crossover_prob:
+        # Select a random crossover point (between 1 and the number of triangles - 1)
+        point = random.randint(1, len(parent1.repr) - 1)
+
+        # Single-point crossover - swap the segments after the crossover point
+        child1_triangles = parent1.repr[:point] + parent2.repr[point:]
+        child2_triangles = parent2.repr[:point] + parent1.repr[point:]
+
+        # Create new child individuals with the new triangle lists
+        child1 = parent1.with_repr(child1_triangles)
+        child2 = parent2.with_repr(child2_triangles)
+
+    else: # If crossover does not occur, return deep copies of the parents
+        child1 = parent1.with_repr(parent1.repr)
+        child1._fitness = parent1._fitness
+        child2 = parent2.with_repr(parent2.repr)
+        child2._fitness = parent2._fitness
+
+    return child1, child2
+
 
 # --- Helper: creates offspring with new representation ---
 def _new_ind(parent, new_repr):
