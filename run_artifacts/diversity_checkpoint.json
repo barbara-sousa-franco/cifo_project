@@ -1,0 +1,646 @@
+{
+  "baseline": [
+    {
+      "run": 1,
+      "fitness": 29.35517120361328,
+      "time_seconds": 744.68,
+      "curve_file": "diversity_baseline_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 29.890085220336914,
+      "time_seconds": 756.48,
+      "curve_file": "diversity_baseline_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 31.191396713256836,
+      "time_seconds": 769.8,
+      "curve_file": "diversity_baseline_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 29.98690414428711,
+      "time_seconds": 741.27,
+      "curve_file": "diversity_baseline_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 30.705421447753906,
+      "time_seconds": 773.67,
+      "curve_file": "diversity_baseline_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 29.981977462768555,
+      "time_seconds": 737.93,
+      "curve_file": "diversity_baseline_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 29.744482040405273,
+      "time_seconds": 738.99,
+      "curve_file": "diversity_baseline_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 29.84573745727539,
+      "time_seconds": 726.71,
+      "curve_file": "diversity_baseline_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 30.88615608215332,
+      "time_seconds": 749.16,
+      "curve_file": "diversity_baseline_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 29.584182739257812,
+      "time_seconds": 752.95,
+      "curve_file": "diversity_baseline_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 30.436626434326172,
+      "time_seconds": 749.72,
+      "curve_file": "diversity_baseline_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 29.72332191467285,
+      "time_seconds": 755.94,
+      "curve_file": "diversity_baseline_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 30.877519607543945,
+      "time_seconds": 768.32,
+      "curve_file": "diversity_baseline_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 29.83332633972168,
+      "time_seconds": 758.44,
+      "curve_file": "diversity_baseline_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 30.666645050048828,
+      "time_seconds": 745.34,
+      "curve_file": "diversity_baseline_run15_curve.npy"
+    }
+  ],
+  "adaptive_mutation_rule": [
+    {
+      "run": 1,
+      "fitness": 29.559049606323242,
+      "time_seconds": 742.7,
+      "curve_file": "diversity_adaptive_mutation_rule_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 31.593698501586914,
+      "time_seconds": 762.74,
+      "curve_file": "diversity_adaptive_mutation_rule_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 30.331880569458008,
+      "time_seconds": 753.51,
+      "curve_file": "diversity_adaptive_mutation_rule_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 31.467741012573242,
+      "time_seconds": 741.51,
+      "curve_file": "diversity_adaptive_mutation_rule_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 31.01685905456543,
+      "time_seconds": 759.82,
+      "curve_file": "diversity_adaptive_mutation_rule_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 29.724910736083984,
+      "time_seconds": 716.09,
+      "curve_file": "diversity_adaptive_mutation_rule_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 30.98282241821289,
+      "time_seconds": 774.32,
+      "curve_file": "diversity_adaptive_mutation_rule_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 30.66948127746582,
+      "time_seconds": 762.19,
+      "curve_file": "diversity_adaptive_mutation_rule_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 31.532718658447266,
+      "time_seconds": 762.02,
+      "curve_file": "diversity_adaptive_mutation_rule_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 30.766149520874023,
+      "time_seconds": 741.27,
+      "curve_file": "diversity_adaptive_mutation_rule_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 30.552499771118164,
+      "time_seconds": 751.49,
+      "curve_file": "diversity_adaptive_mutation_rule_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 31.1319637298584,
+      "time_seconds": 763.48,
+      "curve_file": "diversity_adaptive_mutation_rule_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 31.16806411743164,
+      "time_seconds": 758.61,
+      "curve_file": "diversity_adaptive_mutation_rule_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 29.80747413635254,
+      "time_seconds": 767.63,
+      "curve_file": "diversity_adaptive_mutation_rule_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 30.967880249023438,
+      "time_seconds": 771.9,
+      "curve_file": "diversity_adaptive_mutation_rule_run15_curve.npy"
+    }
+  ],
+  "diversity_injection": [
+    {
+      "run": 1,
+      "fitness": 30.634544372558594,
+      "time_seconds": 820.47,
+      "curve_file": "diversity_diversity_injection_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 30.550073623657227,
+      "time_seconds": 799.68,
+      "curve_file": "diversity_diversity_injection_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 30.484424591064453,
+      "time_seconds": 821.24,
+      "curve_file": "diversity_diversity_injection_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 30.051054000854492,
+      "time_seconds": 819.99,
+      "curve_file": "diversity_diversity_injection_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 29.88967514038086,
+      "time_seconds": 818.2,
+      "curve_file": "diversity_diversity_injection_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 30.870033264160156,
+      "time_seconds": 832.9,
+      "curve_file": "diversity_diversity_injection_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 30.251262664794922,
+      "time_seconds": 820.15,
+      "curve_file": "diversity_diversity_injection_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 29.901432037353516,
+      "time_seconds": 819.68,
+      "curve_file": "diversity_diversity_injection_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 29.963991165161133,
+      "time_seconds": 813.12,
+      "curve_file": "diversity_diversity_injection_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 29.95746612548828,
+      "time_seconds": 811.5,
+      "curve_file": "diversity_diversity_injection_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 29.623350143432617,
+      "time_seconds": 818.08,
+      "curve_file": "diversity_diversity_injection_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 31.074508666992188,
+      "time_seconds": 866.86,
+      "curve_file": "diversity_diversity_injection_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 30.50609016418457,
+      "time_seconds": 848.86,
+      "curve_file": "diversity_diversity_injection_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 29.881942749023438,
+      "time_seconds": 815.15,
+      "curve_file": "diversity_diversity_injection_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 30.06642723083496,
+      "time_seconds": 796.55,
+      "curve_file": "diversity_diversity_injection_run15_curve.npy"
+    }
+  ],
+  "adaptive_and_injection": [
+    {
+      "run": 1,
+      "fitness": 31.175334930419922,
+      "time_seconds": 839.5,
+      "curve_file": "diversity_adaptive_and_injection_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 31.11762809753418,
+      "time_seconds": 840.92,
+      "curve_file": "diversity_adaptive_and_injection_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 31.322710037231445,
+      "time_seconds": 826.43,
+      "curve_file": "diversity_adaptive_and_injection_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 31.144094467163086,
+      "time_seconds": 794.39,
+      "curve_file": "diversity_adaptive_and_injection_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 31.72162628173828,
+      "time_seconds": 800.68,
+      "curve_file": "diversity_adaptive_and_injection_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 32.28823471069336,
+      "time_seconds": 779.39,
+      "curve_file": "diversity_adaptive_and_injection_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 31.624122619628906,
+      "time_seconds": 799.4,
+      "curve_file": "diversity_adaptive_and_injection_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 30.89781951904297,
+      "time_seconds": 817.9,
+      "curve_file": "diversity_adaptive_and_injection_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 31.654727935791016,
+      "time_seconds": 804.3,
+      "curve_file": "diversity_adaptive_and_injection_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 30.20009994506836,
+      "time_seconds": 791.11,
+      "curve_file": "diversity_adaptive_and_injection_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 31.625442504882812,
+      "time_seconds": 798.09,
+      "curve_file": "diversity_adaptive_and_injection_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 31.19940948486328,
+      "time_seconds": 818.61,
+      "curve_file": "diversity_adaptive_and_injection_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 29.8596248626709,
+      "time_seconds": 818.98,
+      "curve_file": "diversity_adaptive_and_injection_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 31.11804962158203,
+      "time_seconds": 809.32,
+      "curve_file": "diversity_adaptive_and_injection_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 32.20814895629883,
+      "time_seconds": 805.87,
+      "curve_file": "diversity_adaptive_and_injection_run15_curve.npy"
+    }
+  ],
+  "fitness_sharing": [
+    {
+      "run": 1,
+      "fitness": 30.15675163269043,
+      "time_seconds": 2499.06,
+      "curve_file": "diversity_fitness_sharing_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 29.535676956176758,
+      "time_seconds": 2514.05,
+      "curve_file": "diversity_fitness_sharing_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 31.124221801757812,
+      "time_seconds": 2525.51,
+      "curve_file": "diversity_fitness_sharing_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 29.322322845458984,
+      "time_seconds": 2456.07,
+      "curve_file": "diversity_fitness_sharing_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 30.139236450195312,
+      "time_seconds": 2443.46,
+      "curve_file": "diversity_fitness_sharing_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 30.109098434448242,
+      "time_seconds": 2416.86,
+      "curve_file": "diversity_fitness_sharing_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 30.527359008789062,
+      "time_seconds": 2453.54,
+      "curve_file": "diversity_fitness_sharing_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 29.859821319580078,
+      "time_seconds": 2476.86,
+      "curve_file": "diversity_fitness_sharing_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 30.625749588012695,
+      "time_seconds": 2487.71,
+      "curve_file": "diversity_fitness_sharing_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 30.096097946166992,
+      "time_seconds": 2434.18,
+      "curve_file": "diversity_fitness_sharing_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 30.553251266479492,
+      "time_seconds": 2421.68,
+      "curve_file": "diversity_fitness_sharing_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 30.78927993774414,
+      "time_seconds": 2561.5,
+      "curve_file": "diversity_fitness_sharing_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 30.940786361694336,
+      "time_seconds": 2429.96,
+      "curve_file": "diversity_fitness_sharing_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 30.14004898071289,
+      "time_seconds": 2433.93,
+      "curve_file": "diversity_fitness_sharing_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 30.817398071289062,
+      "time_seconds": 2392.97,
+      "curve_file": "diversity_fitness_sharing_run15_curve.npy"
+    }
+  ],
+  "restricted_mating": [
+    {
+      "run": 1,
+      "fitness": 28.23939323425293,
+      "time_seconds": 764.97,
+      "curve_file": "diversity_restricted_mating_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 27.541303634643555,
+      "time_seconds": 780.3,
+      "curve_file": "diversity_restricted_mating_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 27.761505126953125,
+      "time_seconds": 755.71,
+      "curve_file": "diversity_restricted_mating_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 27.782007217407227,
+      "time_seconds": 764.2,
+      "curve_file": "diversity_restricted_mating_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 27.372922897338867,
+      "time_seconds": 782.44,
+      "curve_file": "diversity_restricted_mating_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 28.713958740234375,
+      "time_seconds": 758.2,
+      "curve_file": "diversity_restricted_mating_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 27.1146297454834,
+      "time_seconds": 760.93,
+      "curve_file": "diversity_restricted_mating_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 27.957075119018555,
+      "time_seconds": 754.42,
+      "curve_file": "diversity_restricted_mating_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 27.400732040405273,
+      "time_seconds": 759.11,
+      "curve_file": "diversity_restricted_mating_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 28.45913314819336,
+      "time_seconds": 793.68,
+      "curve_file": "diversity_restricted_mating_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 26.858814239501953,
+      "time_seconds": 824.9,
+      "curve_file": "diversity_restricted_mating_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 27.189878463745117,
+      "time_seconds": 801.52,
+      "curve_file": "diversity_restricted_mating_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 27.157487869262695,
+      "time_seconds": 756.28,
+      "curve_file": "diversity_restricted_mating_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 27.684093475341797,
+      "time_seconds": 783.8,
+      "curve_file": "diversity_restricted_mating_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 26.635967254638672,
+      "time_seconds": 798.82,
+      "curve_file": "diversity_restricted_mating_run15_curve.npy"
+    }
+  ],
+  "sharing_and_restricted": [
+    {
+      "run": 1,
+      "fitness": 27.573143005371094,
+      "time_seconds": 1625.04,
+      "curve_file": "diversity_sharing_and_restricted_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 27.510705947875977,
+      "time_seconds": 1758.99,
+      "curve_file": "diversity_sharing_and_restricted_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 27.321014404296875,
+      "time_seconds": 1680.59,
+      "curve_file": "diversity_sharing_and_restricted_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 28.444990158081055,
+      "time_seconds": 1684.68,
+      "curve_file": "diversity_sharing_and_restricted_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 27.95235252380371,
+      "time_seconds": 1641.86,
+      "curve_file": "diversity_sharing_and_restricted_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 28.781492233276367,
+      "time_seconds": 1662.08,
+      "curve_file": "diversity_sharing_and_restricted_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 27.2596492767334,
+      "time_seconds": 1696.52,
+      "curve_file": "diversity_sharing_and_restricted_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 27.897972106933594,
+      "time_seconds": 1703.39,
+      "curve_file": "diversity_sharing_and_restricted_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 28.460073471069336,
+      "time_seconds": 1700.06,
+      "curve_file": "diversity_sharing_and_restricted_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 27.951778411865234,
+      "time_seconds": 1690.66,
+      "curve_file": "diversity_sharing_and_restricted_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 26.233455657958984,
+      "time_seconds": 1626.91,
+      "curve_file": "diversity_sharing_and_restricted_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 26.974775314331055,
+      "time_seconds": 1628.95,
+      "curve_file": "diversity_sharing_and_restricted_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 27.211509704589844,
+      "time_seconds": 1694.23,
+      "curve_file": "diversity_sharing_and_restricted_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 27.521249771118164,
+      "time_seconds": 1703.85,
+      "curve_file": "diversity_sharing_and_restricted_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 27.425033569335938,
+      "time_seconds": 1616.71,
+      "curve_file": "diversity_sharing_and_restricted_run15_curve.npy"
+    }
+  ]
+}

@@ -114,9 +114,13 @@ WINNERS = {
     "max_triangle_size": 1.00,                 # sec 7 winner (31.48 RMSE)
     "alpha_min": 0.10,                         # sec 8 winner (30.18 RMSE)
     "alpha_max": 0.40,                         # sec 8 winner (30.18 RMSE)
-    # Sec 11 winner -- updated once the diversity phase runs.
+    # Sec 11 winner: restricted_mating beat baseline by 2.59 RMSE points
+    # (27.59 vs 30.18). fitness_sharing on its own adds nothing; combined
+    # with restricted_mating it ties (27.64 vs 27.59), so we keep just the
+    # mate selector for simplicity.
     "diversity_kwargs": {
         "selection_algorithm": tournament_selection,
+        "mate_selection_algorithm": restricted_mating_selection,
     },
 }
 
@@ -160,24 +164,27 @@ class Phase:
 # every machine produces the same list).
 # --------------------------------------------------------------------------
 def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
-    """Random sampling near the current winners for mut_prob, xo_prob,
-    max_triangle_size and the alpha window.
+    """Random sampling around the winners found in earlier phases.
 
-    Centred on the current WINNERS but exploring small neighbourhoods:
-        mut_prob          : U(0.005, 0.04)
-        xo_prob           : U(0.85, 1.00)
-        max_triangle_size : U(0.15, 0.40)
-        alpha_min         : U(0.10, 0.40)
-        alpha_max         : alpha_min + U(0.30, 0.60)   (always > alpha_min)
+    Ranges were updated to centre on the actual winners (sec 5/6/7/8/9):
+        mut_prob          : U(0.005, 0.03)    centred near 0.01 (sec 9 winner)
+        xo_prob           : U(0.90, 1.00)     centred near 0.95 (sec 9 winner)
+        max_triangle_size : U(0.40, 1.00)     covers winner (1.00, sec 7) and
+                                              next-best (0.40)
+        alpha_min         : U(0.05, 0.20)     winner = 0.10 (sec 8), explore
+                                              both sides
+        alpha_max         : alpha_min + U(0.20, 0.50)   winner window was 0.30
+                                              wide ([0.10, 0.40]); try both
+                                              narrower and slightly wider
     """
     rng = random.Random(SEED + 999)
     configs = []
     for i in range(n_samples):
-        mut_p = round(rng.uniform(0.005, 0.04), 4)
-        xo_p  = round(rng.uniform(0.85, 1.00), 4)
-        size  = round(rng.uniform(0.15, 0.40), 3)
-        a_min = round(rng.uniform(0.10, 0.40), 3)
-        a_max = round(min(0.95, a_min + rng.uniform(0.30, 0.60)), 3)
+        mut_p = round(rng.uniform(0.005, 0.03), 4)
+        xo_p  = round(rng.uniform(0.90, 1.00), 4)
+        size  = round(rng.uniform(0.40, 1.00), 3)
+        a_min = round(rng.uniform(0.05, 0.20), 3)
+        a_max = round(min(0.95, a_min + rng.uniform(0.20, 0.50)), 3)
         configs.append({
             "name": f"sample_{i:02d}",
             "mut_prob": mut_p,
