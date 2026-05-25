@@ -481,7 +481,7 @@ def plot_experiment_summary(all_curves, df, configs, config_key, title_prefix, c
 
 
 # FUNCTION FOR PLOTTING EXPERIMENT RESULTS - BEST INDIVIDUALS VS TARGET
-def plot_best_individuals(best_inds, configs, target_img, title_prefix):
+def plot_best_individuals(best_inds, configs, target_img, title_prefix, ncols=6):
     """
     Display the target image alongside the best evolved individual(s). This function supports two modes:
     1. Single individual mode:
@@ -509,6 +509,9 @@ def plot_best_individuals(best_inds, configs, target_img, title_prefix):
             The target image displayed as reference.
         - title_prefix (str):
             Figure title prefix.
+        - ncols (int):
+            Max panels per row in multi-config mode (default 6,
+          which includes the Target panel — so up to 5 configs on the first row).
     """
 
     # Single individual mode
@@ -547,13 +550,23 @@ def plot_best_individuals(best_inds, configs, target_img, title_prefix):
         keys   = configs
         labels = [f"mut={k[0]} xo={k[1]}" for k in keys]
 
-    fig, axes = plt.subplots(1, len(keys) + 1, figsize=(4 * (len(keys) + 1), 4))
+    # Panel 0 = Target, then one per config.
+    n_panels = len(keys) + 1
+    ncols    = min(ncols, n_panels)
+    nrows    = (n_panels + ncols - 1) // ncols
 
-    axes[0].imshow(target_img)
-    axes[0].set_title("Target", fontsize=12)
-    axes[0].axis("off")
+    fig, axes = plt.subplots(
+        nrows, ncols,
+        figsize=(3 * ncols, 4 * nrows),
+        squeeze=False,
+    )
+    axes_flat = axes.ravel()
 
-    for ax, key, label in zip(axes[1:], keys, labels):
+    axes_flat[0].imshow(target_img)
+    axes_flat[0].set_title("Target", fontsize=12)
+    axes_flat[0].axis("off")
+
+    for ax, key, label in zip(axes_flat[1:], keys, labels):
 
         ind = best_inds[key]
 
@@ -565,6 +578,11 @@ def plot_best_individuals(best_inds, configs, target_img, title_prefix):
         )
 
         ax.axis("off")
+    
+    # Hide any unused panels at the end of the grid.
+    for ax in axes_flat[n_panels:]:
+        ax.axis("off")
+
 
     fig.suptitle(
         f"{title_prefix} — Best Individual per Configuration",
@@ -579,7 +597,7 @@ def plot_best_individuals(best_inds, configs, target_img, title_prefix):
 # ONE-CALL EVALUATION PIPELINE FOR A MULTI-CONFIG EXPERIMENT
 def evaluate_experiment(all_results, all_curves, best_inds, configs, config_key,
                         target_img, title_prefix, maximization=False, alpha=0.05,
-                        plot_curves=True, plot_images=True):
+                        plot_curves=True, plot_images=True, ncols=6):
     """
     Run the full post-experiment reporting pipeline in a single call.
 
@@ -641,10 +659,138 @@ def evaluate_experiment(all_results, all_curves, best_inds, configs, config_key,
             configs      = configs,
             target_img   = target_img,
             title_prefix = title_prefix,
+            ncols         = ncols
         )
 
     return df, summary, avg_curves
 
+# FUNCTIONS FOR HORIZONTAL BOX PLOT FOR BETTER VISUALISATION OF MULTIPLE CONFIGURATIONS
+def plot_experiment_summary_h(all_curves, df, configs, config_key, title_prefix,
+                              colors=None, errorbar_every=None):
+    """
+    Same as plot_experiment_summary, but the final-fitness boxplot is
+    horizontal so long config names (e.g. 'mut0.01_xo0.85') stay readable.
+    """
+    if colors is None:
+        colors = ["#2196F3", "#F44336", "#4CAF50", "#FF9800", "#9C27B0",
+                  "#00BCD4", "#FFC107", "#795548", "#607D8B"]
+
+    if configs and isinstance(configs[0], dict):
+        keys   = [c["name"] for c in configs]
+        labels = keys
+    else:
+        keys   = configs
+        labels = [f"mut={k[0]} xo={k[1]}" for k in keys]
+
+    max_gens = len(next(iter(all_curves.values()))[0])
+    if errorbar_every is None:
+        errorbar_every = max(1, max_gens // 20)
+
+    # Slightly wider/taller than the vertical version so 9 horizontal
+    # boxes don't get cramped when there are many configs.
+    fig, axes = plt.subplots(
+        1, 2,
+        figsize=(16, max(5, 0.5 * len(keys) + 2)),
+        gridspec_kw={"width_ratios": [1.4, 1]},
+    )
+
+    # --- Plot 1: mean ± std convergence (unchanged) ---
+    ax = axes[0]
+    for idx, (key, label) in enumerate(zip(keys, labels)):
+        curves = np.array(all_curves[key])
+        mean   = curves.mean(axis=0)
+        std    = curves.std(axis=0)
+        gens   = np.arange(1, max_gens + 1)
+        color  = colors[idx % len(colors)]
+
+        ax.plot(gens, mean, label=label, color=color, linewidth=2)
+
+        eb_idx = np.arange(0, max_gens, errorbar_every)
+        ax.errorbar(
+            gens[eb_idx], mean[eb_idx], yerr=std[eb_idx],
+            fmt="none", ecolor=color,
+            elinewidth=1.2, capsize=4, capthick=1.2, alpha=0.8,
+        )
+
+    ax.set_xlabel("Generation", fontsize=12)
+    ax.set_ylabel("Avg Best Fitness (RMSE)", fontsize=12)
+    ax.set_title(f"Convergence by {title_prefix}\n(mean ± std)", fontsize=13)
+    ax.legend(fontsize=10, loc="upper right")
+    ax.grid(True, alpha=0.3)
+
+    # --- Plot 2: HORIZONTAL boxplot of final fitness ---
+    ax = axes[1]
+    groups = [df[df[config_key] == key]["best_fitness"].values for key in keys]
+
+    bp = ax.boxplot(
+        groups,
+        vert=False,                # <-- horizontal
+        labels=labels,
+        patch_artist=True,
+        medianprops=dict(color="black", linewidth=1.5),
+        flierprops=dict(marker="o", markersize=4, markerfacecolor="white"),
+    )
+
+    for patch, color in zip(bp["boxes"], colors):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.6)
+
+    ax.set_xlabel("Final Best Fitness (RMSE)", fontsize=12)
+    ax.set_title(
+        f"Final Fitness Distribution\n"
+        f"({len(next(iter(all_curves.values())))} runs per configuration)",
+        fontsize=13,
+    )
+    ax.invert_yaxis()   # first config on top (more natural reading order)
+    ax.grid(True, axis="x", alpha=0.3)
+
+    fig.suptitle(f"{title_prefix} Comparison", fontsize=14, fontweight="bold")
+    plt.tight_layout()
+    plt.show()
+
+
+def evaluate_experiment_h(all_results, all_curves, best_inds, configs, config_key,
+                          target_img, title_prefix, maximization=False, alpha=0.05,
+                          plot_curves=True, plot_images=True, ncols=6):
+    """
+    Drop-in replacement for evaluate_experiment that uses the horizontal-
+    boxplot version of the summary plot (plot_experiment_summary_h).
+    Everything else (DataFrame, Kruskal-Wallis + post-hoc, best-individuals
+    figure) is identical to the original.
+    """
+    # 1. DataFrame
+    df = pd.DataFrame(all_results)
+
+    # 2. Statistical comparison (Kruskal-Wallis + post-hoc Mann-Whitney)
+    summary, avg_curves = compare_all_configs(
+        all_results = all_results,
+        all_curves  = all_curves,
+        config_key  = config_key,
+        maximization= maximization,
+        alpha       = alpha,
+    )
+
+    # 3. Convergence (mean ± std) + HORIZONTAL final-fitness boxplot
+    if plot_curves:
+        plot_experiment_summary_h(
+            all_curves   = all_curves,
+            df           = df,
+            configs      = configs,
+            config_key   = config_key,
+            title_prefix = title_prefix,
+        )
+
+    # 4. Best individual per config against the target
+    if plot_images:
+        plot_best_individuals(
+            best_inds    = best_inds,
+            configs      = configs,
+            target_img   = target_img,
+            title_prefix = title_prefix,
+            ncols         = ncols
+        )
+
+    return df, summary, avg_curves
 
 # LOAD PRE-COMPUTED EXPERIMENT ARTIFACTS FROM DISK
  
