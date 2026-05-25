@@ -1,0 +1,206 @@
+{
+  "sample_00": {
+    "n_runs": 5,
+    "avg": 26.902714920043945,
+    "std": 0.25142272850473774,
+    "min": 26.546022415161133,
+    "max": 27.2814998626709,
+    "params": {
+      "mut_prob": 0.0083,
+      "xo_prob": 0.993,
+      "max_triangle_size": 0.617,
+      "alpha_min": 0.172,
+      "alpha_max": 0.535,
+      "tournament_size": 5,
+      "mating_min_dist": 0.0081,
+      "mating_max_dist": 0.497
+    }
+  },
+  "sample_01": {
+    "n_runs": 5,
+    "avg": 26.924170303344727,
+    "std": 0.45719306261614223,
+    "min": 26.38039207458496,
+    "max": 27.735044479370117,
+    "params": {
+      "mut_prob": 0.0138,
+      "xo_prob": 0.9433,
+      "max_triangle_size": 0.855,
+      "alpha_min": 0.122,
+      "alpha_max": 0.406,
+      "tournament_size": 5,
+      "mating_min_dist": 0.0219,
+      "mating_max_dist": 0.237
+    }
+  },
+  "sample_02": {
+    "n_runs": 5,
+    "avg": 27.219020080566406,
+    "std": 0.31273249939694203,
+    "min": 26.647634506225586,
+    "max": 27.547182083129883,
+    "params": {
+      "mut_prob": 0.0149,
+      "xo_prob": 0.9971,
+      "max_triangle_size": 0.673,
+      "alpha_min": 0.059,
+      "alpha_max": 0.515,
+      "tournament_size": 2,
+      "mating_min_dist": 0.0065,
+      "mating_max_dist": 0.294
+    }
+  },
+  "sample_03": {
+    "n_runs": 5,
+    "avg": 27.642453002929688,
+    "std": 0.39845432565721606,
+    "min": 27.314315795898438,
+    "max": 28.323143005371094,
+    "params": {
+      "mut_prob": 0.0196,
+      "xo_prob": 0.9129,
+      "max_triangle_size": 0.889,
+      "alpha_min": 0.121,
+      "alpha_max": 0.466,
+      "tournament_size": 3,
+      "mating_min_dist": 0.0322,
+      "mating_max_dist": 0.225
+    }
+  },
+  "sample_04": {
+    "n_runs": 5,
+    "avg": 28.283610916137697,
+    "std": 0.5222898616987398,
+    "min": 27.651744842529297,
+    "max": 28.969900131225586,
+    "params": {
+      "mut_prob": 0.0075,
+      "xo_prob": 0.9863,
+      "max_triangle_size": 0.809,
+      "alpha_min": 0.129,
+      "alpha_max": 0.609,
+      "tournament_size": 2,
+      "mating_min_dist": 0.0246,
+      "mating_max_dist": 0.226
+    }
+  },
+  "sample_05": {
+    "n_runs": 5,
+    "avg": 26.50838508605957,
+    "std": 0.45726505438080695,
+    "min": 25.895009994506836,
+    "max": 27.29531478881836,
+    "params": {
+      "mut_prob": 0.0194,
+      "xo_prob": 0.9931,
+      "max_triangle_size": 0.61,
+      "alpha_min": 0.145,
+      "alpha_max": 0.475,
+      "tournament_size": 5,
+      "mating_min_dist": 0.0199,
+      "mating_max_dist": 0.428
+    }
+  },
+  "sample_06": {
+    "n_runs": 5,
+    "avg": 27.142435836791993,
+    "std": 0.2187929268204541,
+    "min": 26.799266815185547,
+    "max": 27.435543060302734,
+    "params": {
+      "mut_prob": 0.0103,
+      "xo_prob": 0.9173,
+      "max_triangle_size": 0.488,
+      "alpha_min": 0.196,
+      "alpha_max": 0.497,
+      "tournament_size": 5,
+      "mating_min_dist": 0.0145,
+      "mating_max_dist": 0.264
+    }
+  },
+  "sample_07": {
+    "n_runs": 5,
+    "avg": 28.58943977355957,
+    "std": 0.21199152583570804,
+    "min": 28.344640731811523,
+    "max": 28.93401527404785,
+    "params": {
+      "mut_prob": 0.0088,
+      "xo_prob": 0.906,
+      "max_triangle_size": 0.454,
+      "alpha_min": 0.053,
+      "alpha_max": 0.256,
+      "tournament_size": 3,
+      "mating_min_dist": 0.0179,
+      "mating_max_dist": 0.262
+    }
+  },
+  "sample_08": {
+    "n_runs": 5,
+    "avg": 29.278256988525392,
+    "std": 0.480644848063115,
+    "min": 28.624645233154297,
+    "max": 29.799205780029297,
+    "params": {
+      "mut_prob": 0.0053,
+      "xo_prob": 0.9652,
+      "max_triangle_size": 0.481,
+      "alpha_min": 0.051,
+      "alpha_max": 0.332,
+      "tournament_size": 3,
+      "mating_min_dist": 0.0498,
+      "mating_max_dist": 0.355
+    }
+  },
+  "sample_09": {
+    "n_runs": 5,
+    "avg": 27.95188331604004,
+    "std": 0.24263127632628445,
+    "min": 27.718149185180664,
+    "max": 28.334461212158203,
+    "params": {
+      "mut_prob": 0.0298,
+      "xo_prob": 0.9498,
+      "max_triangle_size": 0.509,
+      "alpha_min": 0.099,
+      "alpha_max": 0.512,
+      "tournament_size": 2,
+      "mating_min_dist": 0.0378,
+      "mating_max_dist": 0.318
+    }
+  },
+  "sample_10": {
+    "n_runs": 5,
+    "avg": 27.81178550720215,
+    "std": 0.3689355600269124,
+    "min": 27.128070831298828,
+    "max": 28.113454818725586,
+    "params": {
+      "mut_prob": 0.0144,
+      "xo_prob": 0.9459,
+      "max_triangle_size": 0.689,
+      "alpha_min": 0.16,
+      "alpha_max": 0.373,
+      "tournament_size": 2,
+      "mating_min_dist": 0.0414,
+      "mating_max_dist": 0.492
+    }
+  },
+  "sample_11": {
+    "n_runs": 5,
+    "avg": 26.656647872924804,
+    "std": 0.22148297843945358,
+    "min": 26.34617042541504,
+    "max": 26.941513061523438,
+    "params": {
+      "mut_prob": 0.0123,
+      "xo_prob": 0.9891,
+      "max_triangle_size": 0.573,
+      "alpha_min": 0.178,
+      "alpha_max": 0.521,
+      "tournament_size": 5,
+      "mating_min_dist": 0.0104,
+      "mating_max_dist": 0.348
+    }
+  }
+}
