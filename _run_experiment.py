@@ -8,11 +8,13 @@ Phases (in dependency order):
   alpha           sec 8 -- 5 (alpha_min, alpha_max) windows
   diversity       sec 11 -- 7 anti-convergence mechanisms (incl. fitness sharing,
                   restricted mating)
-  ciede2000       sec 12 -- challenge: RMSE vs CIEDE2000 fitness
   random_search   refinement -- random sampling around the winning probs +
                   size + alpha to look for nearby optima
+  validate_top3   refinement -- 15-run validation of sample_02/05/11
   final_run       sec 10 -- THE final run: pop=500, gens=15000, all winners
                   plugged in. Long run, single best image of the project.
+  ciede2000       sec 12 -- Challenge: one CIEDE2000 run with the same final
+                  setup/budget, then visual comparison against final_run.
 
 Every phase writes per-run results to run_artifacts/<phase>_checkpoint.json
 as soon as each run finishes, so a crash/restart just resumes.
@@ -27,7 +29,7 @@ Run ALL phases in default order:
 Run a subset:
     python _run_experiment.py mutation crossover
     python _run_experiment.py probabilities
-    python _run_experiment.py random_search final_run
+    python _run_experiment.py random_search validate_top3 final_run ciede2000
 
 Filter configs within the chosen phases (case-insensitive):
     python _run_experiment.py mutation --only Gaussian AdaptiveMut
@@ -39,6 +41,7 @@ Outputs (per phase, under run_artifacts/):
   <phase>_results.json         Final aggregated summary (avg/std/min/max)
   <phase>_<config>_run<NN>_curve.npy   Per-generation fitness curve
   <phase>_best_<config>.png    Best-of-config rendered image
+  final_vs_challenge.png       Side-by-side comparison once both final images exist
 ==========================================================================
 
 Winners assumed (used as fixed values in later phases):
@@ -48,10 +51,13 @@ Winners assumed (used as fixed values in later phases):
 
 These are encoded in the WINNERS dict at the top of the file so they can
 be updated in one place if the real winners differ.
+The post-random-search setup used by Challenge/final_run is encoded in
+FINAL_SETUP so it can be swapped after validate_top3 finishes.
 """
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import random
 import sys
@@ -61,7 +67,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 
 # Silence per-generation "Generation X/Y" prints from ga.py.
 import builtins as _b
@@ -105,6 +111,9 @@ SEED = 23
 POP = 100
 GENS = 500
 N_RUNS = 15
+FINAL_POP = 500
+FINAL_GENS = 15000
+FINAL_N_RUNS = 1
 
 WINNERS = {
     "mut_fn":     adaptive_mutation_schedule,   # sec 5 winner
@@ -159,6 +168,25 @@ class Phase:
     fitness_metric: str = "rmse"
 
 
+def _make_tournament_selection(tournament_size: int) -> Callable:
+    return functools.partial(tournament_selection, tournament_size=tournament_size)
+
+
+def _make_restricted_mating_selection(
+    min_distance: float,
+    max_distance: float,
+    *,
+    tournament_size: int | None = None,
+) -> Callable:
+    kwargs: dict[str, Any] = {
+        "min_distance": min_distance,
+        "max_distance": max_distance,
+    }
+    if tournament_size is not None:
+        kwargs["base_selection"] = _make_tournament_selection(tournament_size)
+    return functools.partial(restricted_mating_selection, **kwargs)
+
+
 # --------------------------------------------------------------------------
 # Helper: build the random_search configs deterministically (seeded RNG so
 # every machine produces the same list).
@@ -166,7 +194,11 @@ class Phase:
 def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
     """Random sampling around the winners found in earlier phases.
 
-    Ranges were updated to centre on the actual winners (sec 5/6/7/8/9):
+    Eight dimensions varied. The first five centre on the winners from
+    sec 5/6/7/8/9; the last three explore parameters that were never
+    tuned anywhere else (tournament size and the restricted mating
+    distance window, since restricted_mating won the diversity phase).
+
         mut_prob          : U(0.005, 0.03)    centred near 0.01 (sec 9 winner)
         xo_prob           : U(0.90, 1.00)     centred near 0.95 (sec 9 winner)
         max_triangle_size : U(0.40, 1.00)     covers winner (1.00, sec 7) and
@@ -176,15 +208,28 @@ def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
         alpha_max         : alpha_min + U(0.20, 0.50)   winner window was 0.30
                                               wide ([0.10, 0.40]); try both
                                               narrower and slightly wider
+        tournament_size   : choice(2, 3, 5)   never tuned (always 2)
+        mating_min_dist   : U(0.005, 0.05)    restricted_mating default = 0.012
+        mating_max_dist   : U(0.20, 0.50)     restricted_mating default = 0.30
     """
     rng = random.Random(SEED + 999)
     configs = []
     for i in range(n_samples):
-        mut_p = round(rng.uniform(0.005, 0.03), 4)
-        xo_p  = round(rng.uniform(0.90, 1.00), 4)
-        size  = round(rng.uniform(0.40, 1.00), 3)
-        a_min = round(rng.uniform(0.05, 0.20), 3)
-        a_max = round(min(0.95, a_min + rng.uniform(0.20, 0.50)), 3)
+        mut_p     = round(rng.uniform(0.005, 0.03), 4)
+        xo_p      = round(rng.uniform(0.90, 1.00), 4)
+        size      = round(rng.uniform(0.40, 1.00), 3)
+        a_min     = round(rng.uniform(0.05, 0.20), 3)
+        a_max     = round(min(0.95, a_min + rng.uniform(0.20, 0.50)), 3)
+        tour_size = rng.choice([2, 3, 5])
+        mate_min  = round(rng.uniform(0.005, 0.05), 4)
+        mate_max  = round(rng.uniform(0.20, 0.50), 3)
+
+        # Build configured selection + mate-selection functions via partial,
+        # so the GA can keep calling them with (population, maximization)
+        # while the per-sample hyperparameters are baked in.
+        selection_fn = _make_tournament_selection(tour_size)
+        mate_fn      = _make_restricted_mating_selection(mate_min, mate_max)
+
         configs.append({
             "name": f"sample_{i:02d}",
             "mut_prob": mut_p,
@@ -194,16 +239,70 @@ def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
                 "alpha_min": a_min,
                 "alpha_max": a_max,
             },
+            "selection_algorithm": selection_fn,
+            "ga_kwargs": {"mate_selection_algorithm": mate_fn},
             # Stash the raw values too for the final summary table.
             "_params": {
-                "mut_prob": mut_p,
-                "xo_prob":  xo_p,
+                "mut_prob":          mut_p,
+                "xo_prob":           xo_p,
                 "max_triangle_size": size,
-                "alpha_min": a_min,
-                "alpha_max": a_max,
+                "alpha_min":         a_min,
+                "alpha_max":         a_max,
+                "tournament_size":   tour_size,
+                "mating_min_dist":   mate_min,
+                "mating_max_dist":   mate_max,
             },
         })
     return configs
+
+
+# --------------------------------------------------------------------------
+# Provisional post-random-search setup used by the final run and Challenge.
+#
+# At the time this was wired, sample_05 was the best exploratory random_search
+# config and used tournament_size=5. validate_top3 may still move these values
+# to sample_11 or another config; if that happens, update this one dict and both
+# final_run + ciede2000 follow automatically.
+# --------------------------------------------------------------------------
+FINAL_SETUP: dict[str, Any] = {
+    "source": "sample_05",
+    "mut_prob": 0.0194,
+    "xo_prob": 0.9931,
+    "max_triangle_size": 0.610,
+    "alpha_min": 0.145,
+    "alpha_max": 0.475,
+    "tournament_size": 5,
+    "mating_min_dist": 0.0199,
+    "mating_max_dist": 0.428,
+}
+
+
+def _final_individual_kwargs() -> dict[str, Any]:
+    return {
+        "max_triangle_size": FINAL_SETUP["max_triangle_size"],
+        "alpha_min": FINAL_SETUP["alpha_min"],
+        "alpha_max": FINAL_SETUP["alpha_max"],
+    }
+
+
+def _final_selection_algorithm() -> Callable:
+    return _make_tournament_selection(FINAL_SETUP["tournament_size"])
+
+
+def _final_ga_kwargs() -> dict[str, Any]:
+    return {
+        "mate_selection_algorithm": _make_restricted_mating_selection(
+            FINAL_SETUP["mating_min_dist"],
+            FINAL_SETUP["mating_max_dist"],
+        )
+    }
+
+
+def _final_config(name: str, *, fitness_metric: str | None = None) -> dict[str, Any]:
+    cfg: dict[str, Any] = {"name": name, "_params": dict(FINAL_SETUP)}
+    if fitness_metric is not None:
+        cfg["fitness_metric"] = fitness_metric
+    return cfg
 
 
 # --------------------------------------------------------------------------
@@ -316,12 +415,23 @@ PHASES: dict[str, Phase] = {
         },
     ),
 
-    # ----- sec 12 (challenge) -----
-    "ciede2000": Phase(
-        name="ciede2000",
+    # ----- sec 11 bonus: ALL diversity mechanisms combined -----
+    # Sanity check requested by the team: even though the individual
+    # mechanisms (except restricted_mating) underperformed in the main
+    # diversity phase, we wanted to test whether all four together produce
+    # any positive interaction. Expectation: similar to or worse than
+    # restricted_mating alone (27.59), because adaptive+injection already
+    # hurt and fitness_sharing didn't add anything on top of restricted.
+    "all_diversity": Phase(
+        name="all_diversity",
         configs=[
-            {"name": "rmse",      "fitness_metric": "rmse"},
-            {"name": "ciede2000", "fitness_metric": "ciede2000"},
+            {"name": "all_combined",
+             "ga_kwargs": {
+                 "adaptive_mutation":         True,
+                 "diversity_injection":       True,
+                 "mate_selection_algorithm":  restricted_mating_selection,
+             },
+             "selection_algorithm": fitness_sharing_tournament},
         ],
         xo_prob=WINNERS["xo_prob"],
         mut_prob=WINNERS["mut_prob"],
@@ -343,25 +453,52 @@ PHASES: dict[str, Phase] = {
         n_runs=5,   # fewer runs per sample -- random search is exploratory
     ),
 
+    # ----- validate top configs from random_search with 15 runs each -----
+    # The exploratory random_search used only 5 runs per sample, so the
+    # ranking between close samples is noisy. We re-run the two best
+    # tournament_size=5 samples (sample_05 and sample_11) plus the best
+    # tournament_size=2 sample (sample_02 -- the strongest config that
+    # respects the historical default tournament size) with 15 runs each
+    # to get a statistically solid winner.
+    "validate_top3": Phase(
+        name="validate_top3",
+        configs=[c for c in _build_random_search_configs(n_samples=12)
+                 if c["name"] in {"sample_05", "sample_11", "sample_02"}],
+        xo_fn=WINNERS["xo_fn"],
+        mut_fn=WINNERS["mut_fn"],
+        n_runs=15,
+    ),
+
     # ----- sec 10: THE final run -----
     "final_run": Phase(
         name="final_run",
-        configs=[
-            {"name": "final",
-             "mut_prob": WINNERS["mut_prob"],
-             "xo_prob":  WINNERS["xo_prob"],
-             "individual_kwargs": {
-                 "max_triangle_size": WINNERS["max_triangle_size"],
-                 "alpha_min":         WINNERS["alpha_min"],
-                 "alpha_max":         WINNERS["alpha_max"],
-             },
-             "ga_kwargs": dict(WINNERS["diversity_kwargs"])},
-        ],
+        configs=[_final_config("final")],
+        xo_prob=FINAL_SETUP["xo_prob"],
+        mut_prob=FINAL_SETUP["mut_prob"],
         xo_fn=WINNERS["xo_fn"],
         mut_fn=WINNERS["mut_fn"],
-        pop=500,
-        gens=15000,
-        n_runs=1,
+        selection_algorithm=_final_selection_algorithm(),
+        individual_kwargs=_final_individual_kwargs(),
+        ga_kwargs=_final_ga_kwargs(),
+        pop=FINAL_POP,
+        gens=FINAL_GENS,
+        n_runs=FINAL_N_RUNS,
+    ),
+
+    # ----- sec 12 (Challenge): same final setup/budget, but CIEDE2000 fitness -----
+    "ciede2000": Phase(
+        name="ciede2000",
+        configs=[_final_config("challenge", fitness_metric="ciede2000")],
+        xo_prob=FINAL_SETUP["xo_prob"],
+        mut_prob=FINAL_SETUP["mut_prob"],
+        xo_fn=WINNERS["xo_fn"],
+        mut_fn=WINNERS["mut_fn"],
+        selection_algorithm=_final_selection_algorithm(),
+        individual_kwargs=_final_individual_kwargs(),
+        ga_kwargs=_final_ga_kwargs(),
+        pop=FINAL_POP,
+        gens=FINAL_GENS,
+        n_runs=FINAL_N_RUNS,
     ),
 }
 
@@ -546,6 +683,32 @@ def run_phase(phase: Phase, only: list[str], skip: list[str]) -> None:
                     f"min={s['min']:6.3f}  (n={s['n_runs']})")
 
 
+def _maybe_save_final_visual_comparison() -> None:
+    final_path = ART / "final_run_best_final.png"
+    challenge_path = ART / "ciede2000_best_challenge.png"
+    if not final_path.exists() or not challenge_path.exists():
+        return
+
+    final_img = Image.open(final_path).convert("RGB")
+    challenge_img = Image.open(challenge_path).convert("RGB")
+    width = max(final_img.width, challenge_img.width)
+    height = max(final_img.height, challenge_img.height)
+    label_h = 28
+    gap = 12
+
+    canvas = Image.new("RGB", (width * 2 + gap, height + label_h), "white")
+    canvas.paste(final_img, ((width - final_img.width) // 2, label_h))
+    canvas.paste(challenge_img, (width + gap + (width - challenge_img.width) // 2, label_h))
+
+    draw = ImageDraw.Draw(canvas)
+    draw.text((8, 8), "Final run (RMSE)", fill=(0, 0, 0))
+    draw.text((width + gap + 8, 8), "Challenge (CIEDE2000)", fill=(0, 0, 0))
+
+    out_path = ART / "final_vs_challenge.png"
+    canvas.save(out_path)
+    _stamp(f"Saved visual comparison: {out_path}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Run the CIFO experiment pipeline with checkpoints.",
@@ -555,8 +718,8 @@ def main() -> None:
             "  python _run_experiment.py                            # all phases",
             "  python _run_experiment.py mutation                   # only mutation",
             "  python _run_experiment.py size alpha                 # secs 7 + 8",
-            "  python _run_experiment.py diversity ciede2000",
-            "  python _run_experiment.py random_search final_run",
+            "  python _run_experiment.py random_search validate_top3",
+            "  python _run_experiment.py final_run ciede2000",
             "  python _run_experiment.py probabilities --only mut0.01_xo0.95",
         ]),
     )
@@ -589,6 +752,7 @@ def main() -> None:
     try:
         for p in selected:
             run_phase(PHASES[p], args.only, args.skip)
+        _maybe_save_final_visual_comparison()
     except KeyboardInterrupt:
         _stamp("Interrupted by user. Checkpoint is up-to-date; rerun to resume.")
         sys.exit(130)
