@@ -1,0 +1,94 @@
+{
+  "all_combined": [
+    {
+      "run": 1,
+      "fitness": 31.891510009765625,
+      "time_seconds": 1802.23,
+      "curve_file": "all_diversity_all_combined_run01_curve.npy"
+    },
+    {
+      "run": 2,
+      "fitness": 33.633975982666016,
+      "time_seconds": 2179.33,
+      "curve_file": "all_diversity_all_combined_run02_curve.npy"
+    },
+    {
+      "run": 3,
+      "fitness": 32.08279800415039,
+      "time_seconds": 2274.14,
+      "curve_file": "all_diversity_all_combined_run03_curve.npy"
+    },
+    {
+      "run": 4,
+      "fitness": 33.00938034057617,
+      "time_seconds": 2220.13,
+      "curve_file": "all_diversity_all_combined_run04_curve.npy"
+    },
+    {
+      "run": 5,
+      "fitness": 32.87263870239258,
+      "time_seconds": 1913.55,
+      "curve_file": "all_diversity_all_combined_run05_curve.npy"
+    },
+    {
+      "run": 6,
+      "fitness": 31.866119384765625,
+      "time_seconds": 2019.21,
+      "curve_file": "all_diversity_all_combined_run06_curve.npy"
+    },
+    {
+      "run": 7,
+      "fitness": 32.73799133300781,
+      "time_seconds": 1694.04,
+      "curve_file": "all_diversity_all_combined_run07_curve.npy"
+    },
+    {
+      "run": 8,
+      "fitness": 32.05146789550781,
+      "time_seconds": 1643.04,
+      "curve_file": "all_diversity_all_combined_run08_curve.npy"
+    },
+    {
+      "run": 9,
+      "fitness": 33.23201370239258,
+      "time_seconds": 2032.14,
+      "curve_file": "all_diversity_all_combined_run09_curve.npy"
+    },
+    {
+      "run": 10,
+      "fitness": 32.50088882446289,
+      "time_seconds": 2426.6,
+      "curve_file": "all_diversity_all_combined_run10_curve.npy"
+    },
+    {
+      "run": 11,
+      "fitness": 32.26109313964844,
+      "time_seconds": 2386.29,
+      "curve_file": "all_diversity_all_combined_run11_curve.npy"
+    },
+    {
+      "run": 12,
+      "fitness": 32.52933120727539,
+      "time_seconds": 2435.99,
+      "curve_file": "all_diversity_all_combined_run12_curve.npy"
+    },
+    {
+      "run": 13,
+      "fitness": 31.456436157226562,
+      "time_seconds": 2397.05,
+      "curve_file": "all_diversity_all_combined_run13_curve.npy"
+    },
+    {
+      "run": 14,
+      "fitness": 31.698192596435547,
+      "time_seconds": 2408.39,
+      "curve_file": "all_diversity_all_combined_run14_curve.npy"
+    },
+    {
+      "run": 15,
+      "fitness": 32.8947868347168,
+      "time_seconds": 2394.89,
+      "curve_file": "all_diversity_all_combined_run15_curve.npy"
+    }
+  ]
+}
