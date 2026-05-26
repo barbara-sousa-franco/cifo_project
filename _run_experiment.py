@@ -259,21 +259,19 @@ def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
 # --------------------------------------------------------------------------
 # Provisional post-random-search setup used by the final run and Challenge.
 #
-# At the time this was wired, sample_05 was the best exploratory random_search
-# config and used tournament_size=5. validate_top3 may still move these values
-# to sample_11 or another config; if that happens, update this one dict and both
-# final_run + ciede2000 follow automatically.
+# validate_top3 selected sample_11 by average RMSE across 15 runs. Keep the
+# final/challenge setup here so it can still be swapped in one place.
 # --------------------------------------------------------------------------
 FINAL_SETUP: dict[str, Any] = {
-    "source": "sample_05",
-    "mut_prob": 0.0194,
-    "xo_prob": 0.9931,
-    "max_triangle_size": 0.610,
-    "alpha_min": 0.145,
-    "alpha_max": 0.475,
+    "source": "sample_11",
+    "mut_prob": 0.0123,
+    "xo_prob": 0.9891,
+    "max_triangle_size": 0.573,
+    "alpha_min": 0.178,
+    "alpha_max": 0.521,
     "tournament_size": 5,
-    "mating_min_dist": 0.0199,
-    "mating_max_dist": 0.428,
+    "mating_min_dist": 0.0104,
+    "mating_max_dist": 0.348,
 }
 
 
@@ -500,6 +498,21 @@ PHASES: dict[str, Phase] = {
         gens=FINAL_GENS,
         n_runs=FINAL_N_RUNS,
     ),
+    
+    "ciede2000_short": Phase(
+    name="ciede2000_short",
+    configs=[_final_config("challenge_short", fitness_metric="ciede2000")],
+    xo_prob=FINAL_SETUP["xo_prob"],
+    mut_prob=FINAL_SETUP["mut_prob"],
+    xo_fn=WINNERS["xo_fn"],
+    mut_fn=WINNERS["mut_fn"],
+    selection_algorithm=_final_selection_algorithm(),
+    individual_kwargs=_final_individual_kwargs(),
+    ga_kwargs=_final_ga_kwargs(),
+    pop=200,
+    gens=5000,
+    n_runs=1,
+),
 }
 
 

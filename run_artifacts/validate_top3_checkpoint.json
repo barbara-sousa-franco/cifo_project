@@ -1,0 +1,728 @@
+{
+  "sample_02": [
+    {
+      "run": 1,
+      "fitness": 27.15188980102539,
+      "time_seconds": 738.46,
+      "curve_file": "validate_top3_sample_02_run01_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 2,
+      "fitness": 27.547182083129883,
+      "time_seconds": 751.1,
+      "curve_file": "validate_top3_sample_02_run02_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 3,
+      "fitness": 27.407136917114258,
+      "time_seconds": 738.44,
+      "curve_file": "validate_top3_sample_02_run03_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 4,
+      "fitness": 27.341257095336914,
+      "time_seconds": 734.04,
+      "curve_file": "validate_top3_sample_02_run04_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 5,
+      "fitness": 26.647634506225586,
+      "time_seconds": 726.85,
+      "curve_file": "validate_top3_sample_02_run05_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 6,
+      "fitness": 27.955995559692383,
+      "time_seconds": 747.33,
+      "curve_file": "validate_top3_sample_02_run06_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 7,
+      "fitness": 27.16619300842285,
+      "time_seconds": 734.92,
+      "curve_file": "validate_top3_sample_02_run07_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 8,
+      "fitness": 27.07604217529297,
+      "time_seconds": 732.24,
+      "curve_file": "validate_top3_sample_02_run08_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 9,
+      "fitness": 27.60702133178711,
+      "time_seconds": 755.19,
+      "curve_file": "validate_top3_sample_02_run09_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 10,
+      "fitness": 27.684873580932617,
+      "time_seconds": 734.13,
+      "curve_file": "validate_top3_sample_02_run10_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 11,
+      "fitness": 27.2345027923584,
+      "time_seconds": 759.24,
+      "curve_file": "validate_top3_sample_02_run11_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 12,
+      "fitness": 28.213537216186523,
+      "time_seconds": 749.11,
+      "curve_file": "validate_top3_sample_02_run12_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 13,
+      "fitness": 25.693721771240234,
+      "time_seconds": 729.57,
+      "curve_file": "validate_top3_sample_02_run13_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 14,
+      "fitness": 28.061222076416016,
+      "time_seconds": 742.96,
+      "curve_file": "validate_top3_sample_02_run14_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    },
+    {
+      "run": 15,
+      "fitness": 28.229856491088867,
+      "time_seconds": 728.5,
+      "curve_file": "validate_top3_sample_02_run15_curve.npy",
+      "params": {
+        "mut_prob": 0.0149,
+        "xo_prob": 0.9971,
+        "max_triangle_size": 0.673,
+        "alpha_min": 0.059,
+        "alpha_max": 0.515,
+        "tournament_size": 2,
+        "mating_min_dist": 0.0065,
+        "mating_max_dist": 0.294
+      }
+    }
+  ],
+  "sample_05": [
+    {
+      "run": 1,
+      "fitness": 25.895009994506836,
+      "time_seconds": 705.25,
+      "curve_file": "validate_top3_sample_05_run01_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 2,
+      "fitness": 26.567079544067383,
+      "time_seconds": 715.09,
+      "curve_file": "validate_top3_sample_05_run02_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 3,
+      "fitness": 27.29531478881836,
+      "time_seconds": 686.89,
+      "curve_file": "validate_top3_sample_05_run03_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 4,
+      "fitness": 26.491140365600586,
+      "time_seconds": 696.33,
+      "curve_file": "validate_top3_sample_05_run04_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 5,
+      "fitness": 26.293380737304688,
+      "time_seconds": 694.68,
+      "curve_file": "validate_top3_sample_05_run05_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 6,
+      "fitness": 26.094223022460938,
+      "time_seconds": 692.93,
+      "curve_file": "validate_top3_sample_05_run06_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 7,
+      "fitness": 26.623998641967773,
+      "time_seconds": 698.66,
+      "curve_file": "validate_top3_sample_05_run07_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 8,
+      "fitness": 26.995677947998047,
+      "time_seconds": 711.14,
+      "curve_file": "validate_top3_sample_05_run08_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 9,
+      "fitness": 27.607120513916016,
+      "time_seconds": 687.55,
+      "curve_file": "validate_top3_sample_05_run09_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 10,
+      "fitness": 26.952104568481445,
+      "time_seconds": 697.35,
+      "curve_file": "validate_top3_sample_05_run10_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 11,
+      "fitness": 26.178131103515625,
+      "time_seconds": 694.25,
+      "curve_file": "validate_top3_sample_05_run11_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 12,
+      "fitness": 26.42568016052246,
+      "time_seconds": 690.9,
+      "curve_file": "validate_top3_sample_05_run12_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 13,
+      "fitness": 26.96816062927246,
+      "time_seconds": 692.23,
+      "curve_file": "validate_top3_sample_05_run13_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 14,
+      "fitness": 27.220094680786133,
+      "time_seconds": 685.83,
+      "curve_file": "validate_top3_sample_05_run14_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    },
+    {
+      "run": 15,
+      "fitness": 26.321237564086914,
+      "time_seconds": 708.59,
+      "curve_file": "validate_top3_sample_05_run15_curve.npy",
+      "params": {
+        "mut_prob": 0.0194,
+        "xo_prob": 0.9931,
+        "max_triangle_size": 0.61,
+        "alpha_min": 0.145,
+        "alpha_max": 0.475,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0199,
+        "mating_max_dist": 0.428
+      }
+    }
+  ],
+  "sample_11": [
+    {
+      "run": 1,
+      "fitness": 26.34617042541504,
+      "time_seconds": 695.52,
+      "curve_file": "validate_top3_sample_11_run01_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 2,
+      "fitness": 26.87093734741211,
+      "time_seconds": 692.46,
+      "curve_file": "validate_top3_sample_11_run02_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 3,
+      "fitness": 26.607084274291992,
+      "time_seconds": 698.27,
+      "curve_file": "validate_top3_sample_11_run03_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 4,
+      "fitness": 26.941513061523438,
+      "time_seconds": 678.77,
+      "curve_file": "validate_top3_sample_11_run04_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 5,
+      "fitness": 26.517534255981445,
+      "time_seconds": 718.18,
+      "curve_file": "validate_top3_sample_11_run05_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 6,
+      "fitness": 25.872024536132812,
+      "time_seconds": 700.96,
+      "curve_file": "validate_top3_sample_11_run06_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 7,
+      "fitness": 26.941532135009766,
+      "time_seconds": 759.05,
+      "curve_file": "validate_top3_sample_11_run07_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 8,
+      "fitness": 25.47732162475586,
+      "time_seconds": 721.54,
+      "curve_file": "validate_top3_sample_11_run08_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 9,
+      "fitness": 27.15489959716797,
+      "time_seconds": 710.44,
+      "curve_file": "validate_top3_sample_11_run09_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 10,
+      "fitness": 26.150663375854492,
+      "time_seconds": 740.32,
+      "curve_file": "validate_top3_sample_11_run10_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 11,
+      "fitness": 27.39359474182129,
+      "time_seconds": 732.76,
+      "curve_file": "validate_top3_sample_11_run11_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 12,
+      "fitness": 27.24443244934082,
+      "time_seconds": 719.44,
+      "curve_file": "validate_top3_sample_11_run12_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 13,
+      "fitness": 26.18363380432129,
+      "time_seconds": 728.2,
+      "curve_file": "validate_top3_sample_11_run13_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 14,
+      "fitness": 26.687599182128906,
+      "time_seconds": 735.68,
+      "curve_file": "validate_top3_sample_11_run14_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    },
+    {
+      "run": 15,
+      "fitness": 25.95204734802246,
+      "time_seconds": 706.7,
+      "curve_file": "validate_top3_sample_11_run15_curve.npy",
+      "params": {
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    }
+  ]
+}
