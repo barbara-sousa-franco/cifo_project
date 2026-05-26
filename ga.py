@@ -6,20 +6,14 @@
 #   - diversity injection (replace worst x% with random individuals when
 #     phenotypic diversity collapses) - addresses premature convergence,
 #     one of the failure modes discussed in Eiben & Smith §3.10.
-#
-# The function signature is kept backwards-compatible with utils.py:
-# the new knobs (adaptive_mutation, diversity_injection_*) default to False
-# so the existing experiments in main.ipynb (sections 5/6/9/10) continue to
-# work without changes.
+
 
 from collections.abc import Callable
-
 import numpy as np
-
 from solution import Individual, Triangle
-from operators import tournament_selection, triangle_mutation_vcf
-
 from time import time
+
+
 
 def get_best_ind(population: list, maximization: bool = False):
     '''
@@ -87,39 +81,39 @@ def genetic_algorithm(
 ):
     """Generational GA with optional adaptive mutation and diversity injection.
 
-    Args:
-        initial_population (list[Individual]): The starting population.
-        max_generations (int): Maximum number of generations to evolve.
-        selection_algorithm (Callable): Parent selection function.
-        xo_method (Callable): Crossover operator (returns 2 children).
-        mut_method (Callable): Mutation operator (returns 1 individual).
-        maximization (bool): If True maximises fitness; else minimises.
-        xo_prob (float): Crossover probability.
-        mut_prob (float): Initial mutation probability. May change over
+    Parameters:
+        - initial_population (list[Individual]): The starting population.
+        - max_generations (int): Maximum number of generations to evolve.
+        - selection_algorithm (Callable): Parent selection function.
+        - xo_method (Callable): Crossover operator (returns 2 children).
+        - mut_method (Callable): Mutation operator (returns 1 individual).
+        - maximization (bool): If True maximises fitness; else minimises.
+        - xo_prob (float): Crossover probability.
+        - mut_prob (float): Initial mutation probability. May change over
             generations if ``adaptive_mutation`` is True.
-        elitism (bool): If True, carries the best individual unchanged.
-        verbose (bool): If True, prints per-generation debug info.
+        - elitism (bool): If True, carries the best individual unchanged.
+        - verbose (bool): If True, prints per-generation debug info.
 
-        fitness_sharing (bool): If True, apply fitness sharing
-        adaptive_mutation (bool): If True, apply Rechenberg's 1/5 success
+        - fitness_sharing (bool): If True, apply fitness sharing
+        - adaptive_mutation (bool): If True, apply Rechenberg's 1/5 success
             rule: keep a sliding window of how often offspring beat their
             parents, then scale mut_prob up if success rate > 0.2, down if
             success rate < 0.2. Clipped to [adaptive_min, adaptive_max].
-        adaptive_window (int): Number of generations in the success window.
-        diversity_injection (bool): If True, when phenotypic std-dev drops
+        - adaptive_window (int): Number of generations in the success window.
+        - diversity_injection (bool): If True, when phenotypic std-dev drops
             below ``diversity_threshold`` * initial std-dev, replace the
             worst ``diversity_replace_frac`` of the population with new
             random individuals. Helps escape premature convergence.
 
     Returns:
-        Solution: Best individual found.
-        list[float]: Best fitness per generation (length == generations run).
+        - Solution: Best individual found.
+        - list[float]: Best fitness per generation (length == generations run).
     """
     starttime = time()
     best_fitness_over_gens: list[float] = []
     best_ind = None
 
-    # 1. Initial population P (caller-provided)
+    # Initial population P (caller-provided)
     population = initial_population
 
     # Baseline diversity for the diversity-injection trigger.
@@ -128,7 +122,7 @@ def genetic_algorithm(
     # Sliding window for the 1/5 success rule.
     success_window: list[float] = []
 
-    # 2. Repeat until termination condition (number of generations) is reached
+    # Repeat until termination condition (number of generations) is reached
     for gen in range(1, max_generations + 1):
         gen_starttime = time()
 
@@ -139,7 +133,7 @@ def genetic_algorithm(
         new_population = []
 
 
-        # 2.2. Elitism: copy the best individual into the new population.
+        # Elitism: copy the best individual into the new population.
         if elitism:
             best = get_best_ind(population, maximization)
             new_population.append(best.with_repr(best.repr))
@@ -149,40 +143,54 @@ def genetic_algorithm(
         n_better = 0
         n_offspring = 0
 
-        # 2.3. Fill P' with offspring until it reaches the original size.
+        # Fill P' with offspring until it reaches the original size.
         while len(new_population) < len(population):
+
             first_ind = selection_algorithm(population, maximization)
+
             if mate_selection_algorithm is not None:
-                # Restricted mating: parent 2 is constrained by its
-                # distance to parent 1.
+
+                # Restricted mating: parent 2 is constrained by itsdistance to parent 1.
                 second_ind = mate_selection_algorithm( population, first_ind, maximization )
+
             else:
                 second_ind = selection_algorithm(population, maximization)
 
+            # Perform crossover
             offspring1, offspring2 = xo_method(
                 first_ind, second_ind, xo_prob, verbose, current_gen=gen, max_gens=max_generations)
 
+            # Determine the better parent (for tracking 1/5 success rate if adaptive_mutation is on).
             parent_best = (
                 max(first_ind.fitness(), second_ind.fitness())
                 if maximization else min(first_ind.fitness(), second_ind.fitness()))
 
+            # Apply mutation to the first child, add it to the new population
             first_new_ind = mut_method(offspring1, mut_prob, verbose=verbose, current_gen=gen, max_gens=max_generations)
             new_population.append(first_new_ind)
             n_offspring += 1
+
+            # Track if the first child is better than the better parent (for the 1/5 rule if adaptive_mutation is on).
             if (maximization and first_new_ind.fitness() > parent_best) or (
                 not maximization and first_new_ind.fitness() < parent_best):
 
                 n_better += 1
 
+            # Apply mutation to the second child, add it to the new population if there's room
+            #  (we might have already hit the target population size with the first child).
             if len(new_population) < len(population):
                 second_new_ind = mut_method(offspring2, mut_prob, verbose=verbose, current_gen=gen, max_gens=max_generations)
                 new_population.append(second_new_ind)
                 n_offspring += 1
+
+                # Again, track if the second child is better than the better parent
+                #  (for the 1/5 rule if adaptive_mutation is on).
                 if (maximization and second_new_ind.fitness() > parent_best) or (
                     not maximization and second_new_ind.fitness() < parent_best):
 
                     n_better += 1
 
+        # Replace the old population with the new one.
         population = new_population
 
         # --- Adaptive mutation (Rechenberg 1/5 rule) ---
@@ -190,7 +198,11 @@ def genetic_algorithm(
         # gently: raise mut_prob. If too few, the perturbation is too
         # disruptive: lower mut_prob. Target success rate 0.2.
         if adaptive_mutation and n_offspring > 0:
+
+            # Record the success rate for this generation
             success_window.append(n_better / n_offspring)
+
+            # If we have enough data in the success window, adjust mut_prob based on the average success rate.
             if len(success_window) >= adaptive_window:
                 rate = float(np.mean(success_window[-adaptive_window:])) # average of the last adaptive_window generations
                 if rate > 0.2:
@@ -203,10 +215,16 @@ def genetic_algorithm(
         # worst fraction of the population with brand-new random individuals
         # so the GA can keep exploring.
         if diversity_injection and initial_std > 0:
+
+            # Calculate the current phenotypic diversity (std-dev of fitness across the population).
             current_std = population_fitness_std(population)
+
+            # If diversity is too low, inject new random individuals by replacing the worst performers.
             if current_std < diversity_threshold * initial_std:
+
                 n_replace = max(1, int(diversity_replace_frac * len(population)))
                 # Find the worst n_replace individuals (preserve elite).
+                
                 ordered = sorted(
                     range(len(population)),
                     key=lambda i: population[i].fitness(),
@@ -214,6 +232,8 @@ def genetic_algorithm(
                 )
                 victim_indices = ordered[-n_replace:]
                 template = population[0]
+
+                # Replace the worst individuals with new random ones.
                 for idx in victim_indices:
                     new_ind = Individual(
                         target=template.target,
@@ -224,6 +244,7 @@ def genetic_algorithm(
                         alpha_max=template.alpha_max,
                     )
                     population[idx] = new_ind
+
                 if verbose:
                     print(f'  Diversity injection: replaced {n_replace} individuals '
                           f'(std {current_std:.3f} < {diversity_threshold:.2f}*{initial_std:.3f})')
@@ -235,5 +256,5 @@ def genetic_algorithm(
         if verbose:
             print(f"Best individual fitness in generation: {best_ind.fitness():.4f} | mut_prob={mut_prob:.4f}")
 
-    # 3. Return the best individual + per-generation curve.
+    # Return the best individual + per-generation curve.
     return best_ind, best_fitness_over_gens
