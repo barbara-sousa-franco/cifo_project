@@ -17,7 +17,7 @@ from collections.abc import Callable
 import numpy as np
 
 from solution import Individual, Triangle
-from operators import tournament_selection, triangle_crossover, triangle_mutation_vcf
+from operators import tournament_selection, triangle_mutation_vcf
 
 from time import time
 
@@ -27,9 +27,13 @@ def get_best_ind(population: list, maximization: bool = False):
     If maximization is True, returns the individual with the highest fitness; otherwise, returns the individual with the lowest fitness.
     This corresponds to returning the Elite=1.
 
-        Args:
-        population (list): The population of solutions.
-        maximization (bool): If True (the default), considers that higher values of fitness are better; otherwise, the opposite.
+    Parameters:
+        - population (list): The population of solutions.
+        - maximization (bool): If True (the default), considers that higher values of fitness are better; otherwise,
+        the opposite.
+
+    Returns:
+        - The best individual in the population based on fitness.
     '''
     fitness_list = [ind.fitness() for ind in population]
     if maximization:
@@ -41,7 +45,15 @@ def get_best_ind(population: list, maximization: bool = False):
 def population_fitness_std(population: list[Individual]) -> float:
     """Std-dev of fitness across the population — a cheap phenotypic
     diversity proxy. Low values mean every individual is roughly as good
-    (or bad) as the others, i.e. the GA has converged."""
+    (or bad) as the others, i.e. the GA has converged.
+    
+    Parameters:
+        - population (list[Individual]): The population of solutions.
+
+    Returns:
+        - float: The standard deviation of fitness across the population.
+    
+    """
     if not population:
         return 0.0
     fits = np.array([ind.fitness() for ind in population], dtype=np.float64)
