@@ -17,215 +17,6 @@ from ga import genetic_algorithm
 from solution import Individual
 
 
-# FUNCTION FOR EXPERIMENTS OVER DIFFERENT CONFIGURATIONS
-
-def run_experiment(configs, target_array, n_runs, max_gens, pop_size, seed, xo_prob, mut_prob, elitism, 
-                   selection_algorithm, fixed_xo_fn=None, fixed_mut_fn=None, config_key="config", maximization=False, 
-                   fitness_metric="rmse", individual_kwargs=None, **ga_kwargs):
-    """
-    Run a GA experiment over a list of operator configurations or probability pairs.
-
-    Args:
-        - configs (list[dict] | list[tuple]): Operator configs (each with 'name' and 'fn')
-          or (mut_prob, xo_prob) tuples for probability grid experiments.
-        - target_array (np.ndarray): Target image as an (H, W, 3) float32 array.
-        - n_runs (int): Number of independent runs per configuration.
-        - max_gens (int): Maximum number of generations per run.
-        - pop_size (int): Number of individuals in the population.
-        - seed (int): Base seed; run i uses i * seed for reproducibility.
-        - xo_prob (float): Crossover probability (default when not varied).
-        - mut_prob (float): Mutation probability (default when not varied).
-        - elitism (bool): Whether to carry the best individual unchanged.
-        - selection_algorithm (Callable): Selection function.
-        - fixed_xo_fn (Callable | None): Fixed crossover; if None, taken from each config.
-        - fixed_mut_fn (Callable | None): Fixed mutation; if None, taken from each config.
-        - config_key (str): Key used in results dicts (e.g. 'mutation_type').
-        - individual_kwargs (dict, optional): Extra kwargs for Individual constructor.
-        - **ga_kwargs: Extra kwargs forwarded to genetic_algorithm.
-
-    Returns:
-        - all_results (list[dict]): One dict per run with config_key, 'run', 'best_fitness',
-          'time_seconds'.
-        - all_curves (dict): Maps config key → list of per-run fitness curves.
-        - best_inds (dict): Maps config key → best Individual across all runs.
-    """
-    individual_kwargs = individual_kwargs or {}
-    all_results = []
-    all_curves  = {}
-    best_inds   = {}
-
-    # Normalise configs into (key, xo_fn, mut_fn, run_xo_prob, run_mut_prob)
-    if configs and isinstance(configs[0], dict):
-        normalized = [
-            (
-                c["name"],
-                c["fn"] if fixed_xo_fn  is None else fixed_xo_fn,
-                c["fn"] if fixed_mut_fn is None else fixed_mut_fn,
-                xo_prob,
-                mut_prob,
-            )
-            for c in configs
-        ]
-    else:
-        normalized = [
-            (
-                (mp, xp),
-                fixed_xo_fn,
-                fixed_mut_fn,
-                xp,
-                mp,
-            )
-            for mp, xp in configs
-        ]
-
-    for key, xo_fn, mut_fn, run_xo_prob, run_mut_prob in normalized:
-        curves = []
-        label  = key if isinstance(key, str) else f"mut={key[0]} xo={key[1]}"
-
-        print(f"\n{'='*60}")
-        print(f"  {config_key}: {label}")
-        print(f"{'='*60}")
-
-        for run in range(1, n_runs + 1):
-            print(f"  Run {run}/{n_runs}", end="  ")
-
-            random.seed(run * seed)
-            np.random.seed(run * seed)
-
-            initial_pop = [
-                Individual(
-                    target=target_array,
-                    fitness_metric=fitness_metric,
-                    **individual_kwargs,
-                )
-                for _ in range(pop_size)
-            ]
-
-            start = time()
-            best_ind, fitness_curve = genetic_algorithm(
-                initial_population  = initial_pop,
-                max_generations     = max_gens,
-                selection_algorithm = selection_algorithm,
-                xo_method           = xo_fn,
-                mut_method          = mut_fn,
-                maximization        = maximization,
-                xo_prob             = run_xo_prob,
-                mut_prob            = run_mut_prob,
-                elitism             = elitism,
-                verbose             = False,
-                **ga_kwargs,
-            )
-            elapsed = time() - start
-
-            if (key not in best_inds
-                    or (not maximization and best_ind.fitness() < best_inds[key].fitness())
-                    or (    maximization and best_ind.fitness() > best_inds[key].fitness())):
-                best_inds[key] = best_ind
-
-            curves.append(fitness_curve)
-            all_results.append({
-                config_key    : key,
-                "run"         : run,
-                "best_fitness": best_ind.fitness(),
-                "time_seconds": round(elapsed, 2),
-            })
-            print(f"best fitness: {best_ind.fitness():.4f}")
-
-        all_curves[key] = curves
-        avg = np.mean([r["best_fitness"] for r in all_results if r[config_key] == key])
-        print(f"  Avg best fitness: {avg:.4f}")
-
-    return all_results, all_curves, best_inds
-
-
-
-
-
-
-# FUNCTION TO RUN A SINGLE CONFIGURATION  FOR MULTIPLE RUNS
-
-def run_single_experiment(target_array, n_runs, max_gens, pop_size, seed, xo_prob, mut_prob, elitism,
-                          selection_algorithm, xo_fn, mut_fn, maximization=False, fitness_metric="rmse",
-                          individual_kwargs=None, **ga_kwargs):
-    """
-    Run a single GA configuration for multiple independent runs.
-
-    Args:
-        - target_array (np.ndarray): Target image as an (H, W, 3) float32 array.
-        - n_runs (int): Number of independent runs.
-        - max_gens (int): Maximum number of generations per run.
-        - pop_size (int): Number of individuals in the population.
-        - seed (int): Base seed; run i uses i * seed for reproducibility.
-        - xo_prob (float): Crossover probability.
-        - mut_prob (float): Mutation probability.
-        - elitism (bool): Whether to carry the best individual unchanged.
-        - selection_algorithm (Callable): Selection function.
-        - xo_fn (Callable): Crossover function.
-        - mut_fn (Callable): Mutation function.
-        - individual_kwargs (dict, optional): Extra kwargs for Individual constructor.
-        - **ga_kwargs: Extra kwargs forwarded to genetic_algorithm.
-
-    Returns:
-        - all_results (list[dict]): One dict per run: 'run', 'best_fitness', 'time_seconds'.
-        - all_curves (list[list[float]]): Per-generation best fitness for each run.
-        - best_ind (Individual): Best individual found across all runs.
-    """
-    individual_kwargs = individual_kwargs or {}
-    all_results = []
-    all_curves  = []
-    best_ind    = None
-
-    for run in range(1, n_runs + 1):
-        print(f"  Run {run}/{n_runs}", end="  ")
-
-        random.seed(run * seed)
-        np.random.seed(run * seed)
-
-        initial_pop = [
-            Individual(
-                target=target_array,
-                fitness_metric=fitness_metric,
-                **individual_kwargs,
-            )
-            for _ in range(pop_size)
-        ]
-
-        start = time()
-        ind, fitness_curve = genetic_algorithm(
-            initial_population  = initial_pop,
-            max_generations     = max_gens,
-            selection_algorithm = selection_algorithm,
-            xo_method           = xo_fn,
-            mut_method          = mut_fn,
-            maximization        = maximization,
-            xo_prob             = xo_prob,
-            mut_prob            = mut_prob,
-            elitism             = elitism,
-            verbose             = False,
-            **ga_kwargs,
-        )
-        elapsed = time() - start
-
-        if (best_ind is None
-                or (not maximization and ind.fitness() < best_ind.fitness())
-                or (    maximization and ind.fitness() > best_ind.fitness())):
-            best_ind = ind
-
-        all_curves.append(fitness_curve)
-        all_results.append({
-            "run"         : run,
-            "best_fitness": ind.fitness(),
-            "time_seconds": round(elapsed, 2),
-        })
-        print(f"best fitness: {ind.fitness():.4f}")
-
-    avg_fitness = np.mean([r["best_fitness"] for r in all_results])
-    print(f"\n  Average fitness over {n_runs} runs: {avg_fitness:.4f}")
-
-    return all_results, all_curves, best_ind
-
-
-
 # COMPARE TWO EXPERIMENTS
 def compare_two_experiments(results_a, curves_a, label_a, results_b, curves_b, label_b,
     maximization=False, alpha=0.05):
@@ -367,9 +158,6 @@ def compare_all_configs(all_results, all_curves, config_key, maximization=False,
     return summary_df, avg_curves
 
 
-
-
-
 # FUNCTION TO PLOT THE CONVERGENCE CURVE OF A SINGLE RUN
 
 def plot_convergence_curve(fitness_curve, baseline_rmse, MAX_GENS):
@@ -391,93 +179,6 @@ def plot_convergence_curve(fitness_curve, baseline_rmse, MAX_GENS):
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
     plt.show()
-
-
-
-
-# FUNCTION FOR PLOTTING EXPERIMENT RESULTS - CONVERGE CURVES + FINAL FITNESS
-
-def plot_experiment_summary(all_curves, df, configs, config_key, title_prefix, colors=None, errorbar_every=None):
-    """
-    Plot per-generation average fitness with std error bars (as shown in class)
-    and a boxplot of final fitness distributions.
-
-    Args:
-        - all_curves (dict): Maps config name -> list of per-run fitness curves.
-        - df (pd.DataFrame): Results dataframe with config_key and 'best_fitness'.
-        - configs (list[dict] | list[tuple]): Operator configs or (mut_prob, xo_prob) tuples.
-        - config_key (str): Column in df to group by.
-        - title_prefix (str): Figure suptitle prefix.
-        - colors (list[str], optional): One hex color per config.
-        - errorbar_every (int, optional): Plot error bars every N generations to avoid clutter.
-          Defaults to max(1, max_gens // 20).
-    """
-    if colors is None:
-        colors = ["#2196F3", "#F44336", "#4CAF50", "#FF9800", "#9C27B0"]
-
-    if configs and isinstance(configs[0], dict):
-        keys   = [c["name"] for c in configs]
-        labels = keys
-    else:
-        keys   = configs
-        labels = [f"mut={k[0]} xo={k[1]}" for k in keys]
-
-    max_gens = len(next(iter(all_curves.values()))[0])
-    if errorbar_every is None:
-        errorbar_every = max(1, max_gens // 20)
-
-    fig, axes = plt.subplots(1, 2, figsize=(16, 5))
-
-    # Plot 1: mean ± std error bars per generation (as shown in class) 
-    ax = axes[0]
-    for idx, (key, label) in enumerate(zip(keys, labels)):
-        curves = np.array(all_curves[key])   # shape: (n_runs, max_gens)
-        mean   = curves.mean(axis=0)
-        std    = curves.std(axis=0)
-        gens   = np.arange(1, max_gens + 1)
-        color  = colors[idx % len(colors)]
-
-        # Plot the mean line
-        ax.plot(gens, mean, label=label, color=color, linewidth=2)
-
-        # Error bars only every `errorbar_every` generations to keep it readable
-        eb_idx = np.arange(0, max_gens, errorbar_every)
-        ax.errorbar(
-            gens[eb_idx], mean[eb_idx], yerr=std[eb_idx],
-            fmt="none",           # no marker — just the caps
-            ecolor=color,
-            elinewidth=1.2,
-            capsize=4,
-            capthick=1.2,
-            alpha=0.8,
-        )
-
-    ax.set_xlabel("Generation", fontsize=12)
-    ax.set_ylabel("Avg Best Fitness (RMSE)", fontsize=12)
-    ax.set_title(f"Convergence by {title_prefix}\n(mean ± std)", fontsize=13)
-    ax.legend(fontsize=11)
-    ax.grid(True, alpha=0.3)
-
-    # Plot 2: boxplot of final fitness 
-    ax = axes[1]
-    groups = [df[df[config_key] == key]["best_fitness"].values for key in keys]
-    bp = ax.boxplot(groups, labels=labels, patch_artist=True)
-    for patch, color in zip(bp["boxes"], colors):
-        patch.set_facecolor(color)
-        patch.set_alpha(0.6)
-
-    ax.set_ylabel("Final Best Fitness (RMSE)", fontsize=12)
-    ax.set_title(
-        f"Final Fitness Distribution\n({len(next(iter(all_curves.values())))} runs per configuration)",
-        fontsize=13,
-    )
-    ax.grid(True, axis="y", alpha=0.3)
-
-    fig.suptitle(f"{title_prefix} Comparison", fontsize=14, fontweight="bold")
-    plt.tight_layout()
-    plt.show()
- 
-
 
 
 # FUNCTION FOR PLOTTING EXPERIMENT RESULTS - BEST INDIVIDUALS VS TARGET
@@ -594,82 +295,28 @@ def plot_best_individuals(best_inds, configs, target_img, title_prefix, ncols=6)
     plt.show()
 
 
-# ONE-CALL EVALUATION PIPELINE FOR A MULTI-CONFIG EXPERIMENT
-def evaluate_experiment(all_results, all_curves, best_inds, configs, config_key,
-                        target_img, title_prefix, maximization=False, alpha=0.05,
-                        plot_curves=True, plot_images=True, ncols=6):
-    """
-    Run the full post-experiment reporting pipeline in a single call.
+# FUNCTION FOR PLOTTING EXPERIMENT RESULTS - CONVERGENCE CURVES + FINAL FITNESS
 
-    Bundles the four steps used across every test section so that each section
-    in the notebook needs only ONE evaluation cell instead of four:
-      1. Build a tidy DataFrame from per-run results.
-      2. Run the statistical comparison (Kruskal-Wallis + post-hoc Mann-Whitney
-         with Bonferroni correction).
-      3. Plot mean ± std convergence curves and the boxplot of final fitnesses.
-      4. Plot the best individual per config against the target image.
+def plot_experiment_summary(all_curves, df, configs, config_key, title_prefix,
+                            colors=None, errorbar_every=None,
+                            orientation="horizontal"):
+    """
+    Plot per-generation average fitness with std error bars (as shown in class)
+    and a boxplot of final fitness distributions.
 
     Args:
-        - all_results (list[dict]): Output of run_experiment, or aggregated
-          from per-config run_single_experiment results (one dict per run).
-        - all_curves (dict): Maps config key -> list of per-run fitness curves.
-        - best_inds (dict): Maps config key -> best Individual across runs.
-        - configs (list[dict] | list[tuple]): Operator configs (each with
-          "name", optionally "fn") or (mut_prob, xo_prob) tuples.
-        - config_key (str): Column / key identifying each config in all_results.
-        - target_img (PIL.Image or np.ndarray): Reference image for the
-          best-individuals plot.
-        - title_prefix (str): Used in plot titles and section headers.
-        - maximization (bool): Direction of optimisation (default False).
-        - alpha (float): Significance level for statistical tests.
-        - plot_curves (bool): If False, skip the convergence + boxplot figure.
-        - plot_images (bool): If False, skip the best-individuals figure.
-
-    Returns:
-        - df (pd.DataFrame): Tidy per-run results.
-        - summary (pd.DataFrame): Per-config statistics + global test outcome.
-        - avg_curves (dict): Maps config -> mean fitness curve (np.ndarray).
-    """
-    # 1. DataFrame
-    df = pd.DataFrame(all_results)
-
-    # 2. Statistical comparison (prints the Kruskal-Wallis table + post-hoc)
-    summary, avg_curves = compare_all_configs(
-        all_results = all_results,
-        all_curves  = all_curves,
-        config_key  = config_key,
-        maximization= maximization,
-        alpha       = alpha,
-    )
-
-    # 3. Convergence (mean ± std) + final-fitness boxplot
-    if plot_curves:
-        plot_experiment_summary(
-            all_curves   = all_curves,
-            df           = df,
-            configs      = configs,
-            config_key   = config_key,
-            title_prefix = title_prefix,
-        )
-
-    # 4. Best individual per config against the target
-    if plot_images:
-        plot_best_individuals(
-            best_inds    = best_inds,
-            configs      = configs,
-            target_img   = target_img,
-            title_prefix = title_prefix,
-            ncols         = ncols
-        )
-
-    return df, summary, avg_curves
-
-# FUNCTIONS FOR HORIZONTAL BOX PLOT FOR BETTER VISUALISATION OF MULTIPLE CONFIGURATIONS
-def plot_experiment_summary_h(all_curves, df, configs, config_key, title_prefix,
-                              colors=None, errorbar_every=None):
-    """
-    Same as plot_experiment_summary, but the final-fitness boxplot is
-    horizontal so long config names (e.g. 'mut0.01_xo0.85') stay readable.
+        - all_curves (dict): Maps config name -> list of per-run fitness curves.
+        - df (pd.DataFrame): Results dataframe with config_key and 'best_fitness'.
+        - configs (list[dict] | list[tuple]): Operator configs or (mut_prob, xo_prob) tuples.
+        - config_key (str): Column in df to group by.
+        - title_prefix (str): Figure suptitle prefix.
+        - colors (list[str], optional): One hex color per config.
+        - errorbar_every (int, optional): Plot error bars every N generations to avoid clutter.
+          Defaults to max(1, max_gens // 20).
+        - orientation (str): 'vertical' (default) or 'horizontal'. Controls the
+          orientation of the final-fitness boxplot. Use 'horizontal' when there
+          are many configs or long config names (e.g. 'mut0.01_xo0.85'),
+          so labels stay readable.
     """
     if colors is None:
         colors = ["#2196F3", "#F44336", "#4CAF50", "#FF9800", "#9C27B0",
@@ -686,25 +333,32 @@ def plot_experiment_summary_h(all_curves, df, configs, config_key, title_prefix,
     if errorbar_every is None:
         errorbar_every = max(1, max_gens // 20)
 
-    # Slightly wider/taller than the vertical version so 9 horizontal
-    # boxes don't get cramped when there are many configs.
-    fig, axes = plt.subplots(
-        1, 2,
-        figsize=(16, max(5, 0.5 * len(keys) + 2)),
-        gridspec_kw={"width_ratios": [1.4, 1]},
-    )
+    horizontal = (orientation == "horizontal")
 
-    # --- Plot 1: mean ± std convergence (unchanged) ---
+    # Figure size adapts to the number of configs in horizontal mode so the
+    # boxes don't get cramped when there are many configs.
+    if horizontal:
+        fig, axes = plt.subplots(
+            1, 2,
+            figsize=(16, max(5, 0.5 * len(keys) + 2)),
+            gridspec_kw={"width_ratios": [1.4, 1]},
+        )
+    else:
+        fig, axes = plt.subplots(1, 2, figsize=(16, 5))
+
+    # Plot 1: mean ± std error bars per generation (as shown in class)
     ax = axes[0]
     for idx, (key, label) in enumerate(zip(keys, labels)):
-        curves = np.array(all_curves[key])
+        curves = np.array(all_curves[key])   # shape: (n_runs, max_gens)
         mean   = curves.mean(axis=0)
         std    = curves.std(axis=0)
         gens   = np.arange(1, max_gens + 1)
         color  = colors[idx % len(colors)]
 
+        # Mean line
         ax.plot(gens, mean, label=label, color=color, linewidth=2)
 
+        # Error bars only every `errorbar_every` generations to keep it readable
         eb_idx = np.arange(0, max_gens, errorbar_every)
         ax.errorbar(
             gens[eb_idx], mean[eb_idx], yerr=std[eb_idx],
@@ -718,13 +372,13 @@ def plot_experiment_summary_h(all_curves, df, configs, config_key, title_prefix,
     ax.legend(fontsize=10, loc="upper right")
     ax.grid(True, alpha=0.3)
 
-    # --- Plot 2: HORIZONTAL boxplot of final fitness ---
+    # Plot 2: boxplot of final fitness (vertical or horizontal)
     ax = axes[1]
     groups = [df[df[config_key] == key]["best_fitness"].values for key in keys]
 
     bp = ax.boxplot(
         groups,
-        vert=False,                # <-- horizontal
+        vert=not horizontal,
         labels=labels,
         patch_artist=True,
         medianprops=dict(color="black", linewidth=1.5),
@@ -735,28 +389,60 @@ def plot_experiment_summary_h(all_curves, df, configs, config_key, title_prefix,
         patch.set_facecolor(color)
         patch.set_alpha(0.6)
 
-    ax.set_xlabel("Final Best Fitness (RMSE)", fontsize=12)
+    if horizontal:
+        ax.set_xlabel("Final Best Fitness (RMSE)", fontsize=12)
+        ax.invert_yaxis()                       # first config on top
+        ax.grid(True, axis="x", alpha=0.3)
+    else:
+        ax.set_ylabel("Final Best Fitness (RMSE)", fontsize=12)
+        ax.grid(True, axis="y", alpha=0.3)
+
     ax.set_title(
         f"Final Fitness Distribution\n"
         f"({len(next(iter(all_curves.values())))} runs per configuration)",
         fontsize=13,
     )
-    ax.invert_yaxis()   # first config on top (more natural reading order)
-    ax.grid(True, axis="x", alpha=0.3)
 
     fig.suptitle(f"{title_prefix} Comparison", fontsize=14, fontweight="bold")
     plt.tight_layout()
     plt.show()
 
-
-def evaluate_experiment_h(all_results, all_curves, best_inds, configs, config_key,
-                          target_img, title_prefix, maximization=False, alpha=0.05,
-                          plot_curves=True, plot_images=True, ncols=6):
+# ONE-CALL EVALUATION PIPELINE FOR A MULTI-CONFIG EXPERIMENT
+def evaluate_experiment(all_results, all_curves, best_inds, configs, config_key,
+                        target_img, title_prefix, maximization=False, alpha=0.05,
+                        plot_curves=True, plot_images=True, ncols=6,
+                        orientation="horizontal"):
     """
-    Drop-in replacement for evaluate_experiment that uses the horizontal-
-    boxplot version of the summary plot (plot_experiment_summary_h).
-    Everything else (DataFrame, Kruskal-Wallis + post-hoc, best-individuals
-    figure) is identical to the original.
+    Run the full post-experiment reporting pipeline in a single call.
+
+    Bundles the four steps used across every test section:
+      1. Build a tidy DataFrame from per-run results.
+      2. Run the statistical comparison (Kruskal-Wallis + post-hoc Mann-Whitney
+         with Bonferroni correction).
+      3. Plot mean ± std convergence curves and the boxplot of final fitnesses.
+      4. Plot the best individual per config against the target image.
+
+    Args:
+        - all_results (list[dict]): Output of run_experiment.
+        - all_curves (dict): Maps config key -> list of per-run fitness curves.
+        - best_inds (dict): Maps config key -> best Individual across runs.
+        - configs (list[dict] | list[tuple]): Operator configs or
+          (mut_prob, xo_prob) tuples.
+        - config_key (str): Column / key identifying each config in all_results.
+        - target_img (PIL.Image or np.ndarray): Reference image.
+        - title_prefix (str): Used in plot titles and section headers.
+        - maximization (bool): Direction of optimisation (default False).
+        - alpha (float): Significance level for statistical tests.
+        - plot_curves (bool): If False, skip the convergence + boxplot figure.
+        - plot_images (bool): If False, skip the best-individuals figure.
+        - ncols (int): Max panels per row in the best-individuals figure.
+        - orientation (str): 'vertical' (default) or 'horizontal'. Passed
+          through to plot_experiment_summary to control boxplot orientation.
+
+    Returns:
+        - df (pd.DataFrame): Tidy per-run results.
+        - summary (pd.DataFrame): Per-config statistics + global test outcome.
+        - avg_curves (dict): Maps config -> mean fitness curve (np.ndarray).
     """
     # 1. DataFrame
     df = pd.DataFrame(all_results)
@@ -770,14 +456,15 @@ def evaluate_experiment_h(all_results, all_curves, best_inds, configs, config_ke
         alpha       = alpha,
     )
 
-    # 3. Convergence (mean ± std) + HORIZONTAL final-fitness boxplot
+    # 3. Convergence (mean ± std) + final-fitness boxplot
     if plot_curves:
-        plot_experiment_summary_h(
+        plot_experiment_summary(
             all_curves   = all_curves,
             df           = df,
             configs      = configs,
             config_key   = config_key,
             title_prefix = title_prefix,
+            orientation  = orientation,
         )
 
     # 4. Best individual per config against the target
@@ -787,10 +474,11 @@ def evaluate_experiment_h(all_results, all_curves, best_inds, configs, config_ke
             configs      = configs,
             target_img   = target_img,
             title_prefix = title_prefix,
-            ncols         = ncols
+            ncols        = ncols,
         )
 
     return df, summary, avg_curves
+
 
 # LOAD PRE-COMPUTED EXPERIMENT ARTIFACTS FROM DISK
  
@@ -812,56 +500,79 @@ class _LoadedIndividual:
         return self._fit
     
 def load_experiment_artifacts(checkpoint_path, config_names, config_key,
-                              best_png_template=None):
+                              best_png_template=None, results_path=None):
     """
-    Load a pre-computed experiment from disk into the same (all_results,
-    all_curves, best_inds) triple that ``run_experiment`` returns, so it
-    can be fed directly into ``evaluate_experiment``.
- 
-    Useful for sections whose experiment was run by a separate script
-    (e.g. ``_run_mutation.py``) because a full sweep is too slow to do
-    inline in the notebook.
- 
+    Load a pre-computed experiment from disk into the (all_results,
+    all_curves, best_inds, aggregates) tuple expected by the rest of the
+    pipeline.
+
+    The sibling ``*_results.json`` (alongside the checkpoint) is loaded
+    automatically when present, providing pre-computed per-config
+    aggregates (avg, std, min, max, n_runs, and optionally 'params'
+    for the random_search phase). When the file is missing, ``aggregates``
+    is an empty dict and the rest of the pipeline still works as before
+    (compare_all_configs recomputes the same stats from per-run values).
+
     Expected on-disk layout (paths relative to ``checkpoint_path.parent``):
         - ``checkpoint_path``: JSON file structured as
           ``{config_name: [{"run", "fitness", "time_seconds", "curve_file"}, ...]}``.
-        - ``curve_file``: ``.npy`` fitness curve per run (path stored in the checkpoint).
+        - ``checkpoint_path``-sibling ``*_results.json`` (auto-detected): JSON file
+          structured as ``{config_name: {"avg", "std", "min", "max", "n_runs", ...}}``.
+        - ``curve_file``: ``.npy`` fitness curve per run.
         - best-individual PNGs named via ``best_png_template``.
- 
+
     Args:
         - checkpoint_path (str | Path): Path to the JSON checkpoint.
-        - config_names (list[str]): Configs to load (must be keys in the checkpoint).
-        - config_key (str): Field name used in each result dict
-          (e.g. "mutation_type") — must match what ``evaluate_experiment`` expects.
+        - config_names (list[str]): Configs to load.
+        - config_key (str): Field name used in each result dict.
         - best_png_template (str, optional): Filename template for the best
           PNG, with ``{name}`` placeholder. Defaults to
-          ``"{stem}_best_{name}.png"`` where ``{stem}`` is the checkpoint
-          filename with ``_checkpoint`` stripped (e.g. ``mutation_checkpoint.json``
-          -> ``mutation_best_{name}.png``).
- 
+          ``"{stem}_best_{name}.png"``.
+        - results_path (str | Path, optional): Path to the sibling results
+          JSON. Defaults to ``{stem}_results.json`` next to the checkpoint.
+          If the file doesn't exist, ``aggregates`` is returned as ``{}``.
+
     Returns:
         - all_results (list[dict]): One dict per run.
         - all_curves (dict[str, list[list[float]]]): Per-config fitness curves.
         - best_inds (dict[str, _LoadedIndividual]): Per-config best individual.
+        - aggregates (dict[str, dict]): Per-config pre-computed stats from
+          the sibling ``*_results.json``, or ``{}`` if absent.
     """
     checkpoint_path = Path(checkpoint_path)
     artifacts_dir = checkpoint_path.parent
- 
+
     with open(checkpoint_path, encoding="utf-8") as f:
         checkpoint = json.load(f)
- 
+
     if best_png_template is None:
         stem = checkpoint_path.stem.replace("_checkpoint", "")
         best_png_template = f"{stem}_best_{{name}}.png"
- 
+
+    # Auto-detect sibling results.json. Empty dict when missing -- callers can
+    # still rely on compare_all_configs's recomputation.
+    if results_path is None:
+        stem = checkpoint_path.stem.replace("_checkpoint", "")
+        results_path = artifacts_dir / f"{stem}_results.json"
+    else:
+        results_path = Path(results_path)
+
+    if results_path.exists():
+        with open(results_path, encoding="utf-8") as f:
+            full_aggregates = json.load(f)
+        # Filter to the configs the caller actually asked for.
+        aggregates = {name: full_aggregates[name]
+                      for name in config_names if name in full_aggregates}
+    else:
+        aggregates = {}
+
     all_results = []
     all_curves  = {}
     best_inds   = {}
- 
+
     for name in config_names:
         runs = checkpoint[name]
- 
-        # Flat per-run records — same format as run_experiment outputs.
+
         for r in runs:
             all_results.append({
                 config_key    : name,
@@ -869,18 +580,16 @@ def load_experiment_artifacts(checkpoint_path, config_names, config_key,
                 "best_fitness": r["fitness"],
                 "time_seconds": r["time_seconds"],
             })
- 
-        # Per-run fitness curves, ordered by run number.
+
         all_curves[name] = [
             np.load(artifacts_dir / r["curve_file"]).tolist()
             for r in sorted(runs, key=lambda x: x["run"])
         ]
- 
-        # Best individual: lowest-fitness run's PNG.
+
         best_run = min(runs, key=lambda r: r["fitness"])
         best_inds[name] = _LoadedIndividual(
             artifacts_dir / best_png_template.format(name=name),
             best_run["fitness"],
         )
- 
-    return all_results, all_curves, best_inds
+
+    return all_results, all_curves, best_inds, aggregates
