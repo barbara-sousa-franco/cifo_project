@@ -115,7 +115,6 @@ from operators import (
     color_creep_mutation,
     adaptive_mutation_schedule,
     # crossover
-    triangle_crossover,
     uniform_crossover,
     kpoint_crossover,
     reduced_surrogate_crossover,
