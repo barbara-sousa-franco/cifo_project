@@ -59,6 +59,7 @@ FINAL_SETUP so it can be swapped after validate_top3 finishes.
 from __future__ import annotations
 
 import argparse
+from cmath import phase
 import functools
 import json
 import random
@@ -618,6 +619,7 @@ PHASES: dict[str, Phase] = {
     ),
 
     # ----- sec 12 (Challenge): same final setup/budget, but CIEDE2000 fitness -----
+    # Did not use this one since it is estimated that it would run for at least 72h
     "ciede2000": Phase(
         name="ciede2000",
         configs=[_final_config("challenge", fitness_metric="ciede2000")],
@@ -647,6 +649,22 @@ PHASES: dict[str, Phase] = {
     gens=5000,
     n_runs=1,
 ),
+
+    # A short-run version of the final run for quick visual comparison with the challenge's result
+    "final_run_short": Phase(
+    name="final_run_short",
+    configs=[_final_config("final_short", fitness_metric="rmse")],
+    xo_prob=FINAL_SETUP["xo_prob"],
+    mut_prob=FINAL_SETUP["mut_prob"],
+    xo_fn=WINNERS["xo_fn"],
+    mut_fn=WINNERS["mut_fn"],
+    selection_algorithm=_final_selection_algorithm(),
+    individual_kwargs=_final_individual_kwargs(),
+    ga_kwargs=_final_ga_kwargs(),
+    pop=200,
+    gens=5000,
+    n_runs=1,
+),
 }
 
 
@@ -654,10 +672,36 @@ PHASES: dict[str, Phase] = {
 # Plumbing.
 # --------------------------------------------------------------------------
 def _stamp(msg: str) -> None:
+    """
+    Print a timestamped log message to stdout.
+
+    Used to make experiment logs easier to read while running long jobs,
+    especially when multiple configurations are evaluated sequentially.
+
+    Example:
+        [14:32:18] Starting phase 3...
+
+    Parameters:
+        - msg: Message to print.
+    """
     _orig_print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
 def _load_checkpoint(path: Path) -> dict:
+    """
+    Load a checkpoint file from disk.
+
+    If the checkpoint file does not exist yet, return an empty dictionary.
+
+    This is useful for resuming experiment runs without repeating already
+    completed work.
+
+    Parameters:
+        - path: Path to the checkpoint JSON file.
+
+    Returns:
+        - Parsed checkpoint dictionary, or {} if the file does not exist.
+    """
     if not path.exists():
         return {}
     with open(path, "r", encoding="utf-8") as f:
@@ -665,11 +709,37 @@ def _load_checkpoint(path: Path) -> dict:
 
 
 def _save_checkpoint(path: Path, state: dict) -> None:
+    """
+    Save the current experiment state to a checkpoint file.
+
+    Used so interrupted runs can later be resumed from the saved state.
+
+    Parameters:
+        - path: Destination path of the checkpoint file.
+        - state: Dictionary containing the state/results to persist.
+    """
     with open(path, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
 
 
 def _filter_configs(configs: list[dict], only: list[str], skip: list[str]) -> list[dict]:
+    """
+    Filter experiment configurations by name.
+
+    Supports:
+        - selecting only specific config names
+        - excluding specific config names
+
+    Matching is case-insensitive.
+
+    Parameters:
+        - configs: Full list of experiment configuration dictionaries.
+        - only: Optional list of config names to include.
+        - skip: Optional list of config names to exclude.
+
+    Returns:
+        - Filtered list of configs.
+    """
     out = configs
     if only:
         wanted = {n.lower() for n in only}
@@ -681,7 +751,27 @@ def _filter_configs(configs: list[dict], only: list[str], skip: list[str]) -> li
 
 
 def _merge_dicts(*dicts: dict) -> dict:
-    """Right-most wins. Used to combine phase-level + config-level kwargs."""
+    """
+    Merge multiple dictionaries into one.
+
+    If the same key appears multiple times, the right-most dictionary wins.
+
+    Commonly used to combine phase-level default kwargs with config-specific override kwargs
+
+    Example:
+        {"mut_prob": 0.01}
+        merged with
+        {"mut_prob": 0.02, "xo_prob": 0.95}
+
+        becomes:
+        {"mut_prob": 0.02, "xo_prob": 0.95}
+
+    Parameters:
+        - *dicts: Any number of dictionaries.
+
+    Returns:
+        - Single merged dictionary.
+    """
     out: dict = {}
     for d in dicts:
         if d:
@@ -695,7 +785,19 @@ def _run_one(
     target_array: np.ndarray,
     run: int,
 ) -> tuple[Individual, list[float]]:
-    """Execute a single GA run for a (phase, cfg, run) triple."""
+    """
+    Execute a single GA run for one (phase, config, run) combination.
+
+    Parameters:
+        - phase (Phase): Phase definition containing defaults such as population size,
+        generations, operators and probabilities.
+        - cfg (dict): Configuration dictionary for this experiment variant.
+        - target_array (np.ndarray): Target image as a NumPy array.
+        - run (int): Run index (used to seed randomness for reproducibility).
+
+    Returns:
+        - Tuple: (best_individual, fitness_curve)
+    """
     random.seed(run * SEED)
     np.random.seed(run * SEED)
 
@@ -720,6 +822,12 @@ def _run_one(
     selection_fn = ga_kwargs.pop("selection_algorithm",
                                  cfg.get("selection_algorithm", phase.selection_algorithm))
 
+    # Enable per-generation printing only for the final run.
+    if phase.name in ["final_run", "ciede2000", "ciede2000_short", "final_run_short"]:
+        _b.print = _orig_print
+    else:
+        _b.print = _quiet_print
+
     initial_pop = [
         Individual(target=target_array, fitness_metric=fitness_metric, **ind_kwargs)
         for _ in range(phase.pop)
@@ -737,37 +845,67 @@ def _run_one(
         verbose=False,
         **ga_kwargs,
     )
+
+    # Restore quiet mode after the run so subsequent phases stay clean.
+    _b.print = _quiet_print
+    
     return best_ind, fitness_curve
 
 
 def run_phase(phase: Phase, only: list[str], skip: list[str]) -> None:
+    """
+    Run a complete experiment phase across all selected configurations.
+
+    Handles:
+        - config filtering (--only / --skip)
+        - checkpoint loading/resume
+        - repeated runs per config
+        - fitness curve saving
+        - best-image saving
+        - phase summary statistics
+
+    Results are written to disk under the artifacts directory.
+
+    Parameters:
+        - phase (Phase): Phase definition to execute.
+        - only (list[str]): Optional config-name whitelist.
+        - skip (list[str]): Optional config-name blacklist.
+    """
+    # Apply CLI filters to configs.
     configs = _filter_configs(phase.configs, only, skip)
     if not configs:
         _stamp(f"[{phase.name}] no configs left after --only/--skip; skipping.")
         return
 
+    # Resume progress if checkpoint already exists.
     checkpoint = ART / f"{phase.name}_checkpoint.json"
     state = _load_checkpoint(checkpoint)
     if state:
         already = sum(len(v) for v in state.values())
         _stamp(f"[{phase.name}] resuming from checkpoint ({already} runs already done).")
 
+    # Load target image once for the whole phase.
     target_img = Image.open("data/girl_pearl_earing.png").convert("RGB")
     target_array = np.array(target_img, dtype=np.float32)
 
+    # Print a timestamped log message with the phase name, GA budget, and configs to be run.
     _stamp(f"[{phase.name}] POP={phase.pop} GENS={phase.gens} N_RUNS={phase.n_runs}  "
            f"configs={[c['name'] for c in configs]}")
 
     best_inds: dict[str, Individual] = {}
     phase_start = time.time()
 
+    # Run every configuration
     for cfg in configs:
         name = cfg["name"]
         completed = state.get(name, [])
         completed_runs = {r["run"] for r in completed}
         _stamp(f"  === {name} ===  ({len(completed_runs)}/{phase.n_runs} already done)")
 
+        # Run repeated trials
         for run in range(1, phase.n_runs + 1):
+
+            # Skip already-completed runs
             if run in completed_runs:
                 continue
 
@@ -776,13 +914,16 @@ def run_phase(phase: Phase, only: list[str], skip: list[str]) -> None:
             elapsed = time.time() - t0
             fit = best_ind.fitness()
 
+            # Save fitness evolution curve
             curve_path = ART / f"{phase.name}_{name}_run{run:02d}_curve.npy"
             np.save(curve_path, np.asarray(fitness_curve, dtype=np.float32))
 
+            # Track best image for this config across all runs, and save it if it's the best so far.
             if name not in best_inds or fit < best_inds[name].fitness():
                 best_inds[name] = best_ind
                 best_ind.render().save(ART / f"{phase.name}_best_{name}.png")
 
+            # Store run result in the checkpoint state and save it to disk.
             entry = {
                 "run": run,
                 "fitness": float(fit),
@@ -794,10 +935,14 @@ def run_phase(phase: Phase, only: list[str], skip: list[str]) -> None:
             if "_params" in cfg:
                 entry["params"] = cfg["_params"]
 
+            # Append this run's result to the list of completed runs for this config in the checkpoint state.
             state.setdefault(name, []).append(entry)
+
+            # Save checkpoint after every run
             _save_checkpoint(checkpoint, state)
             _stamp(f"    Run {run:2d}/{phase.n_runs}: fitness {fit:.3f} in {elapsed:.1f}s")
 
+        # After all runs for this config are done, print a summary of the fitness scores.
         fits = [r["fitness"] for r in state[name]]
         if fits:
             _orig_print(f"    summary: avg={np.mean(fits):.3f} std={np.std(fits):.3f} "
@@ -821,42 +966,103 @@ def run_phase(phase: Phase, only: list[str], skip: list[str]) -> None:
         }
         if "_params" in cfg:
             summary[name]["params"] = cfg["_params"]
+
+    # Save machine-readable results summary for this phase to a JSON file in the artifacts directory.
     with open(ART / f"{phase.name}_results.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2)
 
+    # Print ranking ordered by average fitness
     _orig_print(f"\n[{phase.name}] final summary (sorted by avg):")
     for n, s in sorted(summary.items(), key=lambda kv: kv[1]["avg"]):
         _orig_print(f"  {n:25s}  avg={s['avg']:7.3f}  std={s['std']:5.3f}  "
                     f"min={s['min']:6.3f}  (n={s['n_runs']})")
 
 
+
+
+
+
+
 def _maybe_save_final_visual_comparison() -> None:
-    final_path = ART / "final_run_best_final.png"
-    challenge_path = ART / "ciede2000_best_challenge.png"
+    """
+    Create a side-by-side comparison image between the best final-run
+    result and the best challenge result (both with short runs).
+
+    If either image does not exist, nothing is done.
+
+    Output:
+        rmse_vs_ciede2000.png
+    """
+    # Paths to the precomputed best images
+    final_path = ART / "final_run_short_best_final_short.png"
+    challenge_path = ART / "ciede2000_short_best_challenge_short.png"
+
+    # If either image is missing, skip compariso
     if not final_path.exists() or not challenge_path.exists():
         return
 
+    # Load images
     final_img = Image.open(final_path).convert("RGB")
     challenge_img = Image.open(challenge_path).convert("RGB")
+
+    # Compute canvas size (align both images vertically)
     width = max(final_img.width, challenge_img.width)
     height = max(final_img.height, challenge_img.height)
-    label_h = 28
-    gap = 12
 
+    label_h = 28 # space for titles
+    gap = 12 # space between images
+
+    # Create blank canvas
     canvas = Image.new("RGB", (width * 2 + gap, height + label_h), "white")
+
+    # Paste both images centered in their halves
     canvas.paste(final_img, ((width - final_img.width) // 2, label_h))
     canvas.paste(challenge_img, (width + gap + (width - challenge_img.width) // 2, label_h))
 
+    # Add labels above each image
     draw = ImageDraw.Draw(canvas)
     draw.text((8, 8), "Final run (RMSE)", fill=(0, 0, 0))
     draw.text((width + gap + 8, 8), "Challenge (CIEDE2000)", fill=(0, 0, 0))
 
-    out_path = ART / "final_vs_challenge.png"
+    # Save the comparison image to disk.
+    out_path = ART / "rmse_vs_ciede2000.png"
     canvas.save(out_path)
     _stamp(f"Saved visual comparison: {out_path}")
 
 
+
+
+
+
+
+
+
 def main() -> None:
+
+    """
+    Entry point for the full experiment pipeline.
+
+    Responsibilities:
+        - Parse command-line arguments
+        - Select which phases to run
+        - Apply optional config filters (--only / --skip)
+        - Execute phases sequentially
+        - Generate final comparison image
+        - Handle interruptions and errors safely
+
+    The system is checkpoint-aware:
+        If execution is interrupted, re-running the script resumes progress
+        instead of restarting from scratch.
+    """
+
+    # An ArgumentParser reads the command-line arguments. For example, if the user runs `
+    # 'python _run_experiment.py mutation --only mut0.01_xo0.95' then the parser will separate into:
+    # script -> _run_experiment.py
+    # phase -> mutation
+    # option -> --only
+    # config -> mut0.01_xo0.95
+    # discription is the help message that is printed when the user runs `python _run_experiment.py --help`.
+    # epilog is the block of examples printed at the end of the help message.
     parser = argparse.ArgumentParser(
         description="Run the CIFO experiment pipeline with checkpoints.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -870,23 +1076,32 @@ def main() -> None:
             "  python _run_experiment.py probabilities --only mut0.01_xo0.95",
         ]),
     )
+
+    # Positional argument: list of phases to execute
     parser.add_argument(
         "phases",
-        nargs="*",
-        choices=list(PHASES.keys()),
+        nargs="*", # zero or more phases can be specified; if none, defaults to all
+        choices=list(PHASES.keys()), # the user can only choose from the defined phases
         default=None,
         help="Which phase(s) to run. Default: all, in the order shown by --help.",
     )
+
+    # Filter: run only selected configs
     parser.add_argument(
         "--only", nargs="+", default=[],
         help="Run only these configs (case-insensitive). Applies to every chosen phase.",
     )
+
+    # Filter: skip selected configs
     parser.add_argument(
         "--skip", nargs="+", default=[],
         help="Skip these configs (case-insensitive). Applies to every chosen phase.",
     )
 
+    # Parser reads the command-line arguments and converts to an object
     args = parser.parse_args()
+
+    # If no phases are explicitly provided, run all
     selected = args.phases or list(PHASES.keys())
 
     _stamp(f"Phases requested: {selected}")
@@ -899,6 +1114,8 @@ def main() -> None:
     try:
         for p in selected:
             run_phase(PHASES[p], args.only, args.skip)
+
+        # Generate final comparison image if possible
         _maybe_save_final_visual_comparison()
     except KeyboardInterrupt:
         _stamp("Interrupted by user. Checkpoint is up-to-date; rerun to resume.")
@@ -909,8 +1126,9 @@ def main() -> None:
         traceback.print_exc()
         sys.exit(1)
 
+    # Final runtime report
     _stamp(f"All done in {(time.time() - overall_start) / 3600:.2f}h")
 
-
+# Standard Python entry point
 if __name__ == "__main__":
     main()
