@@ -54,6 +54,8 @@ be updated in one place if the real winners differ.
 The post-random-search setup used by Challenge/final_run is encoded in
 FINAL_SETUP so it can be swapped after validate_top3 finishes.
 """
+
+# Import libraries
 from __future__ import annotations
 
 import argparse
@@ -71,11 +73,33 @@ from PIL import Image, ImageDraw
 
 # Silence per-generation "Generation X/Y" prints from ga.py.
 import builtins as _b
+
+
+# Suppress verbose per-generation output from the genetic_algorithm() loop
+# while preserving all other print statements (summaries, run headers, etc.).
+
+# Save a reference to the original print so the wrapper can still forward
+# all non-generation messages to the real print function.
 _orig_print = _b.print
+
 def _quiet_print(*a, **k):
+    """Wrapper around print that suppresses generation-header lines.
+    
+    Forwards all messages to the original print except those containing
+    'Generation:', which are the per-generation progress lines printed
+    by genetic_algorithm() on every iteration.
+
+    Args:
+        *a: Positional arguments forwarded to the original print.
+        **k: Keyword arguments forwarded to the original print.
+    """
     msg = " ".join(str(x) for x in a)
     if "Generation:" not in msg:
         _orig_print(*a, **k)
+
+# Replace print in the ga module's namespace with the filtered version.
+# From this point on, any call to print() inside ga.py will go through
+# _quiet_print instead of the built-in.
 _b.print = _quiet_print
 
 from solution import Individual
@@ -99,14 +123,7 @@ from operators import (
 )
 from ga import genetic_algorithm
 
-
-# --------------------------------------------------------------------------
-# Shared hyperparameters and known winners.
-#
-# WINNERS is the single source of truth for the fixed values that later
-# phases plug into the GA. If we later discover a different winner we only
-# edit this dict instead of hunting through the file.
-# --------------------------------------------------------------------------
+# Global constants
 SEED = 23
 POP = 100
 GENS = 500
@@ -115,6 +132,8 @@ FINAL_POP = 500
 FINAL_GENS = 15000
 FINAL_N_RUNS = 1
 
+# The winners from each phase, plugged in as fixed values for later phases. Before the Random Search phase.
+#If we later discover a different winner we only edit this dict instead of hunting through the file.
 WINNERS = {
     "mut_fn":     adaptive_mutation_schedule,   # sec 5 winner
     "xo_fn":      uniform_crossover,            # sec 6 winner
@@ -133,11 +152,16 @@ WINNERS = {
     },
 }
 
+# Create the artifacts directory if it doesn't exist. All phases write their outputs here, so it needs to be shared
+# and created upfront.
 ART = Path("run_artifacts")
 ART.mkdir(exist_ok=True)
 
 
-# --------------------------------------------------------------------------
+
+
+
+# ==========================================================================
 # Phase dataclass.
 #
 # Each phase varies one or more dimensions and holds all the others fixed.
@@ -145,7 +169,8 @@ ART.mkdir(exist_ok=True)
 # inside the config dict itself: "fn", "mut_prob", "xo_prob", "ga_kwargs",
 # "individual_kwargs", "fitness_metric", "selection_algorithm". Anything
 # absent falls back to the Phase-level default.
-# --------------------------------------------------------------------------
+
+
 @dataclass
 class Phase:
     name: str
@@ -169,7 +194,29 @@ class Phase:
 
 
 def _make_tournament_selection(tournament_size: int) -> Callable:
+    """
+    Create a tournament selection function with a fixed tournament size.
+
+    This is a small factory/helper function that pre-configures
+    `tournament_selection` and returns a callable that can be used later
+    without repeatedly passing `tournament_size`.
+
+    Example:
+        selection_fn = _make_tournament_selection(3)
+
+        # Later:
+        parent = selection_fn(population, fitness_scores)
+
+    Parameters:
+        - tournament_size (int): Number of individuals competing in each tournament.
+
+    Returns:
+        - A partially configured tournament selection function.
+    """
+
     return functools.partial(tournament_selection, tournament_size=tournament_size)
+
+
 
 
 def _make_restricted_mating_selection(
@@ -178,19 +225,42 @@ def _make_restricted_mating_selection(
     *,
     tournament_size: int | None = None,
 ) -> Callable:
+    
+    """
+    Create a restricted mating selection function with fixed distance bounds.
+
+    This helper pre-configures `restricted_mating_selection` with the given
+    distance constraints.
+
+    If `tournament_size` is provided, tournament selection is used as the
+    base selection strategy inside restricted mating.
+
+    Parameters:
+        - min_distance (float): Minimum allowed distance between selected mates.
+
+        - max_distance (float): Maximum allowed distance between selected mates.
+
+        - tournament_size (int | None): Optional tournament size for the internal base selection method.
+
+    Returns:
+        - A partially configured restricted mating selection function.
+    """
+
     kwargs: dict[str, Any] = {
         "min_distance": min_distance,
         "max_distance": max_distance,
     }
     if tournament_size is not None:
         kwargs["base_selection"] = _make_tournament_selection(tournament_size)
+
     return functools.partial(restricted_mating_selection, **kwargs)
 
 
-# --------------------------------------------------------------------------
+
+# ==========================================================================
 # Helper: build the random_search configs deterministically (seeded RNG so
 # every machine produces the same list).
-# --------------------------------------------------------------------------
+
 def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
     """Random sampling around the winners found in earlier phases.
 
@@ -211,10 +281,17 @@ def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
         tournament_size   : choice(2, 3, 5)   never tuned (always 2)
         mating_min_dist   : U(0.005, 0.05)    restricted_mating default = 0.012
         mating_max_dist   : U(0.20, 0.50)     restricted_mating default = 0.30
+
+    Parameters:
+        - n_samples (int): Number of random configs to generate.
+
+    Returns:
+        - List of config dicts with random hyperparameters for the random search phase.
     """
     rng = random.Random(SEED + 999)
     configs = []
     for i in range(n_samples):
+        # Generate random values for each hyperparameter according to the specified distributions and ranges.
         mut_p     = round(rng.uniform(0.005, 0.03), 4)
         xo_p      = round(rng.uniform(0.90, 1.00), 4)
         size      = round(rng.uniform(0.40, 1.00), 3)
@@ -230,6 +307,8 @@ def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
         selection_fn = _make_tournament_selection(tour_size)
         mate_fn      = _make_restricted_mating_selection(mate_min, mate_max)
 
+        # Build the config dict for this sample, including the random hyperparameters and the resolved functions.
+        #  Also stash the raw hyperparameter values under "_params"
         configs.append({
             "name": f"sample_{i:02d}",
             "mut_prob": mut_p,
@@ -256,12 +335,12 @@ def _build_random_search_configs(n_samples: int = 12) -> list[dict]:
     return configs
 
 
-# --------------------------------------------------------------------------
+# =========================================================================
 # Provisional post-random-search setup used by the final run and Challenge.
 #
 # validate_top3 selected sample_11 by average RMSE across 15 runs. Keep the
 # final/challenge setup here so it can still be swapped in one place.
-# --------------------------------------------------------------------------
+
 FINAL_SETUP: dict[str, Any] = {
     "source": "sample_11",
     "mut_prob": 0.0123,
@@ -276,6 +355,19 @@ FINAL_SETUP: dict[str, Any] = {
 
 
 def _final_individual_kwargs() -> dict[str, Any]:
+    """
+    Build the keyword arguments used to initialize individuals
+    in the final GA experiments.
+
+    These values are taken from `FINAL_SETUP`, which stores the
+    best-performing hyperparameters found during previous tuning phases.
+
+    Returns:
+        Dictionary containing the individual-level parameters:
+        - max_triangle_size
+        - alpha_min
+        - alpha_max
+    """
     return {
         "max_triangle_size": FINAL_SETUP["max_triangle_size"],
         "alpha_min": FINAL_SETUP["alpha_min"],
@@ -284,10 +376,30 @@ def _final_individual_kwargs() -> dict[str, Any]:
 
 
 def _final_selection_algorithm() -> Callable:
+    """
+    Build the parent selection function used in the final GA runs.
+
+    The tournament size is taken from `FINAL_SETUP` and baked into
+    the returned callable using `functools.partial`, so the GA can
+    call it directly without passing extra parameters.
+
+    Returns:
+        Configured tournament selection callable.
+    """
     return _make_tournament_selection(FINAL_SETUP["tournament_size"])
 
 
 def _final_ga_kwargs() -> dict[str, Any]:
+    """
+    Build GA-level keyword arguments for the final experiment setup.
+
+    Currently this configures the mating-selection strategy using
+    the best distance bounds found during the restricted mating phase.
+
+    Returns:
+        Dictionary of keyword arguments to be passed into the GA,
+        including the configured mate selection algorithm.
+    """
     return {
         "mate_selection_algorithm": _make_restricted_mating_selection(
             FINAL_SETUP["mating_min_dist"],
@@ -297,15 +409,38 @@ def _final_ga_kwargs() -> dict[str, Any]:
 
 
 def _final_config(name: str, *, fitness_metric: str | None = None) -> dict[str, Any]:
+    """
+    Build the base configuration dictionary for a final experiment.
+
+    This helper creates the shared metadata for a final run and stores
+    a copy of the selected hyperparameters under `_params` for logging,
+    tracking, and summary reporting.
+
+    Args:
+        name:
+            Name/label of the experiment run.
+
+        fitness_metric:
+            Optional fitness metric override to evaluate the run with.
+            If omitted, the default metric is used.
+
+    Returns:
+        Configuration dictionary describing the final experiment.
+    """
+    # Store experiment name and a copy of all final hyperparameters
     cfg: dict[str, Any] = {"name": name, "_params": dict(FINAL_SETUP)}
     if fitness_metric is not None:
         cfg["fitness_metric"] = fitness_metric
     return cfg
 
 
-# --------------------------------------------------------------------------
+
+
+
+
+# ==========================================================================
 # The complete pipeline. Order matters -- the default run goes top to bottom.
-# --------------------------------------------------------------------------
+# ==========================================================================
 PHASES: dict[str, Phase] = {
     # ----- sec 5 -----
     "mutation": Phase(
@@ -319,7 +454,7 @@ PHASES: dict[str, Phase] = {
         ],
         xo_prob=0,
         mut_prob=0.1,
-        xo_fn=triangle_crossover,
+        xo_fn=uniform_crossover,
         mut_fn=None,
     ),
 
@@ -414,8 +549,7 @@ PHASES: dict[str, Phase] = {
     ),
 
     # ----- sec 11 bonus: ALL diversity mechanisms combined -----
-    # Sanity check requested by the team: even though the individual
-    # mechanisms (except restricted_mating) underperformed in the main
+    # Sanity check: even though the individual mechanisms (except restricted_mating) underperformed in the main
     # diversity phase, we wanted to test whether all four together produce
     # any positive interaction. Expectation: similar to or worse than
     # restricted_mating alone (27.59), because adaptive+injection already
@@ -448,7 +582,7 @@ PHASES: dict[str, Phase] = {
         configs=_build_random_search_configs(n_samples=12),
         xo_fn=WINNERS["xo_fn"],
         mut_fn=WINNERS["mut_fn"],
-        n_runs=5,   # fewer runs per sample -- random search is exploratory
+        n_runs=5,   # fewer runs per sample - random search is exploratory
     ),
 
     # ----- validate top configs from random_search with 15 runs each -----
