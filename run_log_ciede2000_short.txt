@@ -1,0 +1,10 @@
+[04:50:07] Phases requested: ['ciede2000_short']
+[04:50:07] [ciede2000_short] POP=200 GENS=5000 N_RUNS=1  configs=['challenge_short']
+[04:50:07]   === challenge_short ===  (0/1 already done)
+[18:25:39]     Run  1/1: fitness 6.200 in 48932.0s
+    summary: avg=6.200 std=0.000 min=6.200 max=6.200
+[18:25:39] [ciede2000_short] phase done in 13.59h
+
+[ciede2000_short] final summary (sorted by avg):
+  challenge_short            avg=  6.200  std=0.000  min= 6.200  (n=1)
+[18:25:39] All done in 13.59h
