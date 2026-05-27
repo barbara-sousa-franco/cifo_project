@@ -32,14 +32,16 @@ The experimental pipeline is fully systematic. Six One-Factor-At-A-Time (OFAT) p
 
 ```
 .
-├── solution.py             # Individual + Triangle classes; rendering (Porter-Duff);
-│                           # RMSE and CIEDE2000 fitness; sRGB→Lab pipeline
-├── operators.py            # All GA operators: 3 selection, 5 crossover, 5 mutation
-├── ga.py                   # Generational GA loop: elitism, adaptive mutation (1/5 rule),
-│                           # diversity injection, restricted mating support
+├── src/
+│   ├── solution.py         # Individual + Triangle classes; rendering (Porter-Duff);
+│   │                       # RMSE and CIEDE2000 fitness; sRGB→Lab pipeline
+│   ├── operators.py        # All GA operators: 3 selection, 5 crossover, 5 mutation
+│   ├── ga.py               # Generational GA loop: elitism, adaptive mutation (1/5 rule);
+│   │                       # diversity injection, restricted mating support
+│   └── utils.py            # Plotting helpers, compare_all_configs, load_experiment_artifacts
+│
 ├── _run_experiment.py      # Unified phase runner with checkpoint/restart;
 │                           # defines all PHASES, WINNERS, FINAL_SETUP
-├── utils.py                # Plotting helpers, compare_all_configs, load_experiment_artifacts
 ├── main.ipynb              # End-to-end analytical notebook (loads checkpoints, no GA runs)
 ├── report.tex              # LaTeX report (Overleaf-ready; all figures in figures/)
 ├── requirements.txt        # Python dependencies
@@ -58,7 +60,7 @@ The experimental pipeline is fully systematic. Six One-Factor-At-A-Time (OFAT) p
 │   └── top3_graphs.png              # Sec 5.7
 │
 └── run_logs/
-        └── run_log_*.txt    # Stdout logs from _run_experiment.py per phase
+    └── run_log_*.txt       # Stdout logs from _run_experiment.py per phase
 ```
 
 ---
