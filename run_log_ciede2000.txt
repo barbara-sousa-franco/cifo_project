@@ -1,3 +1,0 @@
-[04:34:11] Phases requested: ['ciede2000']
-[04:34:11] [ciede2000] POP=500 GENS=15000 N_RUNS=1  configs=['challenge']
-[04:34:11]   === challenge ===  (0/1 already done)
