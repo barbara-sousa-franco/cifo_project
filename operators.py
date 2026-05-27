@@ -489,9 +489,9 @@ def adaptive_crossover_schedule(p1, p2, xo_prob, verbose=False,
                                  current_gen=0, max_gen=100, **kwargs):
     """
     Changes the operation of crossover based on the phase of evolution:
-      - Initial phase  (< 50% of generations) : Uniform      → maximum exploration
-      - Mid phase      (50–85%)              : K-Point      → structured mixing
-      - Final phase    (> 85% of generations) : Red.Surrogate → focus on real differences
+      - Initial phase  (< 50% of generations) : Uniform       -> maximum exploration
+      - Mid phase      (50–85%)              : K-Point        -> structured mixing
+      - Final phase    (> 85% of generations) : Red.Surrogate -> focus on real differences
 
     Parameters:
         - p1, p2: Parent individuals.
@@ -751,9 +751,9 @@ def color_creep_mutation(individual, mutation_prob, color_sigma=0.04, **kwargs):
 def adaptive_mutation_schedule(individual, mut_prob, current_gen=0, max_gens=100, verbose=False, **kwargs):
     """
     Switches mutation operator based on the phase of evolution:
-      - Initial phase  (< 40%) : Full replacement  → maximum exploration
-      - Mid phase      (40-85%): Gaussian           → uniform fine-tuning (best overall)
-      - Final phase    (>= 85%): Color creep        → color refinement only
+      - Initial phase  (< 40%) : Full replacement  -> maximum exploration
+      - Mid phase      (40-85%): Gaussian          -> uniform fine-tuning (best overall)
+      - Final phase    (>= 85%): Color creep       -> color refinement only
 
     The VCF mutation is not used here because Gaussian outperformed it
     consistently across runs, and color creep is more targeted for late
