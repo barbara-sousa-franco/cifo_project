@@ -1,0 +1,14 @@
+# RECONSTRUCTED LOG (2026-05-27)
+# Source checkpoint: run_artifacts/final_run_short_checkpoint.json
+# Source results:    run_artifacts/final_run_short_results.json
+# Wall-clock timestamps were not recoverable; per-run durations and fitness values are from the checkpoint.
+[00:00:00] Phases requested: ['final_run_short']
+[00:00:00] [final_run_short] POP=200 GENS=5000 N_RUNS=1  configs=['final_short']
+[00:00:00]   === final_short ===  (0/1 already done)
+[00:00:00]     Run  1/1: fitness 19.635 in 32207.1s
+    summary: avg=19.635 std=0.000 min=19.635 max=19.635
+[00:00:00] [final_run_short] phase done in 8.95h
+
+[final_run_short] final summary (sorted by avg):
+  final_short                avg= 19.635  std=0.000  min=19.635  (n=1)
+[00:00:00] All done in 8.95h

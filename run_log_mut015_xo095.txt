@@ -1,7 +1,0 @@
-[13:05:39] Phases requested: ['probabilities']
-[13:05:39] --only:  ['mut0.15_xo0.95']
-[13:05:39] [probabilities] resuming from checkpoint (45 runs already done).
-[13:05:39] [probabilities] POP=100 GENS=500 N_RUNS=15  configs=['mut0.15_xo0.95']
-[13:05:39]   === mut0.15_xo0.95 ===  (0/15 already done)
-[13:17:37]     Run  1/15: fitness 35.784 in 717.6s
-[13:29:42]     Run  2/15: fitness 35.891 in 725.2s
