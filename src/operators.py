@@ -7,7 +7,7 @@
 from copy import deepcopy
 import random
 import numpy as np
-from solution import Individual, Triangle, IMG_WIDTH, IMG_HEIGHT, GENES_PER_TRIANGLE, clip_alpha, shrink_to_max_size
+from src.solution import Individual, Triangle, IMG_WIDTH, IMG_HEIGHT, GENES_PER_TRIANGLE, clip_alpha, shrink_to_max_size
 
 
 # Helper used by fitness sharing and restricted mating: flatten an

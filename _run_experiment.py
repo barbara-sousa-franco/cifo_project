@@ -118,8 +118,8 @@ def _quiet_print(*a, **k):
 # _quiet_print instead of the built-in.
 _b.print = _quiet_print
 
-from solution import Individual
-from operators import (
+from src.solution import Individual
+from src.operators import (
     tournament_selection,
     fitness_sharing_tournament,
     restricted_mating_selection,
@@ -136,7 +136,7 @@ from operators import (
     shuffle_crossover,
     adaptive_crossover_schedule,
 )
-from ga import genetic_algorithm
+from src.ga import genetic_algorithm
 
 # Global constants
 SEED = 23
