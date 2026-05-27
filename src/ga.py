@@ -10,7 +10,7 @@
 
 from collections.abc import Callable
 import numpy as np
-from solution import Individual, Triangle
+from src.solution import Individual, Triangle
 from time import time
 
 
