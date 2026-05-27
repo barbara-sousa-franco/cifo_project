@@ -119,7 +119,24 @@
 [22:00:30]     Run 14/15: fitness 27.521 in 1703.9s
 [22:27:26]     Run 15/15: fitness 27.425 in 1616.7s
     summary: avg=27.635 std=0.623 min=26.233 max=28.781
-[22:27:26] [diversity] phase done in 33.55h
+[23:41:38]   === all_combined ===  (0/15 already done)
+[00:11:40]     Run  1/15: fitness 31.892 in 1802.2s
+[00:47:59]     Run  2/15: fitness 33.634 in 2179.3s
+[01:25:53]     Run  3/15: fitness 32.083 in 2274.1s
+[02:02:53]     Run  4/15: fitness 33.009 in 2220.1s
+[02:34:47]     Run  5/15: fitness 32.873 in 1913.6s
+[03:08:26]     Run  6/15: fitness 31.866 in 2019.2s
+[03:36:40]     Run  7/15: fitness 32.738 in 1694.0s
+[04:04:03]     Run  8/15: fitness 32.051 in 1643.0s
+[04:37:55]     Run  9/15: fitness 33.232 in 2032.1s
+[05:18:22]     Run 10/15: fitness 32.501 in 2426.6s
+[05:58:08]     Run 11/15: fitness 32.261 in 2386.3s
+[06:38:44]     Run 12/15: fitness 32.529 in 2436.0s
+[07:18:41]     Run 13/15: fitness 31.456 in 2397.1s
+[07:58:50]     Run 14/15: fitness 31.698 in 2408.4s
+[08:38:45]     Run 15/15: fitness 32.895 in 2394.9s
+    summary: avg=32.448 std=0.596 min=31.456 max=33.634
+[08:38:45] [diversity] phase done in 42.50h
 
 [diversity] final summary (sorted by avg):
   restricted_mating          avg= 27.591  std=0.563  min=26.636  (n=15)
@@ -129,4 +146,5 @@
   fitness_sharing            avg= 30.316  std=0.497  min=29.322  (n=15)
   adaptive_mutation_rule     avg= 30.752  std=0.628  min=29.559  (n=15)
   adaptive_and_injection     avg= 31.277  std=0.626  min=29.860  (n=15)
-[22:27:26] All done in 33.55h
+  all_combined               avg= 32.448  std=0.596  min=31.456  (n=15)
+[08:38:45] All done in 42.50h

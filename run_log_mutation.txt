@@ -1,0 +1,100 @@
+# RECONSTRUCTED LOG (2026-05-27)
+# Source checkpoint: run_artifacts/mutation_checkpoint.json
+# Source results:    run_artifacts/mutation_results.json
+# Wall-clock timestamps were not recoverable; per-run durations and fitness values are from the checkpoint.
+[00:00:00] Phases requested: ['mutation']
+[00:00:00] [mutation] POP=100 GENS=500 N_RUNS=15  configs=['VCF', 'Full', 'Gaussian', 'ColorCreep', 'AdaptiveMut']
+[00:00:00]   === VCF ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 49.283 in 1316.6s
+[00:00:00]     Run  2/15: fitness 51.236 in 1139.2s
+[00:00:00]     Run  3/15: fitness 50.377 in 1121.7s
+[00:00:00]     Run  4/15: fitness 48.632 in 1097.6s
+[00:00:00]     Run  5/15: fitness 50.022 in 1096.3s
+[00:00:00]     Run  6/15: fitness 50.558 in 1079.6s
+[00:00:00]     Run  7/15: fitness 48.461 in 1107.1s
+[00:00:00]     Run  8/15: fitness 53.081 in 1114.2s
+[00:00:00]     Run  9/15: fitness 50.016 in 1109.3s
+[00:00:00]     Run 10/15: fitness 47.876 in 1079.3s
+[00:00:00]     Run 11/15: fitness 47.945 in 1089.4s
+[00:00:00]     Run 12/15: fitness 47.922 in 1087.1s
+[00:00:00]     Run 13/15: fitness 49.610 in 1107.2s
+[00:00:00]     Run 14/15: fitness 50.389 in 1097.4s
+[00:00:00]     Run 15/15: fitness 50.912 in 1091.5s
+    summary: avg=49.754 std=1.403 min=47.876 max=53.081
+[00:00:00]   === Full ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 52.459 in 1077.1s
+[00:00:00]     Run  2/15: fitness 51.160 in 1113.0s
+[00:00:00]     Run  3/15: fitness 53.505 in 1117.8s
+[00:00:00]     Run  4/15: fitness 53.309 in 1105.7s
+[00:00:00]     Run  5/15: fitness 52.377 in 1107.2s
+[00:00:00]     Run  6/15: fitness 51.320 in 1103.4s
+[00:00:00]     Run  7/15: fitness 52.018 in 1117.0s
+[00:00:00]     Run  8/15: fitness 51.152 in 1090.6s
+[00:00:00]     Run  9/15: fitness 50.689 in 1117.4s
+[00:00:00]     Run 10/15: fitness 51.620 in 1110.6s
+[00:00:00]     Run 11/15: fitness 54.303 in 1090.0s
+[00:00:00]     Run 12/15: fitness 50.400 in 1093.4s
+[00:00:00]     Run 13/15: fitness 52.156 in 1105.9s
+[00:00:00]     Run 14/15: fitness 54.602 in 1107.7s
+[00:00:00]     Run 15/15: fitness 50.882 in 1110.3s
+    summary: avg=52.130 std=1.258 min=50.400 max=54.602
+[00:00:00]   === Gaussian ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 42.985 in 1104.5s
+[00:00:00]     Run  2/15: fitness 44.225 in 1103.3s
+[00:00:00]     Run  3/15: fitness 45.229 in 1035.7s
+[00:00:00]     Run  4/15: fitness 43.696 in 1139.3s
+[00:00:00]     Run  5/15: fitness 43.444 in 2509.5s
+[00:00:00]     Run  6/15: fitness 42.510 in 2556.8s
+[00:00:00]     Run  7/15: fitness 44.063 in 2446.5s
+[00:00:00]     Run  8/15: fitness 43.800 in 2065.1s
+[00:00:00]     Run  9/15: fitness 42.633 in 1586.1s
+[00:00:00]     Run 10/15: fitness 43.769 in 1659.3s
+[00:00:00]     Run 11/15: fitness 42.213 in 1904.5s
+[00:00:00]     Run 12/15: fitness 40.885 in 2373.3s
+[00:00:00]     Run 13/15: fitness 42.914 in 2360.6s
+[00:00:00]     Run 14/15: fitness 43.671 in 3009.2s
+[00:00:00]     Run 15/15: fitness 41.363 in 1542.7s
+    summary: avg=43.160 std=1.087 min=40.885 max=45.229
+[00:00:00]   === ColorCreep ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 47.319 in 1557.3s
+[00:00:00]     Run  2/15: fitness 53.622 in 1361.4s
+[00:00:00]     Run  3/15: fitness 48.564 in 1233.4s
+[00:00:00]     Run  4/15: fitness 51.406 in 1265.5s
+[00:00:00]     Run  5/15: fitness 49.570 in 1351.9s
+[00:00:00]     Run  6/15: fitness 48.172 in 1188.3s
+[00:00:00]     Run  7/15: fitness 50.064 in 1166.6s
+[00:00:00]     Run  8/15: fitness 47.147 in 1193.6s
+[00:00:00]     Run  9/15: fitness 51.440 in 1090.3s
+[00:00:00]     Run 10/15: fitness 49.514 in 1310.1s
+[00:00:00]     Run 11/15: fitness 49.686 in 2125.7s
+[00:00:00]     Run 12/15: fitness 45.569 in 2443.3s
+[00:00:00]     Run 13/15: fitness 48.382 in 1081.8s
+[00:00:00]     Run 14/15: fitness 51.102 in 1057.1s
+[00:00:00]     Run 15/15: fitness 50.594 in 1065.9s
+    summary: avg=49.477 std=1.969 min=45.569 max=53.622
+[00:00:00]   === AdaptiveMut ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 40.291 in 1042.5s
+[00:00:00]     Run  2/15: fitness 40.709 in 1088.3s
+[00:00:00]     Run  3/15: fitness 42.111 in 1055.7s
+[00:00:00]     Run  4/15: fitness 43.984 in 1037.5s
+[00:00:00]     Run  5/15: fitness 42.718 in 1033.0s
+[00:00:00]     Run  6/15: fitness 43.124 in 1034.5s
+[00:00:00]     Run  7/15: fitness 41.808 in 1046.3s
+[00:00:00]     Run  8/15: fitness 39.575 in 1042.5s
+[00:00:00]     Run  9/15: fitness 40.545 in 1046.3s
+[00:00:00]     Run 10/15: fitness 40.855 in 1047.2s
+[00:00:00]     Run 11/15: fitness 42.340 in 1012.1s
+[00:00:00]     Run 12/15: fitness 41.918 in 1036.0s
+[00:00:00]     Run 13/15: fitness 42.491 in 1047.9s
+[00:00:00]     Run 14/15: fitness 42.746 in 1031.9s
+[00:00:00]     Run 15/15: fitness 41.085 in 1053.6s
+    summary: avg=41.753 std=1.169 min=39.575 max=43.984
+[00:00:00] [mutation] phase done in 27.18h
+
+[mutation] final summary (sorted by avg):
+  AdaptiveMut                avg= 41.753  std=1.169  min=39.575  (n=15)
+  Gaussian                   avg= 43.160  std=1.087  min=40.885  (n=15)
+  ColorCreep                 avg= 49.477  std=1.969  min=45.569  (n=15)
+  VCF                        avg= 49.754  std=1.403  min=47.876  (n=15)
+  Full                       avg= 52.130  std=1.258  min=50.400  (n=15)
+[00:00:00] All done in 27.18h

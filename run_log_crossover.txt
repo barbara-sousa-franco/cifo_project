@@ -1,0 +1,100 @@
+# RECONSTRUCTED LOG (2026-05-27)
+# Source checkpoint: run_artifacts/crossover_checkpoint.json
+# Source results:    run_artifacts/crossover_results.json
+# Wall-clock timestamps were not recoverable; per-run durations and fitness values are from the checkpoint.
+[00:00:00] Phases requested: ['crossover']
+[00:00:00] [crossover] POP=100 GENS=500 N_RUNS=15  configs=['Uniform', 'KPoint', 'ReducedSurrogate', 'Shuffle', 'AdaptiveXO']
+[00:00:00]   === Uniform ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 49.959 in 1434.8s
+[00:00:00]     Run  2/15: fitness 50.463 in 1529.7s
+[00:00:00]     Run  3/15: fitness 49.705 in 1384.0s
+[00:00:00]     Run  4/15: fitness 53.863 in 1417.6s
+[00:00:00]     Run  5/15: fitness 52.158 in 1410.5s
+[00:00:00]     Run  6/15: fitness 50.934 in 1412.7s
+[00:00:00]     Run  7/15: fitness 49.517 in 1431.8s
+[00:00:00]     Run  8/15: fitness 51.304 in 1404.3s
+[00:00:00]     Run  9/15: fitness 50.052 in 1364.8s
+[00:00:00]     Run 10/15: fitness 51.636 in 1393.5s
+[00:00:00]     Run 11/15: fitness 49.405 in 1376.1s
+[00:00:00]     Run 12/15: fitness 50.804 in 1371.2s
+[00:00:00]     Run 13/15: fitness 53.644 in 1384.8s
+[00:00:00]     Run 14/15: fitness 51.703 in 1407.6s
+[00:00:00]     Run 15/15: fitness 50.694 in 1426.7s
+    summary: avg=51.056 std=1.324 min=49.405 max=53.863
+[00:00:00]   === KPoint ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 51.632 in 1376.4s
+[00:00:00]     Run  2/15: fitness 51.415 in 1390.5s
+[00:00:00]     Run  3/15: fitness 53.599 in 1368.0s
+[00:00:00]     Run  4/15: fitness 54.068 in 1472.3s
+[00:00:00]     Run  5/15: fitness 56.276 in 1402.1s
+[00:00:00]     Run  6/15: fitness 53.334 in 1376.8s
+[00:00:00]     Run  7/15: fitness 53.751 in 1380.7s
+[00:00:00]     Run  8/15: fitness 54.159 in 1402.8s
+[00:00:00]     Run  9/15: fitness 54.079 in 1368.0s
+[00:00:00]     Run 10/15: fitness 52.520 in 1363.1s
+[00:00:00]     Run 11/15: fitness 50.788 in 1426.4s
+[00:00:00]     Run 12/15: fitness 51.856 in 1401.0s
+[00:00:00]     Run 13/15: fitness 57.305 in 1504.7s
+[00:00:00]     Run 14/15: fitness 53.758 in 1404.2s
+[00:00:00]     Run 15/15: fitness 52.653 in 1558.1s
+    summary: avg=53.413 std=1.691 min=50.788 max=57.305
+[00:00:00]   === ReducedSurrogate ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 57.315 in 1388.2s
+[00:00:00]     Run  2/15: fitness 57.741 in 1403.2s
+[00:00:00]     Run  3/15: fitness 58.355 in 1386.8s
+[00:00:00]     Run  4/15: fitness 57.945 in 1450.1s
+[00:00:00]     Run  5/15: fitness 60.700 in 1344.2s
+[00:00:00]     Run  6/15: fitness 58.340 in 1416.3s
+[00:00:00]     Run  7/15: fitness 59.205 in 1316.2s
+[00:00:00]     Run  8/15: fitness 58.821 in 1382.0s
+[00:00:00]     Run  9/15: fitness 57.180 in 1421.8s
+[00:00:00]     Run 10/15: fitness 59.193 in 1443.3s
+[00:00:00]     Run 11/15: fitness 61.318 in 1416.0s
+[00:00:00]     Run 12/15: fitness 59.489 in 1442.1s
+[00:00:00]     Run 13/15: fitness 58.417 in 1415.9s
+[00:00:00]     Run 14/15: fitness 56.972 in 1360.5s
+[00:00:00]     Run 15/15: fitness 59.142 in 1365.5s
+    summary: avg=58.676 std=1.189 min=56.972 max=61.318
+[00:00:00]   === Shuffle ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 50.320 in 1389.2s
+[00:00:00]     Run  2/15: fitness 50.494 in 1469.1s
+[00:00:00]     Run  3/15: fitness 50.009 in 1450.3s
+[00:00:00]     Run  4/15: fitness 54.484 in 1459.9s
+[00:00:00]     Run  5/15: fitness 53.987 in 1413.3s
+[00:00:00]     Run  6/15: fitness 52.934 in 1394.2s
+[00:00:00]     Run  7/15: fitness 52.595 in 1379.8s
+[00:00:00]     Run  8/15: fitness 55.189 in 1434.9s
+[00:00:00]     Run  9/15: fitness 52.015 in 1386.3s
+[00:00:00]     Run 10/15: fitness 52.297 in 1464.4s
+[00:00:00]     Run 11/15: fitness 50.109 in 1525.5s
+[00:00:00]     Run 12/15: fitness 50.183 in 1502.8s
+[00:00:00]     Run 13/15: fitness 53.721 in 1485.8s
+[00:00:00]     Run 14/15: fitness 54.072 in 1485.4s
+[00:00:00]     Run 15/15: fitness 52.943 in 1491.8s
+    summary: avg=52.357 std=1.708 min=50.009 max=55.189
+[00:00:00]   === AdaptiveXO ===  (0/15 already done)
+[00:00:00]     Run  1/15: fitness 49.851 in 1484.1s
+[00:00:00]     Run  2/15: fitness 50.481 in 1443.8s
+[00:00:00]     Run  3/15: fitness 49.732 in 1407.6s
+[00:00:00]     Run  4/15: fitness 53.885 in 1451.2s
+[00:00:00]     Run  5/15: fitness 52.236 in 1450.7s
+[00:00:00]     Run  6/15: fitness 50.939 in 1442.6s
+[00:00:00]     Run  7/15: fitness 49.520 in 1470.4s
+[00:00:00]     Run  8/15: fitness 51.299 in 1434.8s
+[00:00:00]     Run  9/15: fitness 50.053 in 1389.6s
+[00:00:00]     Run 10/15: fitness 51.668 in 1405.0s
+[00:00:00]     Run 11/15: fitness 49.405 in 1400.3s
+[00:00:00]     Run 12/15: fitness 50.824 in 1399.3s
+[00:00:00]     Run 13/15: fitness 53.687 in 1402.6s
+[00:00:00]     Run 14/15: fitness 51.719 in 1427.2s
+[00:00:00]     Run 15/15: fitness 50.760 in 1464.0s
+    summary: avg=51.071 std=1.341 min=49.405 max=53.885
+[00:00:00] [crossover] phase done in 29.58h
+
+[crossover] final summary (sorted by avg):
+  Uniform                    avg= 51.056  std=1.324  min=49.405  (n=15)
+  AdaptiveXO                 avg= 51.071  std=1.341  min=49.405  (n=15)
+  Shuffle                    avg= 52.357  std=1.708  min=50.009  (n=15)
+  KPoint                     avg= 53.413  std=1.691  min=50.788  (n=15)
+  ReducedSurrogate           avg= 58.676  std=1.189  min=56.972  (n=15)
+[00:00:00] All done in 29.58h
