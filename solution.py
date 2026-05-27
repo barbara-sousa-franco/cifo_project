@@ -336,8 +336,20 @@ class Triangle:
     __slots__ = ("repr", "alpha_min", "alpha_max", "max_triangle_size")
 
 
-    def __init__(self, max_triangle_size = 1, alpha_min = 0, alpha_max = 1, repr=None):
+    def __init__(
+        self,
+        max_triangle_size: float = 1.0,
+        alpha_min: float = 0.0,
+        alpha_max: float = 1.0,
+        repr: list[float] | None = None,
+    ) -> None:
+        """Build one Triangle, enforcing all domain constraints on the way in.
 
+        If ``repr`` is None a fresh random triangle is sampled; otherwise the
+        supplied 10 floats are used. Either way, the constructor runs the
+        full repair pipeline (alpha clip → size shrink → degenerate vertex
+        repair) so any Triangle that leaves ``__init__`` is guaranteed valid.
+        """
         if repr is None:
             repr = [random.random() for _ in range(GENES_PER_TRIANGLE)]
             repr[9] = alpha_min + random.random() * (alpha_max - alpha_min)
@@ -401,8 +413,13 @@ class Triangle:
 
 
 
-    def vertices(self, w=IMG_WIDTH, h=IMG_HEIGHT):
-        """Return the 3 vertices in pixel space, decoded from [0, 1]."""
+    def vertices(self, w: int = IMG_WIDTH, h: int = IMG_HEIGHT) -> list[tuple[int, int]]:
+        """Decode the 6 normalised vertex genes into 3 integer pixel coordinates.
+
+        Uses ``w - 1`` / ``h - 1`` rather than ``w`` / ``h`` so that the
+        maximum coordinate is the last valid pixel index, not an off-by-one
+        past the canvas edge.
+        """
         g = self.repr
         return [
             (round(g[0] * (w - 1)), round(g[1] * (h - 1))),
@@ -410,8 +427,8 @@ class Triangle:
             (round(g[4] * (w - 1)), round(g[5] * (h - 1))),
         ]
 
-    def color(self):
-        """Return the RGBA color as a 4-tuple of bytes (0-255)."""
+    def color(self) -> tuple[int, int, int, int]:
+        """Decode the 4 normalised colour genes into an RGBA byte tuple (0-255)."""
         g = self.repr
         return (
             round(g[6] * 255),
@@ -420,7 +437,14 @@ class Triangle:
             round(g[9] * 255),
         )
 
-    def copy(self):
+    def copy(self) -> "Triangle":
+        """Shallow-copy this triangle, skipping the constraint-repair pipeline.
+
+        Used on hot paths (crossover/mutation) where the source triangle is
+        already valid, so the expensive ``__init__`` rebuild would be wasted
+        work. The genome list is copied so the new instance can be mutated
+        independently of its source.
+        """
         new_tri = Triangle.__new__(Triangle)
         new_tri.repr = list(self.repr)
         new_tri.alpha_min = self.alpha_min
@@ -428,7 +452,7 @@ class Triangle:
         new_tri.max_triangle_size = self.max_triangle_size
         return new_tri
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Triangle({self.repr})"
 
 
