@@ -39,8 +39,6 @@ The experimental pipeline is fully systematic. Six One-Factor-At-A-Time (OFAT) p
 │                           # diversity injection, restricted mating support
 ├── _run_experiment.py      # Unified phase runner with checkpoint/restart;
 │                           # defines all PHASES, WINNERS, FINAL_SETUP
-├── _stats_tests.py         # Primary: Kruskal-Wallis + Mann-Whitney U (OFAT);
-│                           # Secondary: Friedman + Wilcoxon signed-rank (paired seeds)
 ├── utils.py                # Plotting helpers, compare_all_configs, load_experiment_artifacts
 ├── main.ipynb              # End-to-end analytical notebook (loads checkpoints, no GA runs)
 ├── report.tex              # LaTeX report (Overleaf-ready; all figures in figures/)
@@ -59,8 +57,8 @@ The experimental pipeline is fully systematic. Six One-Factor-At-A-Time (OFAT) p
 │   ├── diversity_comparison.png     # Sec 5.6
 │   └── top3_graphs.png              # Sec 5.7
 │
-├── run_log_*.txt           # Stdout logs from _run_experiment.py per phase
-└── classes/                # Practical-class notebooks + theoretical.pdf (Vanneschi & Silva)
+└── run_logs/
+        └── run_log_*.txt    # Stdout logs from _run_experiment.py per phase
 ```
 
 ---
