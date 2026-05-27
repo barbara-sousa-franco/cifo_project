@@ -1,0 +1,20 @@
+{
+  "final": {
+    "n_runs": 1,
+    "avg": 17.11827278137207,
+    "std": 0.0,
+    "min": 17.11827278137207,
+    "max": 17.11827278137207,
+    "params": {
+      "source": "sample_11",
+      "mut_prob": 0.0123,
+      "xo_prob": 0.9891,
+      "max_triangle_size": 0.573,
+      "alpha_min": 0.178,
+      "alpha_max": 0.521,
+      "tournament_size": 5,
+      "mating_min_dist": 0.0104,
+      "mating_max_dist": 0.348
+    }
+  }
+}

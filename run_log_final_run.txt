@@ -1,3 +1,10 @@
 [02:17:56] Phases requested: ['final_run']
 [02:17:56] [final_run] POP=500 GENS=15000 N_RUNS=1  configs=['final']
 [02:17:56]   === final ===  (0/1 already done)
+[06:54:56]     Run  1/1: fitness 17.118 in 103019.7s
+    summary: avg=17.118 std=0.000 min=17.118 max=17.118
+[06:54:56] [final_run] phase done in 28.62h
+
+[final_run] final summary (sorted by avg):
+  final                      avg= 17.118  std=0.000  min=17.118  (n=1)
+[06:54:56] All done in 28.62h

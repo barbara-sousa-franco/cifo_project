@@ -1,0 +1,21 @@
+{
+  "final": [
+    {
+      "run": 1,
+      "fitness": 17.11827278137207,
+      "time_seconds": 103019.74,
+      "curve_file": "final_run_final_run01_curve.npy",
+      "params": {
+        "source": "sample_11",
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    }
+  ]
+}

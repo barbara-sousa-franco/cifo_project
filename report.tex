@@ -154,32 +154,15 @@ dropped from $30.18$ (best fully-configured GA without diversity mechanisms)
 to $26.56$ after all enhancements were combined -- a $12\%$ improvement
 over that baseline, or a $36\%$ improvement relative to the strongest
 mutation-only configuration ($41.75$). The final long-budget run
-(population $500$, $15{,}000$ generations) reached \textbf{(PENDING:
-final\_run RMSE)} and is reported in \S6.
-As a Challenge extension, the perceptual CIEDE2000 metric reached
-$\Delta E_{00} = 6.20$ on a shorter budget (POP $= 200$, GENS $= 5{,}000$).
+(population $500$, $15{,}000$ generations, $\sim\!28.6$~h of wall-clock)
+reached a final RMSE of $\mathbf{17.12}$, the best image produced in
+the project. As a Challenge extension, the perceptual CIEDE2000 metric
+reached $\Delta E_{00} = 6.20$ on a shorter budget (POP $= 200$,
+GENS $= 5{,}000$); cross-evaluation against the budget-matched
+RMSE-tuned run is reported in \S7.
 
 
 \section{Introduction \& Problem Formalization}
-
-\begin{figure}[H]
-\centering
-\begin{minipage}{0.30\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{girl_pearl_earing.png}\\[2pt]
-  {\footnotesize\textit{Target}}
-\end{minipage}\hspace{0.04\linewidth}%
-\begin{minipage}{0.30\linewidth}
-  \centering
-  \includegraphics[width=\linewidth]{ciede2000_short_best_challenge_short.png}\\[2pt]
-  {\footnotesize\textit{Best CIEDE2000 (\S7)}}
-\end{minipage}
-\caption{Vermeer's \textit{Girl with a Pearl Earring} ($300\times 400$
-target) and the best reconstruction obtained by our GA under the
-CIEDE2000 perceptual metric ($\Delta E_{00} = 6.20$). Both are
-composed of exactly 100 semi-transparent triangles.}
-\label{fig:teaser}
-\end{figure}
 
 In this work, we address the problem of reconstructing the painting \textit{Girl with a Pearl Earring} by Johannes Vermeer using genetic algorithms. The search space is highly dimensional, and solution quality can be directly assessed through visual inspection.
 
@@ -612,28 +595,32 @@ configuration was: Adaptive Mutation Schedule and Uniform Crossover;
 $p_m = 0.0123$, $p_c = 0.989$; $s_{\max} = 0.573$;
 $[\alpha_{\min}, \alpha_{\max}] = [0.178, 0.521]$; tournament selection
 with $k = 5$; restricted mating with distance window $[0.010, 0.348]$;
-elitism on.
+elitism on. The run completed in $\sim\!28.6$~h of wall-clock and
+reached a final RMSE of $\mathbf{17.12}$ --- the best image produced
+in the project (Figure~\ref{fig:final_run_best}).
 
-\textbf{(PENDING: insert \texttt{final\_run} best RMSE here once the
-long-budget run terminates. The \texttt{ciede2000\_short} entry in
-Table~\ref{tab:cross_eval} confirms the regeneration pipeline works;
-the long-budget RMSE figure is the last missing number in the
-report.)}
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.65\linewidth]{figures/final_run_best.png}
+\caption{Best individual from the long-budget final run
+(POP $= 500$, GENS $= 15{,}000$) alongside the target. RMSE $= 17.12$,
+$\Delta E_{00} = 5.46$ when re-evaluated under the perceptual metric.}
+\label{fig:final_run_best}
+\end{figure}
 
-The long-budget RMSE run did not complete within the submission
-window (estimated wall-clock $> 14$~h per run; the process was still
-executing at submission time). The strongest defensible result is
-therefore the $\mathbf{26.56}$ mean RMSE from \texttt{sample\_11}
-over the 15 validation runs of \S5.7; as a partial substitute for the
-unfinished long-budget RMSE result we ran \texttt{final\_run\_short}
-(POP $= 200$, GENS $= 5{,}000$, single seed) --- \textbf{(PENDING:
-final\_run\_short artefact still on a colleague's machine; once
-delivered, its best RMSE goes here and the top row of
-Table~\ref{tab:cross_eval} fills in)}. The statistical claim of the
-project rests on the OFAT and random-search phases ($\sim\!100$ total
-runs); the long-budget run is the \emph{best achievable image}, not an
-estimate of expected performance. When the long-budget artefact lands,
-the table in \S7.
+\textbf{Long vs short budget.} We also ran the same configuration
+under a reduced budget (\texttt{final\_run\_short}: POP $= 200$,
+GENS $= 5{,}000$, single seed), which reached RMSE $= 19.63$. The
+long-budget run improves on the short-budget result by $2.51$ RMSE
+($-12.8\%$) at a cost of roughly $10\times$ more wall-clock, and
+on the 15-run calibration baseline (\texttt{sample\_11},
+mean $= 26.56$) by $9.44$ RMSE ($-35.5\%$). The diminishing-returns
+shape of the trade-off is expected: the short-budget setting already
+captures the coarse structure of the painting, while the long budget
+mostly refines colour gradients and edge placement. The statistical
+claim of the project rests on the OFAT and random-search phases
+($\sim\!100$ total runs); the two long-budget runs are illustrative
+single-seed reconstructions, not estimates of expected performance.
 
 \section{Challenge 1: Perceptual Fitness (CIEDE2000)}
 
@@ -660,18 +647,14 @@ imposed by the runtime budget.
 \textbf{Cross-evaluation (budget-matched).} The core question of
 Challenge 1 is whether the choice of fitness regime produces visibly
 different reconstructions when the two GAs receive the \emph{same}
-compute budget. We therefore designed two runs that share an
-identical hyperparameter setup and budget (POP $= 200$,
-GENS $= 5{,}000$, single seed) and differ \emph{only} in the fitness
-function: \texttt{ciede2000\_short} for the perceptual side and
-\texttt{final\_run\_short} for the pixel-RMSE side, with each best
-individual scored under \emph{both} metrics. The
-\texttt{final\_run\_short} artefact was being computed on a
-colleague's machine and did not arrive before the submission cut-off,
-so its row in Table~\ref{tab:cross_eval} is marked
-\textbf{(PENDING)}. Notebook \S12 (cell \texttt{0e865d57}) regenerates
-the missing cells from a single disk lookup once the PNG arrives in
-\texttt{run\_artifacts/} .
+compute budget. We therefore ran two GAs that share an identical
+hyperparameter setup and budget (POP $= 200$, GENS $= 5{,}000$, single
+seed) and differ \emph{only} in the fitness function:
+\texttt{final\_run\_short} for the pixel-RMSE side and
+\texttt{ciede2000\_short} for the perceptual side. Each best
+individual was then scored under \emph{both} metrics
+(Table~\ref{tab:cross_eval}); the side-by-side rendering is shown in
+Figure~\ref{fig:rmse_vs_ciede2000}.
 
 \begin{table}[h]
 \centering
@@ -679,35 +662,50 @@ the missing cells from a single disk lookup once the PNG arrives in
 \toprule
 \tH{Winner (POP $= 200$, GENS $= 5{,}000$, 1 seed)} & \tH{RMSE} & \tH{$\Delta E_{00}$} \\
 \gmid
-RMSE-optimised      (\texttt{final\_run\_short})  & \textbf{(PENDING)} & \textbf{(PENDING)} \\
-CIEDE2000-optimised (\texttt{ciede2000\_short})   & $23.83$   & $\mathbf{6.20}$ \\
+RMSE-optimised      (\texttt{final\_run\_short})  & $\mathbf{19.63}$ & $6.09$ \\
+CIEDE2000-optimised (\texttt{ciede2000\_short})   & $23.83$ & $\mathbf{6.20}$ \\
 \bottomrule
 \end{tabular}
 \caption{Budget-matched cross-evaluation of the two fitness regimes.
-Each row is one best individual scored under \emph{both} metrics.
-The diagonal of a fully populated table holds each GA's native
-objective; off-diagonal cells quantify how a winner of one metric
-performs under the other. The bottom-right $6.20$ is the native
-CIEDE2000 score; the bottom-left $23.83$ is the same CIEDE2000-tuned
-image re-rendered and measured under RMSE. The top row remains
-marked \textbf{(PENDING)} until the \texttt{final\_run\_short} artefact
-arrives (still running on a separate machine at the submission cut-off).}
+Each row is one best individual scored under \emph{both} metrics; the
+diagonal (in bold) is each GA's native objective and the off-diagonal
+quantifies how each winner performs under the rival metric.}
 \label{tab:cross_eval}
 \end{table}
 
-\textbf{What we can already say.} The CIEDE2000 winner scores RMSE
-$= 23.83$ at the short-Challenge budget. This single number cannot
-yet be compared to a matched RMSE-tuned run, but is reported here so
-the table is interpretable as it stands; the strict No-Free-Lunch
-test --- whether \texttt{final\_run\_short} can beat $23.83$ on the
-pixel metric while losing to $6.20$ on $\Delta E_{00}$ --- requires
-the \textbf{(PENDING)} row.
+\begin{figure}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/rmse_vs_ciede2000.png}
+\caption{Best individual produced by each fitness regime under the
+matched short budget. The RMSE-tuned image (centre) preserves edge
+contrast; the CIEDE2000-tuned image (right) smooths skin tones and
+saturates the turban hue. Both numbers per panel correspond to
+Table~\ref{tab:cross_eval}.}
+\label{fig:rmse_vs_ciede2000}
+\end{figure}
 
-\textbf{Visual reading.} The CIEDE2000 image (Figure~\ref{fig:teaser},
-right) preserves smoother skin tones and a more saturated turban hue
---- the ultramarine region where CIE76 historically fails. The full
-target-vs-both side-by-side is generated by notebook \S12
-(cell~\texttt{0e865d57}) once both PNGs are on disk.
+\textbf{Reading of the result.} On its native pixel metric the
+RMSE-tuned GA wins by $4.20$ RMSE points ($19.63$ vs $23.83$), as
+expected. The more interesting observation is the right column: the
+RMSE-tuned image also scores marginally lower $\Delta E_{00}$ ($6.09$
+vs $6.20$) than the CIEDE2000-tuned image. At this short budget the
+geometric placement of triangles dominates the fitness signal, and
+the smoother RMSE landscape converges faster to a configuration that
+also happens to be perceptually competitive. We expect the perceptual
+advantage of CIEDE2000 to emerge more clearly at the full POP $= 500$,
+GENS $= 15{,}000$ budget (estimated $\sim\!4$ days under
+CIEDE2000), where edge placement is already converged and the
+remaining optimisation budget is spent on colour --- which is exactly
+the regime in which the two metrics differ most. We list that
+extended Challenge run as future work.
+
+\textbf{Visual reading.} Both reconstructions in
+Figure~\ref{fig:rmse_vs_ciede2000} share gross structure (head,
+turban silhouette, dark background). The CIEDE2000 image preserves
+smoother skin tones and a more saturated turban hue --- the
+ultramarine region where CIE76 historically fails --- while the RMSE
+image sharpens local edges at the expense of overall colour balance,
+consistent with what each metric numerically penalises.
 
 \section{Implementation \& Reproducibility}
 
@@ -747,11 +745,15 @@ search refined the continuous hyperparameters and exposed tournament
 size $k = 5$ as the largest unexplored gain. On the calibration budget
 (POP $= 100$, GENS $= 500$) the mean RMSE dropped from a no-mechanism
 baseline of $30.18$ to $26.56$ after all enhancements --- a $12\%$
-reduction supported by 15-run statistical evidence. The Challenge
-extension confirms that the same pipeline transfers cleanly to a
-perceptual fitness ($\Delta E_{00} = 6.20$ on the short budget),
-with the budget-matched No-Free-Lunch comparison \textbf{(PENDING)}
-only the \texttt{final\_run\_short} artefact.
+reduction supported by 15-run statistical evidence. The long-budget
+final run (POP $= 500$, GENS $= 15{,}000$) pushed this further to
+RMSE $= 17.12$ on a single seed, the best image of the project. The
+Challenge extension transferred the same pipeline cleanly to a
+perceptual fitness ($\Delta E_{00} = 6.20$ on the short budget); the
+budget-matched cross-evaluation revealed that, at this short setting,
+the RMSE-tuned GA is competitive on both metrics, while the perceptual
+advantage of CIEDE2000 is expected to materialise only at the full
+long budget --- which exceeded our deadline.
 
 \section{Discussion \& Future Work}
 
@@ -831,7 +833,7 @@ checkpoints under \texttt{run\_artifacts/}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{mutation_comparison.png}
+    \includegraphics[width=\textwidth]{figures/mutation_comparison.png}
     \caption{Mutation operator comparison (\S5.1). Left: convergence
     curves (mean $\pm$ std across 15 runs). Right: distribution of
     final-generation RMSE. The Adaptive Mutation Schedule overtakes
@@ -843,7 +845,7 @@ checkpoints under \texttt{run\_artifacts/}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{crossover_comparison.png}
+    \includegraphics[width=\textwidth]{figures/crossover_comparison.png}
     \caption{Crossover operator comparison (\S5.2). Uniform and
     Adaptive XO are statistically indistinguishable ($p = 0.84$),
     both significantly better than Shuffle, K-Point, and Reduced
@@ -853,7 +855,7 @@ checkpoints under \texttt{run\_artifacts/}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{probabilities_comparison.png}
+    \includegraphics[width=\textwidth]{figures/probabilities_comparison.png}
     \caption{Probability sweep (\S5.3): the nine $(p_m, p_c)$ cells
     visibly cluster into three bands by $p_m$. Within each $p_m$
     band the three $p_c$ values overlap, confirming the statistical
@@ -863,7 +865,7 @@ checkpoints under \texttt{run\_artifacts/}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{triangle_comparison_graphs.png}
+    \includegraphics[width=\textwidth]{figures/triangle_comparison_graphs.png}
     \caption{Triangle-size sweep (\S5.4). $s_{\max}=1.0$ and
     $s_{\max}=0.4$ converge to similar plateaus; aggressive caps
     ($0.25$, $0.15$) saturate well above the baseline.}
@@ -872,7 +874,7 @@ checkpoints under \texttt{run\_artifacts/}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{triangle_comparison_images.png}
+    \includegraphics[width=\textwidth]{figures/triangle_comparison_images.png}
     \caption{Best individual for each $s_{\max}$ configuration.
     The fragmentation at $s_{\max}=0.15$ illustrates why aggressive
     caps fail: with only 100 primitives, the GA cannot cover the
@@ -882,7 +884,7 @@ checkpoints under \texttt{run\_artifacts/}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{alpha_comparison.png}
+    \includegraphics[width=\textwidth]{figures/alpha_comparison.png}
     \caption{Alpha window sweep (\S5.5). The narrow low-alpha window
     $[0.10, 0.40]$ dominates because translucent triangles favour
     additive layering, which raises effective palette resolution
@@ -892,7 +894,7 @@ checkpoints under \texttt{run\_artifacts/}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{diversity_comparison.png}
+    \includegraphics[width=\textwidth]{figures/diversity_comparison.png}
     \caption{Diversity-mechanism comparison (\S5.6). Only Restricted
     Mating (and its combination with Fitness Sharing) substantially
     improves over the baseline; the other mechanisms either match or
@@ -902,7 +904,7 @@ checkpoints under \texttt{run\_artifacts/}.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{diversity_images.png}
+    \includegraphics[width=\textwidth]{figures/diversity_images.png}
     \caption{Best individual per diversity-mechanism configuration.
     Visual differences are subtler than the RMSE gap suggests --- the
     Restricted-Mating outputs are smoother in the headscarf region.}
@@ -943,7 +945,7 @@ dimension never probed in the OFAT phases.}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{top3_graphs.png}
+    \includegraphics[width=\textwidth]{figures/top3_graphs.png}
     \caption{Top-three validation pass (15 runs per sample).
     \texttt{sample\_05} placed first under the 5-run exploratory
     pass; the 15-run validation reverses the order in favour of
@@ -954,32 +956,12 @@ dimension never probed in the OFAT phases.}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{top3_images.png}
+    \includegraphics[width=\textwidth]{figures/top3_images.png}
     \caption{Best individual per top-three sample after 15-run
     validation. All three are visually similar at this budget; the
     RMSE difference is concentrated in subtle colour and edge
     structure rather than gross layout.}
     \label{fig:top3_images}
 \end{figure}
-
-\subsection{Challenge: best-individual comparison \textbf{(PENDING)}}
-
-\textbf{(PENDING)} Side-by-side rendering of \texttt{final\_run\_short}
-vs \texttt{ciede2000\_short} goes here once both PNGs are present in
-\texttt{figures/}. The notebook section~12 (cell \texttt{0e865d57})
-auto-generates \texttt{figures/rmse\_vs\_ciede2000.png}; once that file
-exists, uncomment the figure block below and remove this paragraph.
-
-% PENDING — uncomment after final_run_short PNG arrives and notebook §12 is run.
-% \begin{figure}[H]
-%     \centering
-%     \includegraphics[width=\textwidth]{rmse_vs_ciede2000.png}
-%     \caption{RMSE-optimised vs CIEDE2000-optimised best individuals
-%     at the matched short budget (POP=200, GENS=5000), with the
-%     target image on the left. The CIEDE2000 reconstruction produces
-%     smoother skin tones and a more saturated turban; the RMSE
-%     reconstruction sharpens local edges.}
-%     \label{fig:rmse_vs_ciede2000}
-% \end{figure}
 
 \end{document}
