@@ -1,0 +1,3 @@
+[02:17:56] Phases requested: ['final_run']
+[02:17:56] [final_run] POP=500 GENS=15000 N_RUNS=1  configs=['final']
+[02:17:56]   === final ===  (0/1 already done)

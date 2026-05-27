@@ -1,0 +1,60 @@
+[17:10:07] Phases requested: ['validate_top3']
+[17:10:07] [validate_top3] POP=100 GENS=500 N_RUNS=15  configs=['sample_02', 'sample_05', 'sample_11']
+[17:10:07]   === sample_02 ===  (0/15 already done)
+[17:22:26]     Run  1/15: fitness 27.152 in 738.5s
+[17:34:57]     Run  2/15: fitness 27.547 in 751.1s
+[17:47:15]     Run  3/15: fitness 27.407 in 738.4s
+[17:59:29]     Run  4/15: fitness 27.341 in 734.0s
+[18:11:36]     Run  5/15: fitness 26.648 in 726.8s
+[18:24:03]     Run  6/15: fitness 27.956 in 747.3s
+[18:36:18]     Run  7/15: fitness 27.166 in 734.9s
+[18:48:31]     Run  8/15: fitness 27.076 in 732.2s
+[19:01:06]     Run  9/15: fitness 27.607 in 755.2s
+[19:13:20]     Run 10/15: fitness 27.685 in 734.1s
+[19:25:59]     Run 11/15: fitness 27.235 in 759.2s
+[19:38:28]     Run 12/15: fitness 28.214 in 749.1s
+[19:50:38]     Run 13/15: fitness 25.694 in 729.6s
+[20:03:01]     Run 14/15: fitness 28.061 in 743.0s
+[20:15:09]     Run 15/15: fitness 28.230 in 728.5s
+    summary: avg=27.401 std=0.631 min=25.694 max=28.230
+[20:15:09]   === sample_05 ===  (0/15 already done)
+[20:26:55]     Run  1/15: fitness 25.895 in 705.3s
+[20:38:50]     Run  2/15: fitness 26.567 in 715.1s
+[20:50:17]     Run  3/15: fitness 27.295 in 686.9s
+[21:01:53]     Run  4/15: fitness 26.491 in 696.3s
+[21:13:28]     Run  5/15: fitness 26.293 in 694.7s
+[21:25:00]     Run  6/15: fitness 26.094 in 692.9s
+[21:36:39]     Run  7/15: fitness 26.624 in 698.7s
+[21:48:30]     Run  8/15: fitness 26.996 in 711.1s
+[21:59:58]     Run  9/15: fitness 27.607 in 687.6s
+[22:11:35]     Run 10/15: fitness 26.952 in 697.4s
+[22:23:09]     Run 11/15: fitness 26.178 in 694.2s
+[22:34:40]     Run 12/15: fitness 26.426 in 690.9s
+[22:46:13]     Run 13/15: fitness 26.968 in 692.2s
+[22:57:38]     Run 14/15: fitness 27.220 in 685.8s
+[23:09:27]     Run 15/15: fitness 26.321 in 708.6s
+    summary: avg=26.662 std=0.475 min=25.895 max=27.607
+[23:09:27]   === sample_11 ===  (0/15 already done)
+[23:21:03]     Run  1/15: fitness 26.346 in 695.5s
+[23:32:35]     Run  2/15: fitness 26.871 in 692.5s
+[23:44:13]     Run  3/15: fitness 26.607 in 698.3s
+[23:55:32]     Run  4/15: fitness 26.942 in 678.8s
+[00:07:30]     Run  5/15: fitness 26.518 in 718.2s
+[00:19:11]     Run  6/15: fitness 25.872 in 701.0s
+[00:31:50]     Run  7/15: fitness 26.942 in 759.0s
+[00:43:52]     Run  8/15: fitness 25.477 in 721.5s
+[00:55:42]     Run  9/15: fitness 27.155 in 710.4s
+[01:08:03]     Run 10/15: fitness 26.151 in 740.3s
+[01:20:15]     Run 11/15: fitness 27.394 in 732.8s
+[01:32:15]     Run 12/15: fitness 27.244 in 719.4s
+[01:44:23]     Run 13/15: fitness 26.184 in 728.2s
+[01:56:39]     Run 14/15: fitness 26.688 in 735.7s
+[02:08:25]     Run 15/15: fitness 25.952 in 706.7s
+    summary: avg=26.556 std=0.535 min=25.477 max=27.394
+[02:08:25] [validate_top3] phase done in 8.97h
+
+[validate_top3] final summary (sorted by avg):
+  sample_11                  avg= 26.556  std=0.535  min=25.477  (n=15)
+  sample_05                  avg= 26.662  std=0.475  min=25.895  (n=15)
+  sample_02                  avg= 27.401  std=0.631  min=25.694  (n=15)
+[02:08:25] All done in 8.97h

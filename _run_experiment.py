@@ -59,7 +59,6 @@ FINAL_SETUP so it can be swapped after validate_top3 finishes.
 from __future__ import annotations
 
 import argparse
-from cmath import phase
 import functools
 import json
 import random
@@ -76,11 +75,27 @@ from PIL import Image, ImageDraw
 import builtins as _b
 
 
-# Suppress verbose per-generation output from the genetic_algorithm() loop
-# while preserving all other print statements (summaries, run headers, etc.).
-
-# Save a reference to the original print so the wrapper can still forward
-# all non-generation messages to the real print function.
+# ---------------------------------------------------------------------------
+# NOTE: builtins.print monkey-patch
+# ---------------------------------------------------------------------------
+# This module rebinds `builtins.print` to `_quiet_print` so that the
+# `print("Generation X/Y ...")` lines hard-coded in ga.py do not flood the
+# terminal during long sweeps. All other `print(...)` calls (run summaries,
+# phase headers, errors) are forwarded unchanged.
+#
+# The patch is restricted to runs of THIS script: it is applied at import
+# time and reset back to `_orig_print` inside `_run_one` only for the
+# long-budget phases (final_run, ciede2000, final_run_short) where seeing
+# every generation is useful. Importing this module from elsewhere will
+# also activate the patch — callers that need the original print should
+# capture `builtins.print` BEFORE importing this module, or restore it
+# manually after import.
+#
+# Implemented as a monkey-patch (rather than passing a logger into ga.py)
+# to keep ga.py free of any reporting machinery: the GA loop stays a
+# self-contained, single-responsibility module that simply prints, and
+# every caller decides whether and how to display those prints.
+# ---------------------------------------------------------------------------
 _orig_print = _b.print
 
 def _quiet_print(*a, **k):
@@ -138,7 +153,7 @@ WINNERS = {
     "mut_fn":     adaptive_mutation_schedule,   # sec 5 winner
     "xo_fn":      uniform_crossover,            # sec 6 winner
     "mut_prob":   0.01,                         # sec 9 winner
-    "xo_prob":    0.95,                         # sec 9 winner (31.48 RMSE)
+    "xo_prob":    0.95,                         # sec 9 winner (avg 31.48 RMSE; tied with 0.85/0.90 within p_m=0.01 band)
     "max_triangle_size": 1.00,                 # sec 7 winner (31.48 RMSE)
     "alpha_min": 0.10,                         # sec 8 winner (30.18 RMSE)
     "alpha_max": 0.40,                         # sec 8 winner (30.18 RMSE)

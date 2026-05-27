@@ -1,0 +1,102 @@
+[23:58:25] Phases requested: ['random_search']
+[23:58:25] [random_search] POP=100 GENS=500 N_RUNS=5  configs=['sample_00', 'sample_01', 'sample_02', 'sample_03', 'sample_04', 'sample_05', 'sample_06', 'sample_07', 'sample_08', 'sample_09', 'sample_10', 'sample_11']
+[23:58:25]   === sample_00 ===  (0/5 already done)
+[00:12:50]     Run  1/5: fitness 26.751 in 864.9s
+[00:28:16]     Run  2/5: fitness 26.546 in 925.7s
+[00:46:08]     Run  3/5: fitness 27.281 in 1072.3s
+[01:03:20]     Run  4/5: fitness 27.051 in 1031.7s
+[01:21:14]     Run  5/5: fitness 26.884 in 1074.0s
+    summary: avg=26.903 std=0.251 min=26.546 max=27.281
+[01:21:14]   === sample_01 ===  (0/5 already done)
+[01:39:36]     Run  1/5: fitness 27.735 in 1102.6s
+[01:56:57]     Run  2/5: fitness 26.380 in 1041.0s
+[02:11:05]     Run  3/5: fitness 26.741 in 848.1s
+[02:25:29]     Run  4/5: fitness 26.717 in 864.0s
+[02:40:28]     Run  5/5: fitness 27.048 in 898.9s
+    summary: avg=26.924 std=0.457 min=26.380 max=27.735
+[02:40:28]   === sample_02 ===  (0/5 already done)
+[02:56:29]     Run  1/5: fitness 27.152 in 960.8s
+[03:11:36]     Run  2/5: fitness 27.547 in 906.6s
+[03:23:38]     Run  3/5: fitness 27.407 in 722.5s
+[03:35:40]     Run  4/5: fitness 27.341 in 722.0s
+[03:47:25]     Run  5/5: fitness 26.648 in 704.8s
+    summary: avg=27.219 std=0.313 min=26.648 max=27.547
+[03:47:25]   === sample_03 ===  (0/5 already done)
+[04:00:05]     Run  1/5: fitness 27.314 in 760.0s
+[04:13:14]     Run  2/5: fitness 27.379 in 789.3s
+[04:31:30]     Run  3/5: fitness 27.871 in 1095.6s
+[04:51:33]     Run  4/5: fitness 27.324 in 1203.1s
+[05:11:29]     Run  5/5: fitness 28.323 in 1195.9s
+    summary: avg=27.642 std=0.398 min=27.314 max=28.323
+[05:11:29]   === sample_04 ===  (0/5 already done)
+[05:31:12]     Run  1/5: fitness 28.487 in 1183.3s
+[05:50:51]     Run  2/5: fitness 28.613 in 1178.4s
+[06:10:57]     Run  3/5: fitness 28.970 in 1206.6s
+[06:30:27]     Run  4/5: fitness 27.697 in 1169.8s
+[06:50:20]     Run  5/5: fitness 27.652 in 1192.3s
+    summary: avg=28.284 std=0.522 min=27.652 max=28.970
+[06:50:20]   === sample_05 ===  (0/5 already done)
+[07:09:03]     Run  1/5: fitness 25.895 in 1123.8s
+[07:28:05]     Run  2/5: fitness 26.567 in 1141.5s
+[07:46:41]     Run  3/5: fitness 27.295 in 1115.7s
+[08:05:24]     Run  4/5: fitness 26.491 in 1123.7s
+[08:24:05]     Run  5/5: fitness 26.293 in 1120.5s
+    summary: avg=26.508 std=0.457 min=25.895 max=27.295
+[08:24:05]   === sample_06 ===  (0/5 already done)
+[08:40:51]     Run  1/5: fitness 27.310 in 1006.6s
+[08:51:55]     Run  2/5: fitness 27.065 in 663.1s
+[09:03:06]     Run  3/5: fitness 26.799 in 671.7s
+[09:14:09]     Run  4/5: fitness 27.103 in 662.6s
+[09:25:11]     Run  5/5: fitness 27.436 in 662.0s
+    summary: avg=27.142 std=0.219 min=26.799 max=27.436
+[09:25:11]   === sample_07 ===  (0/5 already done)
+[09:36:21]     Run  1/5: fitness 28.662 in 670.0s
+[09:47:33]     Run  2/5: fitness 28.618 in 672.4s
+[09:58:42]     Run  3/5: fitness 28.345 in 669.1s
+[10:09:53]     Run  4/5: fitness 28.934 in 670.2s
+[10:20:59]     Run  5/5: fitness 28.389 in 666.3s
+    summary: avg=28.589 std=0.212 min=28.345 max=28.934
+[10:20:59]   === sample_08 ===  (0/5 already done)
+[10:32:13]     Run  1/5: fitness 28.625 in 673.9s
+[10:43:20]     Run  2/5: fitness 29.367 in 666.7s
+[10:54:31]     Run  3/5: fitness 28.827 in 671.3s
+[11:05:40]     Run  4/5: fitness 29.773 in 669.0s
+[11:16:57]     Run  5/5: fitness 29.799 in 677.0s
+    summary: avg=29.278 std=0.481 min=28.625 max=29.799
+[11:16:57]   === sample_09 ===  (0/5 already done)
+[11:28:07]     Run  1/5: fitness 27.734 in 669.9s
+[11:39:24]     Run  2/5: fitness 27.839 in 677.6s
+[11:50:43]     Run  3/5: fitness 28.334 in 678.3s
+[12:01:50]     Run  4/5: fitness 27.718 in 667.4s
+[12:13:31]     Run  5/5: fitness 28.134 in 700.9s
+    summary: avg=27.952 std=0.243 min=27.718 max=28.334
+[12:13:31]   === sample_10 ===  (0/5 already done)
+[12:25:50]     Run  1/5: fitness 27.128 in 738.5s
+[12:39:16]     Run  2/5: fitness 27.718 in 806.9s
+[12:54:05]     Run  3/5: fitness 28.043 in 889.0s
+[13:07:58]     Run  4/5: fitness 28.113 in 833.0s
+[13:21:15]     Run  5/5: fitness 28.056 in 796.4s
+    summary: avg=27.812 std=0.369 min=27.128 max=28.113
+[13:21:15]   === sample_11 ===  (0/5 already done)
+[13:32:45]     Run  1/5: fitness 26.346 in 689.6s
+[13:44:14]     Run  2/5: fitness 26.871 in 689.9s
+[13:55:44]     Run  3/5: fitness 26.607 in 689.4s
+[14:07:01]     Run  4/5: fitness 26.942 in 677.1s
+[14:18:21]     Run  5/5: fitness 26.518 in 679.5s
+    summary: avg=26.657 std=0.221 min=26.346 max=26.942
+[14:18:21] [random_search] phase done in 14.33h
+
+[random_search] final summary (sorted by avg):
+  sample_05                  avg= 26.508  std=0.457  min=25.895  (n=5)
+  sample_11                  avg= 26.657  std=0.221  min=26.346  (n=5)
+  sample_00                  avg= 26.903  std=0.251  min=26.546  (n=5)
+  sample_01                  avg= 26.924  std=0.457  min=26.380  (n=5)
+  sample_06                  avg= 27.142  std=0.219  min=26.799  (n=5)
+  sample_02                  avg= 27.219  std=0.313  min=26.648  (n=5)
+  sample_03                  avg= 27.642  std=0.398  min=27.314  (n=5)
+  sample_10                  avg= 27.812  std=0.369  min=27.128  (n=5)
+  sample_09                  avg= 27.952  std=0.243  min=27.718  (n=5)
+  sample_04                  avg= 28.284  std=0.522  min=27.652  (n=5)
+  sample_07                  avg= 28.589  std=0.212  min=28.345  (n=5)
+  sample_08                  avg= 29.278  std=0.481  min=28.625  (n=5)
+[14:18:21] All done in 14.33h

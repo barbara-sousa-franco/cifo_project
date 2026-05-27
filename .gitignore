@@ -16,3 +16,10 @@ env/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local-only experiment runner artefacts
+*.pid
+
+# Style template (not part of the deliverable)
+layout_modelo.tex
+report_outdated.tex

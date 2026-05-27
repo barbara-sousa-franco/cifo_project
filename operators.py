@@ -210,9 +210,10 @@ def restricted_mating_selection(
     returns the candidate whose distance is closest to the midpoint of the
     allowed range -- a graceful fallback that still respects the intent.
 
-    Prevents both inbreeding (parents too similar then offspring will beidentical to the
-    parents, no exploration) and outbreeding (parents too different then the offspring will
-    disrupt accumulated building blocks).
+    Prevents both inbreeding (parents too similar means offspring will be
+    near-identical to the parents and no exploration happens) and
+    outbreeding (parents too different means crossover disrupts the
+    accumulated building blocks of good solutions).
 
     Reference: Goldberg, "Genetic Algorithms in Search, Optimization and
     Machine Learning", 1989, §5.5; Eshelman & Schaffer, "Preventing
@@ -293,7 +294,12 @@ def restricted_mating_selection(
 
 
 # --- Helper: creates offspring with new representation ---
-def _new_ind(parent, new_repr):
+def _new_ind(parent: Individual, new_repr: list) -> Individual:
+    """Wrap ``new_repr`` in a fresh Individual that inherits ``parent``'s
+    target image, fitness metric and domain bounds. Used by every
+    crossover so children share the parent's configuration without
+    copy-pasting the constructor call across operators.
+    """
     return parent.with_repr(new_repr)
 
 
@@ -625,15 +631,14 @@ def triangle_mutation_vcf(individual, mutation_prob, **kwargs):
 
 
 def triangle_mutation_full(individual, mutation_prob, **kwargs):
-    """ Performs mutation on an individual by replacing entire triangles with new random triangles. 
-    Each triangle in the individual's representation has a chance to mutate based on the given mutation 
-    probability.
+    """ Performs mutation on an individual by replacing entire triangles with new random triangles.
+    Each triangle in the individual's representation has a chance to mutate based on the given mutation
+    probability. The replacement triangle inherits the individual's domain
+    constraints (``max_triangle_size``, ``alpha_min``/``alpha_max``).
 
     Parameters:
         - individual (Individual): The individual to be mutated.
         - mutation_prob (float): The probability of mutating each triangle.
-        - alpha_min (float): The minimum alpha value.
-        - alpha_max (float): The maximum alpha value.
 
     Returns:
         - Individual: A new individual resulting from mutation.
@@ -747,8 +752,8 @@ def adaptive_mutation_schedule(individual, mut_prob, current_gen=0, max_gens=100
     """
     Switches mutation operator based on the phase of evolution:
       - Initial phase  (< 40%) : Full replacement  → maximum exploration
-      - Mid phase      (40-75%): Gaussian           → uniform fine-tuning (best overall)
-      - Final phase    (> 75%) : Color creep        → color refinement only
+      - Mid phase      (40-85%): Gaussian           → uniform fine-tuning (best overall)
+      - Final phase    (>= 85%): Color creep        → color refinement only
 
     The VCF mutation is not used here because Gaussian outperformed it
     consistently across runs, and color creep is more targeted for late

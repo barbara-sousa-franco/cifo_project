@@ -1,20 +1,27 @@
-# Utility functions 
+"""Plotting and statistical helpers used by the analysis notebook.
+
+This module is the analytical counterpart to ``_run_experiment.py``: every
+function here consumes the per-run checkpoints written under
+``run_artifacts/`` and produces tables, figures, or statistical summaries.
+
+Statistical convention: the primary analysis is unpaired
+(Kruskal-Wallis + post-hoc Mann-Whitney U with Bonferroni correction in
+:func:`compare_all_configs`; Wilcoxon vs. Mann-Whitney auto-selected in
+:func:`compare_two_experiments`). A secondary, paired analysis exploiting
+the shared seed sequence (Wilcoxon signed-rank + Friedman) is provided by
+the companion module ``_stats_tests.py``; conclusions are identical in
+every phase of this project.
+"""
 
 import json
-import random
+from itertools import combinations
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from time import time
-from pathlib import Path
-
-from itertools import combinations
 from scipy import stats
-
 from PIL import Image
-
-from ga import genetic_algorithm
-from solution import Individual
 
 
 # COMPARE TWO EXPERIMENTS
@@ -77,13 +84,16 @@ def compare_two_experiments(results_a, curves_a, label_a, results_b, curves_b, l
 
 # COMPARE MORE THAN ONE CONFIGURATION
 def compare_all_configs(all_results, all_curves, config_key, maximization=False, alpha=0.05):
-    """
-    Compare all configurations at once using the Kruskal-Wallis test
-    (non-parametric equivalent of one-way ANOVA), then produce a clean
-    summary table with per-config statistics.
+    """Primary unpaired analysis: Kruskal-Wallis + post-hoc Mann-Whitney U.
 
-    If Kruskal-Wallis is significant, runs post-hoc pairwise Mann-Whitney U
-    tests with Bonferroni correction to identify which configs differ.
+    Runs the global Kruskal-Wallis test across all configurations and, if
+    significant, the post-hoc pairwise Mann-Whitney U with Bonferroni
+    correction. Treats every configuration as an independent treatment
+    (OFAT), which is the design used by ``_run_experiment.py``.
+
+    A complementary paired analysis (Wilcoxon signed-rank + Friedman)
+    exploiting the shared seed sequence is available via
+    ``_stats_tests.py``. Conclusions agree in every phase of this project.
 
     Args:
         - all_results (list[dict]): Full results from run_experiment.
@@ -484,19 +494,24 @@ def evaluate_experiment(all_results, all_curves, best_inds, configs, config_key,
  
 class _LoadedIndividual:
     """Lightweight stand-in for an Individual, built from saved artifacts.
- 
+
     Implements the minimal interface that ``plot_best_individuals`` and
     ``evaluate_experiment`` rely on: ``.render()`` returns a PIL image of
     the best individual, and ``.fitness()`` returns its scalar fitness.
+    Used by :func:`load_experiment_artifacts` so the plotting helpers can
+    treat freshly-evolved Individuals and disk-loaded artifacts uniformly.
     """
-    def __init__(self, png_path, fitness_val):
+
+    def __init__(self, png_path: Path, fitness_val: float) -> None:
         self._img = Image.open(png_path).convert("RGB")
         self._fit = float(fitness_val)
- 
-    def render(self):
+
+    def render(self) -> Image.Image:
+        """Return the cached PNG of the best individual as an RGB PIL image."""
         return self._img
- 
-    def fitness(self):
+
+    def fitness(self) -> float:
+        """Return the scalar fitness value loaded from the checkpoint."""
         return self._fit
     
 def load_experiment_artifacts(checkpoint_path, config_names, config_key,

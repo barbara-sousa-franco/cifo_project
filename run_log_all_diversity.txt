@@ -1,0 +1,24 @@
+[23:41:38] Phases requested: ['all_diversity']
+[23:41:38] [all_diversity] POP=100 GENS=500 N_RUNS=15  configs=['all_combined']
+[23:41:38]   === all_combined ===  (0/15 already done)
+[00:11:40]     Run  1/15: fitness 31.892 in 1802.2s
+[00:47:59]     Run  2/15: fitness 33.634 in 2179.3s
+[01:25:53]     Run  3/15: fitness 32.083 in 2274.1s
+[02:02:53]     Run  4/15: fitness 33.009 in 2220.1s
+[02:34:47]     Run  5/15: fitness 32.873 in 1913.6s
+[03:08:26]     Run  6/15: fitness 31.866 in 2019.2s
+[03:36:40]     Run  7/15: fitness 32.738 in 1694.0s
+[04:04:03]     Run  8/15: fitness 32.051 in 1643.0s
+[04:37:55]     Run  9/15: fitness 33.232 in 2032.1s
+[05:18:22]     Run 10/15: fitness 32.501 in 2426.6s
+[05:58:08]     Run 11/15: fitness 32.261 in 2386.3s
+[06:38:44]     Run 12/15: fitness 32.529 in 2436.0s
+[07:18:41]     Run 13/15: fitness 31.456 in 2397.1s
+[07:58:50]     Run 14/15: fitness 31.698 in 2408.4s
+[08:38:45]     Run 15/15: fitness 32.895 in 2394.9s
+    summary: avg=32.448 std=0.596 min=31.456 max=33.634
+[08:38:45] [all_diversity] phase done in 8.95h
+
+[all_diversity] final summary (sorted by avg):
+  all_combined               avg= 32.448  std=0.596  min=31.456  (n=15)
+[08:38:45] All done in 8.95h

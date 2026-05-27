@@ -84,30 +84,39 @@ def genetic_algorithm(
     Parameters:
         - initial_population (list[Individual]): The starting population.
         - max_generations (int): Maximum number of generations to evolve.
-        - selection_algorithm (Callable): Parent selection function.
-        - xo_method (Callable): Crossover operator (returns 2 children).
-        - mut_method (Callable): Mutation operator (returns 1 individual).
+        - selection_algorithm (Callable): Parent selection function. Called
+            as ``selection_algorithm(population, maximization)``.
+        - xo_method (Callable): Crossover operator. Returns two children.
+        - mut_method (Callable): Mutation operator. Returns one individual.
         - maximization (bool): If True maximises fitness; else minimises.
         - xo_prob (float): Crossover probability.
         - mut_prob (float): Initial mutation probability. May change over
             generations if ``adaptive_mutation`` is True.
         - elitism (bool): If True, carries the best individual unchanged.
-        - verbose (bool): If True, prints per-generation debug info.
-
-        - fitness_sharing (bool): If True, apply fitness sharing
+        - verbose (bool): If True, prints extra per-generation diagnostics
+            (success rate, mut_prob, diversity injection events). The
+            "Generation X/Y" header is always printed so progress is
+            visible on long runs.
         - adaptive_mutation (bool): If True, apply Rechenberg's 1/5 success
             rule: keep a sliding window of how often offspring beat their
             parents, then scale mut_prob up if success rate > 0.2, down if
             success rate < 0.2. Clipped to [adaptive_min, adaptive_max].
         - adaptive_window (int): Number of generations in the success window.
+        - adaptive_min, adaptive_max (float): Clipping bounds for mut_prob
+            under the 1/5 rule.
         - diversity_injection (bool): If True, when phenotypic std-dev drops
             below ``diversity_threshold`` * initial std-dev, replace the
             worst ``diversity_replace_frac`` of the population with new
             random individuals. Helps escape premature convergence.
+        - diversity_threshold, diversity_replace_frac (float): Trigger and
+            replacement fraction for diversity injection.
+        - mate_selection_algorithm (Callable | None): If provided, parent 2
+            is selected by this function instead of ``selection_algorithm``
+            (used to implement restricted mating).
 
     Returns:
-        - Solution: Best individual found.
-        - list[float]: Best fitness per generation (length == generations run).
+        - Individual: Best individual found across all generations.
+        - list[float]: Best fitness per generation (length == max_generations).
     """
     starttime = time()
     best_fitness_over_gens: list[float] = []
@@ -136,7 +145,9 @@ def genetic_algorithm(
         # Elitism: copy the best individual into the new population.
         if elitism:
             best = get_best_ind(population, maximization)
-            new_population.append(best.with_repr(best.repr))
+            elite = best.with_repr(best.repr)
+            elite._fitness = best._fitness
+            new_population.append(elite)
 
         # Track how many children beat their parents this generation
         # (used for the 1/5 rule when adaptive_mutation is on).
@@ -150,8 +161,8 @@ def genetic_algorithm(
 
             if mate_selection_algorithm is not None:
 
-                # Restricted mating: parent 2 is constrained by itsdistance to parent 1.
-                second_ind = mate_selection_algorithm( population, first_ind, maximization )
+                # Restricted mating: parent 2 is constrained by its distance to parent 1.
+                second_ind = mate_selection_algorithm(population, first_ind, maximization)
 
             else:
                 second_ind = selection_algorithm(population, maximization)

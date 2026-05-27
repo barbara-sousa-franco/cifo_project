@@ -1,0 +1,21 @@
+{
+  "challenge_short": [
+    {
+      "run": 1,
+      "fitness": 6.200370788574219,
+      "time_seconds": 48932.0,
+      "curve_file": "ciede2000_short_challenge_short_run01_curve.npy",
+      "params": {
+        "source": "sample_11",
+        "mut_prob": 0.0123,
+        "xo_prob": 0.9891,
+        "max_triangle_size": 0.573,
+        "alpha_min": 0.178,
+        "alpha_max": 0.521,
+        "tournament_size": 5,
+        "mating_min_dist": 0.0104,
+        "mating_max_dist": 0.348
+      }
+    }
+  ]
+}

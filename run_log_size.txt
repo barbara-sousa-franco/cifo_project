@@ -1,0 +1,78 @@
+[13:41:13] Phases requested: ['size']
+[13:41:13] [size] POP=100 GENS=500 N_RUNS=15  configs=['size_1.0', 'size_0.4', 'size_0.25', 'size_0.15']
+[13:41:13]   === size_1.0 ===  (0/15 already done)
+[13:53:25]     Run  1/15: fitness 31.476 in 732.0s
+[14:05:54]     Run  2/15: fitness 30.914 in 749.1s
+[14:18:20]     Run  3/15: fitness 31.799 in 746.3s
+[14:31:40]     Run  4/15: fitness 32.149 in 799.6s
+[14:44:07]     Run  5/15: fitness 32.386 in 747.0s
+[14:56:16]     Run  6/15: fitness 31.049 in 728.9s
+[15:08:55]     Run  7/15: fitness 31.208 in 759.2s
+[15:21:21]     Run  8/15: fitness 31.877 in 745.9s
+[15:33:46]     Run  9/15: fitness 31.411 in 744.4s
+[15:46:14]     Run 10/15: fitness 30.608 in 748.3s
+[15:58:32]     Run 11/15: fitness 30.848 in 738.3s
+[16:11:22]     Run 12/15: fitness 31.707 in 769.4s
+[16:23:24]     Run 13/15: fitness 33.299 in 722.4s
+[16:35:35]     Run 14/15: fitness 31.421 in 731.3s
+[16:47:42]     Run 15/15: fitness 30.102 in 726.4s
+    summary: avg=31.484 std=0.754 min=30.102 max=33.299
+[16:47:42]   === size_0.4 ===  (0/15 already done)
+[16:57:42]     Run  1/15: fitness 32.267 in 600.6s
+[17:07:40]     Run  2/15: fitness 32.483 in 597.8s
+[17:17:37]     Run  3/15: fitness 31.405 in 596.7s
+[17:27:35]     Run  4/15: fitness 32.289 in 598.3s
+[17:37:34]     Run  5/15: fitness 31.755 in 599.0s
+[17:47:38]     Run  6/15: fitness 32.311 in 603.9s
+[17:57:39]     Run  7/15: fitness 31.518 in 600.5s
+[18:07:44]     Run  8/15: fitness 31.520 in 605.5s
+[18:17:49]     Run  9/15: fitness 32.639 in 604.8s
+[18:27:44]     Run 10/15: fitness 32.039 in 595.3s
+[18:37:48]     Run 11/15: fitness 32.558 in 603.5s
+[18:47:53]     Run 12/15: fitness 31.778 in 605.8s
+[18:57:48]     Run 13/15: fitness 31.872 in 594.3s
+[19:07:50]     Run 14/15: fitness 31.366 in 602.0s
+[19:17:53]     Run 15/15: fitness 32.416 in 603.2s
+    summary: avg=32.014 std=0.426 min=31.366 max=32.639
+[19:17:53]   === size_0.25 ===  (0/15 already done)
+[19:27:07]     Run  1/15: fitness 38.506 in 554.4s
+[19:36:20]     Run  2/15: fitness 37.758 in 552.2s
+[19:45:33]     Run  3/15: fitness 36.908 in 553.8s
+[19:54:47]     Run  4/15: fitness 36.579 in 553.3s
+[20:03:57]     Run  5/15: fitness 36.789 in 550.5s
+[20:13:10]     Run  6/15: fitness 36.922 in 553.1s
+[20:22:25]     Run  7/15: fitness 36.946 in 554.4s
+[20:31:40]     Run  8/15: fitness 37.184 in 555.7s
+[20:40:54]     Run  9/15: fitness 35.827 in 553.8s
+[20:50:13]     Run 10/15: fitness 36.318 in 558.7s
+[20:59:27]     Run 11/15: fitness 36.599 in 553.9s
+[21:08:43]     Run 12/15: fitness 37.383 in 556.2s
+[21:18:06]     Run 13/15: fitness 37.687 in 562.8s
+[21:27:18]     Run 14/15: fitness 36.827 in 552.4s
+[21:36:37]     Run 15/15: fitness 36.195 in 559.2s
+    summary: avg=36.962 std=0.653 min=35.827 max=38.506
+[21:36:37]   === size_0.15 ===  (0/15 already done)
+[21:45:21]     Run  1/15: fitness 54.706 in 523.6s
+[21:54:14]     Run  2/15: fitness 53.443 in 532.4s
+[22:03:03]     Run  3/15: fitness 53.820 in 529.5s
+[22:11:49]     Run  4/15: fitness 52.542 in 525.7s
+[22:20:43]     Run  5/15: fitness 55.309 in 533.8s
+[22:29:29]     Run  6/15: fitness 55.323 in 526.2s
+[22:38:18]     Run  7/15: fitness 52.161 in 529.5s
+[22:47:09]     Run  8/15: fitness 51.791 in 530.6s
+[22:55:53]     Run  9/15: fitness 54.127 in 524.5s
+[23:04:47]     Run 10/15: fitness 52.420 in 533.8s
+[23:13:33]     Run 11/15: fitness 52.672 in 525.6s
+[23:22:18]     Run 12/15: fitness 55.901 in 525.2s
+[23:31:08]     Run 13/15: fitness 53.690 in 529.8s
+[23:39:55]     Run 14/15: fitness 54.904 in 527.2s
+[23:48:37]     Run 15/15: fitness 54.729 in 521.7s
+    summary: avg=53.836 std=1.255 min=51.791 max=55.901
+[23:48:37] [size] phase done in 10.12h
+
+[size] final summary (sorted by avg):
+  size_1.0                   avg= 31.484  std=0.754  min=30.102  (n=15)
+  size_0.4                   avg= 32.014  std=0.426  min=31.366  (n=15)
+  size_0.25                  avg= 36.962  std=0.653  min=35.827  (n=15)
+  size_0.15                  avg= 53.836  std=1.255  min=51.791  (n=15)
+[23:48:37] All done in 10.12h
