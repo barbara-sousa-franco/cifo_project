@@ -1,8 +1,0 @@
-# MERGED INTO run_log_diversity.txt
-#
-# all_combined was executed separately as the all_diversity phase, but it belongs
-# to the diversity experiment family. The canonical combined log is now:
-#   run_log_diversity.txt
-#
-# The original standalone log was archived at:
-#   run_logs_original_backup_20260527/run_log_all_diversity.standalone.txt
